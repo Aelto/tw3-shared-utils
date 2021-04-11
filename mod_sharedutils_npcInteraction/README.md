@@ -11,4 +11,4 @@ You can see an example implementation in the [`example/main.ws`](example/main.ws
 
 ## Important information
 
-The list of event listeners does not persist in the save, meaning you have to add the event back every time a loading screen appears. **Unless** you add the persistent attribute `onInteractionEventListeners` to the `w2ent` you used to spawn the entity. So this will only work with custom made NPCs as you can't realistically edit the `w2ent` file of every NPC in the game.
+The list of event listeners does not persist in the save for some NPCs, such as guards, because they can die and respawn and so it seems they are simply recrated from scratch every loading screen.
