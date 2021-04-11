@@ -41,8 +41,6 @@ function SU_NpcInteraction_runAllInteractionListeners(actionName: string, activa
 
   should_event_continue = true;
 
-  NDEBUG(" events = " + receptor.onInteractionEventListeners.Size());
-
   for (i = 0; i < receptor.onInteractionEventListeners.Size(); i += 1) {
     current_event_listener = receptor.onInteractionEventListeners[i];
 
@@ -67,7 +65,6 @@ function SU_NpcInteraction_hasEventListenerWithTag(npc: CNewNPC, tag: string): b
       return true;
     }
   }
-
 
   return false;
 }
