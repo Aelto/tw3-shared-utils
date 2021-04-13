@@ -108,3 +108,54 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
     flash_array.PushBackFlashObject(flash_object);
   }
 }
+
+function SU_removeCustomPinByTag(tag: String) {
+  var i: int;
+  var current_pin: SU_MapPin;
+  var last_pin: SU_MapPin;
+  
+  for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
+    current_pin = thePlayer.customMapPins[i];
+
+    if (current_pin.tag != tag) {
+      continue;
+    }
+
+    if (i == thePlayer.customMapPins.Size() - 1) {
+      thePlayer.customMapPins.PopBack();
+      continue;
+    }
+
+    // for performance reasons we swap the pin to remove and the last one,
+    // then we popback the last pin (which is now the current_pin).
+    last_pin = thePlayer.customMapPins.Last();
+    thePlayer.customMapPins[i] = last_pin;
+    thePlayer.customMapPins.PopBack();
+  }
+}
+
+function SU_removeCustomPinByPosition(position: Vector) {
+  var i: int;
+  var current_pin: SU_MapPin;
+  var last_pin: SU_MapPin;
+  
+  for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
+    current_pin = thePlayer.customMapPins[i];
+
+    if (current_pin.position.X != position.X
+    ||  current_pin.position.Y != position.Y) {
+      continue;
+    }
+
+    if (i == thePlayer.customMapPins.Size() - 1) {
+      thePlayer.customMapPins.PopBack();
+      continue;
+    }
+
+    // for performance reasons we swap the pin to remove and the last one,
+    // then we popback the last pin (which is now the current_pin).
+    last_pin = thePlayer.customMapPins.Last();
+    thePlayer.customMapPins[i] = last_pin;
+    thePlayer.customMapPins.PopBack();
+  }
+}

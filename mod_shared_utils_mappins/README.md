@@ -9,4 +9,6 @@ The [example file](example/main.ws) should show everything you need to know abou
 
 Basically, you create your new pin from the class `SU_MapPin` and set its information, then you call `thePlayer.addCustomPin(pin);` and you're done.
 
-For the sake of simplicity there is no function to remove a pin from the list, there is only a function to add one `addCustomPin()`. To remove a pin from the list, simply iterate through `thePlayer.customMapPins` and `.Remove()` the pin you want to remove.
+There are two functions to remove pins from the list of custom pins:
+ - [SU_removeCustomPinByTag](content/scripts/local/sharedutils/mappins.ws) to remove all pins with the same tag as the supplied tag.
+ - [SU_removeCustomPinByPosition](content/scripts/local/sharedutils/mappins.ws) to remove all pins with the same X:Y coordinates as the supplied coordinates.
