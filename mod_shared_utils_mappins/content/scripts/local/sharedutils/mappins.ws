@@ -126,11 +126,8 @@ function SU_removeCustomPinByTag(tag: String) {
       continue;
     }
 
-    // for performance reasons we swap the pin to remove and the last one,
-    // then we popback the last pin (which is now the current_pin).
-    last_pin = thePlayer.customMapPins.Last();
-    thePlayer.customMapPins[i] = last_pin;
-    thePlayer.customMapPins.PopBack();
+    thePlayer.customMapPins.Erase(i);
+    i -= 1;
   }
 }
 
@@ -152,11 +149,8 @@ function SU_removeCustomPinByPosition(position: Vector) {
       continue;
     }
 
-    // for performance reasons we swap the pin to remove and the last one,
-    // then we popback the last pin (which is now the current_pin).
-    last_pin = thePlayer.customMapPins.Last();
-    thePlayer.customMapPins[i] = last_pin;
-    thePlayer.customMapPins.PopBack();
+    thePlayer.customMapPins.Erase(i);
+    i -= 1;
   }
 }
 
@@ -177,11 +171,8 @@ function SU_removeCustomPinByPredicate(predicate_runner: SU_PredicateInterfaceRe
       continue;
     }
 
-    // for performance reasons we swap the pin to remove and the last one,
-    // then we popback the last pin (which is now the current_pin).
-    last_pin = thePlayer.customMapPins.Last();
-    thePlayer.customMapPins[i] = last_pin;
-    thePlayer.customMapPins.PopBack();
+    thePlayer.customMapPins.Erase(i);
+    i -= 1;
   }
 }
 
