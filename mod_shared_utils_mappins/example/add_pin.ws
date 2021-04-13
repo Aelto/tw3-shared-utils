@@ -1,4 +1,6 @@
-
+/**
+ * This is a simple example to show to add your own custom pins at the given coordinates
+ */
 exec function SU_CustomMapPins_addPin(x: float, y: float) {
   var pin: SU_MapPin;
 
