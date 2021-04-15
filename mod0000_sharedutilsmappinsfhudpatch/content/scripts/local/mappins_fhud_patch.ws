@@ -17,7 +17,7 @@ function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CMod
     new_marker.isActiveQuest = false;
     
     // skipping the config on both of them too
-    new_marker.force = true || fhud.ShouldForceMarker(new_marker);
+    new_marker.force = false || fhud.ShouldForceMarker(new_marker);
     new_marker.pin = true || fhud.ShouldPinMarker(new_marker);
 
     // skipping the config on purpose
