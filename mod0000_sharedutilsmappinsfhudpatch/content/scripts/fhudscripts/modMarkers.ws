@@ -2563,6 +2563,10 @@ class CModMarkers
 		userMarkerSubstituted = false;
 		
 		highlightedObjective = journalManager.GetHighlightedObjective();
+
+		// sharedutils - FHUD patch - BEGIN
+		SU_fhudPatchAddCustomMarkers(cached3DMarkersTracked, this);
+		// sharedutils - FHUD patch - END
 		
 		if( !highlightedObjective )
 			return;
@@ -2610,10 +2614,6 @@ class CModMarkers
 				cached3DMarkersTracked.PushBack( marker );
 			}
 		}
-
-		// sharedutils - FHUD patch - BEGIN
-		SU_fhudPatchAddCustomMarkers(cached3DMarkersTracked, this);
-		// sharedutils - FHUD patch - END
 	}
 	
 	function ResetQuestMarkerStatus( out marker : SMod3DMarker )
