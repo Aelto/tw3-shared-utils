@@ -28,8 +28,6 @@ function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CMod
     new_marker.description = current_mappin.description;
     new_marker.text = fhud.GetMarkerIconByType(new_marker);
 
-    NLOG("marker = " + new_marker.text);
-
     cache.PushBack(new_marker);
   }
 }

@@ -23,6 +23,10 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
   dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
   dialogueModule.OnDialogChoicesSet( choices, false );
 
+  // set the value to false before starting, in case it was already at true
+  // and not properly reset.
+  dialogueModule.isAcceptedChoiceAvailable = false;
+
   // telling the game to display the cutscene UI
   theInput.SetContext( 'Scene' );
   theGame.SetIsDialogOrCutscenePlaying(true);
