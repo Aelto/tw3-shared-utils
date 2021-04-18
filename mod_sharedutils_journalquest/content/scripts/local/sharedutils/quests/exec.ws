@@ -15,35 +15,68 @@ statemachine class SU_QuestTest extends SU_JournalQuestEntry {
   default episode = SU_JournalQuestEntryEpisodeCORE;
 }
 
-state QuestTestChapterOne in SU_QuestTest {
+statemachine class QTchapterOne extends SU_JournalQuestChapter {
+  public function init(quest_entry: SU_JournalQuestEntry): QTchapterOne {
+    this.tag = "QuestTestChapterOne";
+    this.setLocalizedDescriptionWhenActive("description_when_active");
+    this.setLocalizedDescriptionWhenCompleted("description_when_completed");
+
+    this.addObjective(
+      (new SU_JournalQuestChapterObjective in thePlayer)
+      .setTags('objective_one_tag')
+      .setLabel("objective_one_label")
+      .addPin((new SU_MapPin in thePlayer).init(
+        "tag_one",
+        thePlayer.GetWorldPosition() + Vector(30, 30),
+        "Go there and get a reward",
+        "Objective position",
+        "MonsterQuest",
+        10,
+        "no_mans_land"
+      ))
+    );
+
+    return this;
+  }
+}
+
+state Running in QTchapterOne extends BaseChapter {
   event OnEnterState(previous_state_name: name) {
     super.OnEnterState(previous_state_name);
-    LogChannel('SU', "state - QuestTestChapterOne");
+    LogChannel('SU', "state - Running");
 
     this.QuestTestChapterOne_main();
   }
 
   entry function QuestTestChapterOne_main() {
-    theGame
-    .GetGuiManager()
-    .ShowNotification("QuestTestChapterOne", 10);
-  }
-}
+    var pin: SU_MapPin;
 
-class QTchapterOne extends SU_JournalQuestChapter {
-  public function init(quest_entry: SU_JournalQuestEntry): QTchapterOne {
-    this.tag = "QuestTestChapterOne";
-    this.chapter_state = 'QuestTestChapterOne';
-    this.setLocalizedDescriptionWhenActive("description_when_active");
-    this.setLocalizedDescriptionWhenCompleted("description_when_completed");
+    LogChannel('SU', "current region = " + this.getCurrentRegion());
 
-    this.addObjective(
-      (new SU_JournalQuestChapterObjectives in thePlayer)
-      .setTags('objective_one_tag')
-      .setLabel("objective_one_label")
-    );
+    if (!this.isPlayerInRegion("no_mans_land")) {
+      theGame
+      .GetGuiManager()
+      .ShowNotification("wrong region");
 
-    return this;
+      return;
+    }
+
+    pin = parent
+      .getObjectiveWithUniqueTag('objective_one_tag')
+      .getFirstPin();
+
+    if (pin) {
+      LogChannel('SU', "Look at your map and reach the position = " + VecToString(pin.position));
+
+      this.waitForPlayerToReachPoint(pin.position, pin.radius);
+
+      theGame
+      .GetGuiManager()
+      .ShowNotification("Good job!");
+    }
+    else {
+      LogChannel('SU', "could not find the first pin");
+    }
   }
 }
 

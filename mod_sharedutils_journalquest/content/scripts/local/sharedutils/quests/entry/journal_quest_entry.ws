@@ -59,6 +59,8 @@ abstract statemachine class SU_JournalQuestEntry {
    * It returns `this` so it is chainable.
    */
   public function addChapter(chapter: SU_JournalQuestChapter): SU_JournalQuestEntry {
+    chapter.quest_entry = this;
+
     this.chapters.PushBack(chapter);
 
     return this;
@@ -99,6 +101,12 @@ abstract statemachine class SU_JournalQuestEntry {
     var chapter: SU_JournalQuestChapter;
     var next_chapter_index: int;
 
+    chapter = this.getCurrentChapter();
+
+    // it's a latent function and it could take a few frames to finish
+    chapter.closeChapter();
+    chapter.untrack();
+
     this.completed_chapters.PushBack(this.current_chapter);
 
     next_chapter_index = this.getChapterIndexByTag(chapter_tag);
@@ -110,22 +118,16 @@ abstract statemachine class SU_JournalQuestEntry {
 
       return;
     }
-
-    // before going to the next chapter, we untrack the current chapter to
-    // remove the markers
-    chapter = this.getCurrentChapter();
-    chapter.clean(chapter_tag);
-    chapter.untrack();
     
     this.current_chapter = next_chapter_index;
-    this.GotoState(this.getCurrentChapter().chapter_state);
+    this.chapters[this.current_chapter].GotoState('Progress');
   }
 
   /**
    * returns the list of objectives from the list of completed chapters
    */
-  public function getCompletedObjectives(): array<SU_JournalQuestChapterObjectives> {
-    var output: array<SU_JournalQuestChapterObjectives>;
+  public function getCompletedObjectives(): array<SU_JournalQuestChapterObjective> {
+    var output: array<SU_JournalQuestChapterObjective>;
     var current_chapter: SU_JournalQuestChapter;
     var chapter_index: int;
     var i, k: int;
@@ -145,8 +147,8 @@ abstract statemachine class SU_JournalQuestEntry {
   /**
    * returns the list of objectives from the currently active chapter.
    */
-  public function getActiveObjectives(): array<SU_JournalQuestChapterObjectives> {
-    var output: array<SU_JournalQuestChapterObjectives>;
+  public function getActiveObjectives(): array<SU_JournalQuestChapterObjective> {
+    var output: array<SU_JournalQuestChapterObjective>;
     var current_chapter: SU_JournalQuestChapter;
     var i: int;
 
@@ -184,6 +186,8 @@ abstract statemachine class SU_JournalQuestEntry {
    * set the quest as tracked and also start tracking the current chapter.
    */
   public function trackQuest() {
+    LogChannel('SU', "tracking quest " + this.tag + ", is tracked =" + this.is_tracked);
+
     if (this.is_tracked) {
       return;
     }
@@ -202,7 +206,10 @@ abstract statemachine class SU_JournalQuestEntry {
   }
 
   public function bootstrap() {
-    this.GotoState('Bootstrap');
+    var current_chapter: SU_JournalQuestChapter;
+
+    current_chapter = this.chapters[this.current_chapter];
+    current_chapter.GotoState('Bootstrap');
   }
 }
 

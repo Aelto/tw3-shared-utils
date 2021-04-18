@@ -1,5 +1,14 @@
 
-class SU_JournalQuestChapter {
+/**
+ * workflow of the statemachine:
+ *  - Progress: if it comes from a previous chapter
+ *  - Bootstrap: every loading screen or when the player tracks the quest or
+ *    simply after Progress
+ *  - Running: after Bootstrap
+ *  - Closing: after calling QuestEntry::completeCurrentChapterAndGoToNext
+ *  - Closed: after Closing and when ready to move on to the next chapter
+ */
+statemachine class SU_JournalQuestChapter {
   /**
    * the unique tag would should be used to identify the chapter among the
    * others.
@@ -25,13 +34,6 @@ class SU_JournalQuestChapter {
   var description_when_completed: string;
 
   /**
-   * The main class for the quest is a statemachine, and if you want to add
-   * custom code for your chapter it should sit in a unique state.
-   * This variables holds the name of the state. 
-   */
-  var chapter_state: name;
-
-  /**
    * The list of objectives for this chapter, there is no way to set one 
    * objective as completed while keeping the other uncompleted. The objectives
    * are all set as completed when the chapter is set completed itself.
@@ -41,13 +43,19 @@ class SU_JournalQuestChapter {
    *
    * This in a array in case you want to display optional objectives.
    */
-  var objectives: array<SU_JournalQuestChapterObjectives>;
+  var objectives: array<SU_JournalQuestChapterObjective>;
+
+  /**
+   * do not set it yourself, it will be set automatically when you add the
+   * chapter to the questEntry's list of chapters.
+   */
+  var quest_entry: SU_JournalQuestEntry;
 
   /** 
    * a chainable helper to easily add an objective without having to hold
    * the instance in a variable.
    */
-  function addObjective(objective: SU_JournalQuestChapterObjectives): SU_JournalQuestChapter {
+  function addObjective(objective: SU_JournalQuestChapterObjective): SU_JournalQuestChapter {
     this.objectives.PushBack(objective);
 
     return this;
@@ -89,7 +97,23 @@ class SU_JournalQuestChapter {
   }
 
   /**
-   *
+   * returns the first objective that has the same tag as the supplied tag.
+   */
+  function getObjectiveWithUniqueTag(tag: name): SU_JournalQuestChapterObjective {
+    var null: SU_JournalQuestChapterObjective;
+    var i: int;
+
+    for (i = 0; i < this.objectives.Size(); i += 1) {
+      if (this.objectives[i].unique_tag == tag) {
+        return this.objectives[i];
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * show the markers from its list of objectives
    */
   function track() {
     var i: int;
@@ -100,7 +124,7 @@ class SU_JournalQuestChapter {
   }
 
   /**
-   *
+   * hide the markers from its list of objectives
    */
   function untrack() {
     var i: int;
@@ -110,9 +134,11 @@ class SU_JournalQuestChapter {
     }
   }
 
-  /**
-   * this function is called when the quest progresses from this chapter to the
-   * next. You can override it to implement your own cleaning logic.
-   */
-  public latent function clean(next_chapter_tag: string) {}
+  latent function closeChapter() {
+    this.GotoState('Closing');
+
+    while (this.GetCurrentStateName() != 'Closed') {
+      SleepOneFrame();
+    }
+  }
 }

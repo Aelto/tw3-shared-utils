@@ -1,6 +1,6 @@
 
 function SU_injectQuestObjectives(out flasharray: CScriptedFlashArray, quest_tag: name, storage: CScriptedFlashValueStorage, binding: string, expansionIconFlashFunction: CScriptedFlashFunction): bool {
-  var objectives: array<SU_JournalQuestChapterObjectives>;
+  var objectives: array<SU_JournalQuestChapterObjective>;
   var quest_entry: SU_JournalQuestEntry;
   var i, offset: int;
 
@@ -37,7 +37,7 @@ function SU_injectQuestObjectives(out flasharray: CScriptedFlashArray, quest_tag
   return false;
 }
 
-function SU_getFlashDataFromQuestChapterObjective(objective: SU_JournalQuestChapterObjectives, is_completed: bool, index: int, storage: CScriptedFlashValueStorage): CScriptedFlashObject {
+function SU_getFlashDataFromQuestChapterObjective(objective: SU_JournalQuestChapterObjective, is_completed: bool, index: int, storage: CScriptedFlashValueStorage): CScriptedFlashObject {
   var output: CScriptedFlashObject;
 
   output = storage.CreateTempFlashObject();

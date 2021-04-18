@@ -52,6 +52,26 @@ class SU_MapPin {
    * - bob
    */
   var region: String;
+
+  function init(
+    _tag: String,
+    _position: Vector,
+    _description: String,
+    _label: String,
+    _type: String,
+    _radius: float,
+    _region: String
+  ): SU_MapPin {
+    this.tag = _tag;
+    this.position = _position;
+    this.description = _description;
+    this.label = _label;
+    this.type = _type;
+    this.radius = _radius;
+    this.region = _region;
+
+    return this;
+  }
 }
 
 function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage) {

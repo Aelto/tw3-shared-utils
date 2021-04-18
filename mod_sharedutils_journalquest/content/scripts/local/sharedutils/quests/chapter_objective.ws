@@ -1,5 +1,5 @@
 
-class SU_JournalQuestChapterObjectives {
+class SU_JournalQuestChapterObjective {
   /**
    * the unique value used to identify the objective among the other objectives
    */
@@ -27,7 +27,7 @@ class SU_JournalQuestChapterObjectives {
    * quickly initialize the class and set the localized label at the same time
    * without having to use a variable.
    */
-  function setLocalizedLabel(key: string): SU_JournalQuestChapterObjectives {
+  function setLocalizedLabel(key: string): SU_JournalQuestChapterObjective {
     this.label = GetLocStringByKey(key);
 
     return this;
@@ -39,17 +39,38 @@ class SU_JournalQuestChapterObjectives {
    * quickly initialize the class and set the localized label at the same time
    * without having to use a variable.
    */
-  function setLabel(label: string): SU_JournalQuestChapterObjectives {
+  function setLabel(label: string): SU_JournalQuestChapterObjective {
     this.label = label;
 
     return this;
   }
 
-  function setTags(tags: name): SU_JournalQuestChapterObjectives {
+  function setTags(tags: name): SU_JournalQuestChapterObjective {
     this.tag = ""+tags;
     this.unique_tag = tags;
 
     return this;
+  }
+
+  /**
+   * this function is an helper function you can chain to add pins to the
+   * objective. It also edits the pin tag to make sure it's unique and does
+   * not conflict with an already existing pin.
+   * This is why it is recommended to add pins via this function and not
+   * directly through the `this.pins` property.
+   */
+  public function addPin(pin: SU_MapPin): SU_JournalQuestChapterObjective {
+    // edit the pin tag at insertion to make sure it has a unique tag that suits
+    // the current objective.
+    pin.tag = this.tag + "_" + pin.tag;
+
+    this.pins.PushBack(pin);
+
+    return this;
+  }
+
+  public function getFirstPin(): SU_MapPin {
+    return this.pins[0];
   }
 
   /**
@@ -70,6 +91,7 @@ class SU_JournalQuestChapterObjectives {
     var i: int;
 
     for (i = 0; i < this.pins.Size(); i += 1) {
+      LogChannel('SU', "ChapterObjective::untrack() - remove pin with tag = " + this.pins[i].tag);
       SU_removeCustomPinByTag(this.pins[i].tag);
     }
   }

@@ -3,16 +3,19 @@ function SU_isThereAnyQuestToTrackFromObjectiveHighlight(objective_tag: name, qu
   var quest_entry: SU_JournalQuestEntry;
 
   if (!SU_getJournalQuestEntryByUniqueTag(quest_tag, quest_entry)) {
+    SU_untrackAllQuestsWithTagsDifferentThan(quest_tag);
     return false;
   }
 
   if (!quest_entry.getCurrentChapter().hasObjectiveWithUniqueTag(objective_tag)) {
+    SU_untrackAllQuestsWithTagsDifferentThan(quest_tag);
     return false;
   }
 
-  SU_untrackAllQuestsWithTagsDifferentThan(quest_tag);
 
   if (!quest_entry.is_tracked) {
+    SU_untrackAllQuestsWithTagsDifferentThan(quest_tag);
+
     quest_entry.trackQuest();
     theSound.SoundEvent("gui_journal_track_quest");
   }
