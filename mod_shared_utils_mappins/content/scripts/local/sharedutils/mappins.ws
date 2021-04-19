@@ -132,7 +132,6 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
 function SU_removeCustomPinByTag(tag: String) {
   var i: int;
   var current_pin: SU_MapPin;
-  var last_pin: SU_MapPin;
   
   for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
     current_pin = thePlayer.customMapPins[i];

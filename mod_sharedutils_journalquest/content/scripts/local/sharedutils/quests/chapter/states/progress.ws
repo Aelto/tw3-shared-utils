@@ -8,11 +8,6 @@ state Progress in SU_JournalQuestChapter extends BaseChapter {
   event OnEnterState(previous_state_name: name) {
     super.OnEnterState(previous_state_name);
     LogChannel('SU', "chapter [" + parent.tag + "] - state Progress");
-
-    this.Progress_main();
-  }
-
-  entry function Progress_main() {
-    parent.GotoState('Bootstrap');
+    parent.nextState();
   }
 }

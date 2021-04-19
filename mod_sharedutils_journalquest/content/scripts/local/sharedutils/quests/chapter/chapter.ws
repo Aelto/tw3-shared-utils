@@ -134,6 +134,34 @@ statemachine class SU_JournalQuestChapter {
     }
   }
 
+  /**
+   * small helper to prevent you from having to remember the full workflow
+   * of the Chapter statemachine
+   */
+  protected function nextState() {
+    var current_state: name;
+    
+    current_state = this.GetCurrentStateName();
+
+    if (current_state == 'Progress') {
+      this.GotoState('Bootstrap');
+    }
+    if (current_state == 'Bootstrap') {
+      this.GotoState('Running');
+    }
+    if (current_state == 'Running') {
+      // don't do anything, instead you should call the function:
+      // SU_JournalQuestEntry::completeCurrentChapterAndGoToNext()
+    }
+    if (current_state == 'Closing') {
+      this.GotoState('Closed');
+    }
+  }
+
+  /**
+   * it's a function that is called by the QuestEntry when we ask it to move to
+   * the next chapter. Do not call it yourself.
+   */
   latent function closeChapter() {
     this.GotoState('Closing');
 

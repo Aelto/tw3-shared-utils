@@ -50,19 +50,17 @@ state BaseChapter in SU_JournalQuestChapter {
 
     // squared radius to save performances by using VecDistanceSquared
     radius *= radius;
-    distance_from_player = VecDistanceSquared(thePlayer.GetWorldPosition(), position);
+    distance_from_player = VecDistanceSquared2D(thePlayer.GetWorldPosition(), position);
 
     while (distance_from_player > radius) {
-      Sleep(1);
+      SleepOneFrame();
 
-      LogChannel('SU', "waitForPlayerToReachPoint, distance = " + distance_from_player);
-
-      // should_cancel = this.waitForPlayerToReachPoint_action();
+      should_cancel = this.waitForPlayerToReachPoint_action();
       if (should_cancel) {
         break;
       };
 
-      distance_from_player = VecDistanceSquared(thePlayer.GetWorldPosition(), position);
+      distance_from_player = VecDistanceSquared2D(thePlayer.GetWorldPosition(), position);
     }
   }
 
@@ -125,30 +123,52 @@ state BaseChapter in SU_JournalQuestChapter {
     }
   }
 
+  
+  latent function waitUntilInteraction(entity: CPeristentEntity) {
+    var listener: SU_StoreIfInteractedWith;
+
+    listener = new SU_StoreIfInteractedWith in entity;
+
+    entity.addInteractionEventListener(listener);
+
+    listener.waitUntilActivated();
+  }
+
 }
 
 /**
- * latent function that will sleep until the player reaches the position and
- * is in the supplied radius.
+ * A really basic SU_InteractionEventListener that sets a boolean to true when
+ * the player has interacted with the component, then removes itself from the
+ * list.
  */
-latent function waitForPlayerToReachPoint(position: Vector, radius: float) {
-  var distance_from_player: float;
-  var should_cancel: bool;
+class SU_StoreIfInteractedWith extends SU_InteractionEventListener {
 
-  // squared radius to save performances by using VecDistanceSquared
-  radius *= radius;
-  distance_from_player = VecDistanceSquared(thePlayer.GetWorldPosition(), position);
+  /**
+   * The tag we will use to identify this kind of event listener
+   */
+  default tag = "SU_StoreIfInteractedWith";
 
-  while (distance_from_player > radius) {
-    Sleep(1);
+  public var was_activated: bool;
 
-    LogChannel('SU', "waitForPlayerToReachPoint, distance = " + distance_from_player);
+  /**
+   * Override the run method to run our custom code.
+   */
+  public function run(actionName : string, activator : CEntity, receptor: CPeristentEntity): bool {
+    this.was_activated = true;
 
-    // should_cancel = this.waitForPlayerToReachPoint_action();
-    if (should_cancel) {
-      break;
-    };
+    SU_removeInteractionEventListenerByTag(receptor, this.tag);
 
-    distance_from_player = VecDistanceSquared(thePlayer.GetWorldPosition(), position);
+    /**
+     * We still want the dialogue to play after the interaction, so we'll return
+     * true no matter what.
+     */
+    return true;
   }
+
+  public latent function waitUntilActivated() {
+    while (!this.was_activated) {
+      SleepOneFrame();
+    }
+  }
+
 }

@@ -56,6 +56,12 @@ abstract statemachine class SU_JournalQuestEntry {
   default current_chapter = -1;
 
   /**
+   * uses the index of the chapters in `this.chapter`
+   */
+  var next_chapter: int;
+  default next_chapter = -1;
+
+  /**
    * an helper function to easily add chapters to the quest.
    * It returns `this` so it is chainable.
    */
@@ -90,7 +96,10 @@ abstract statemachine class SU_JournalQuestEntry {
    * an error at this point and it's better to crash the game.
    */
   public function getCurrentChapter(): SU_JournalQuestChapter {
-    return this.chapters[this.current_chapter];
+    // important detail here, we do a Max() call here because by default the
+    // current_chapter index is at -1. And so we wouldn't get any objective
+    // while the quest has not started yet.
+    return this.chapters[Max(this.current_chapter, 0)];
   }
 
   /**
@@ -98,30 +107,23 @@ abstract statemachine class SU_JournalQuestEntry {
    * next chapter.
    * This function does a this.GotoState() to the next chapter's state.
    */
-  public latent function completeCurrentChapterAndGoToNext(chapter_tag: string) {
-    var chapter: SU_JournalQuestChapter;
-    var next_chapter_index: int;
+  public latent function completeCurrentChapterAndGoToNext(optional chapter_tag: string) {
+    if (StrLen(chapter_tag) > 0) {
+      this.next_chapter = this.getChapterIndexByTag(chapter_tag);
 
-    chapter = this.getCurrentChapter();
+      if (this.next_chapter < 0) {
+        theGame
+        .GetGuiManager()
+        .ShowNotification("ERROR: no chapter with tag: " + chapter_tag, 20);
 
-    // it's a latent function and it could take a few frames to finish
-    chapter.closeChapter();
-    chapter.untrack();
-
-    this.completed_chapters.PushBack(this.current_chapter);
-
-    next_chapter_index = this.getChapterIndexByTag(chapter_tag);
-    
-    if (next_chapter_index < 0) {
-      theGame
-      .GetGuiManager()
-      .ShowNotification("ERROR: no chapter with tag: " + chapter_tag, 20);
-
-      return;
+        return;
+      }
     }
-    
-    this.current_chapter = next_chapter_index;
-    this.chapters[this.current_chapter].GotoState('Progress');
+    else {
+      this.next_chapter = this.current_chapter + 1;
+    }
+
+    this.GotoState('Progressing');
   }
 
   /**
@@ -153,7 +155,7 @@ abstract statemachine class SU_JournalQuestEntry {
     var current_chapter: SU_JournalQuestChapter;
     var i: int;
 
-    current_chapter = this.chapters[this.current_chapter];
+    current_chapter = this.getCurrentChapter();
     
     return current_chapter.objectives;
   }

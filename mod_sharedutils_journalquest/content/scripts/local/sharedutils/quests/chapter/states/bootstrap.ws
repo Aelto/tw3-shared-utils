@@ -11,11 +11,6 @@ state Bootstrap in SU_JournalQuestChapter extends BaseChapter {
   event OnEnterState(previous_state_name: name) {
     super.OnEnterState(previous_state_name);
     LogChannel('SU', "chapter [" + parent.tag + "] - state Bootstrap");
-
-    this.Bootstrap_main();
-  }
-
-  entry function Bootstrap_main() {
-    parent.GotoState('Running');
+    parent.nextState();
   }
 }

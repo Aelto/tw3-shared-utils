@@ -74,3 +74,24 @@ function SU_NpcInteraction_hasEventListenerWithTag(npc: CPeristentEntity, tag: s
 
   return false;
 }
+
+function SU_removeInteractionEventListenerByTag(npc: CPeristentEntity, tag: string) {
+  var current_event_listener: SU_InteractionEventListener;
+  var i: int;
+  
+  for (i = 0; i < npc.onInteractionEventListeners.Size(); i += 1) {
+    current_event_listener = npc.onInteractionEventListeners[i];
+
+    if (current_event_listener.tag != tag) {
+      continue;
+    }
+
+    if (i == npc.onInteractionEventListeners.Size() - 1) {
+      npc.onInteractionEventListeners.PopBack();
+      continue;
+    }
+
+    npc.onInteractionEventListeners.Erase(i);
+    i -= 1;
+  }
+}
