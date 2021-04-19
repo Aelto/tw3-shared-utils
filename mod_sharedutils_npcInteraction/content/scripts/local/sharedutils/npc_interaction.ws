@@ -22,7 +22,7 @@ abstract class SU_InteractionEventListener {
    * and then this method has a third parameter that is the NPC the player
    * interacted with.
    */
-  public function run(actionName : string, activator : CEntity, receptor: CNewNPC): bool {
+  public function run(actionName : string, activator : CEntity, receptor: CPeristentEntity): bool {
     /**
      * The return value here dictactes if the CNewNPC::OnInteraction event should
      * continue after your code or if it should end.
@@ -34,27 +34,33 @@ abstract class SU_InteractionEventListener {
 
 }
 
-function SU_NpcInteraction_runAllInteractionListeners(actionName: string, activator: CEntity, receptor: CNewNPC): bool {
+function SU_NpcInteraction_runAllInteractionListeners(actionName: string, activator: CEntity, receptor: CEntity): bool {
   var current_event_listener: SU_InteractionEventListener;
+  var persistent_entity: CPeristentEntity;
   var should_event_continue: bool;
   var i: int;
 
   should_event_continue = true;
 
-  for (i = 0; i < receptor.onInteractionEventListeners.Size(); i += 1) {
-    current_event_listener = receptor.onInteractionEventListeners[i];
+  if ((CPeristentEntity)receptor) {
+    persistent_entity = (CPeristentEntity)receptor;
 
-    should_event_continue = should_event_continue && current_event_listener.run(
-      actionName,
-      activator,
-      receptor
-    );
+    for (i = 0; i < persistent_entity.onInteractionEventListeners.Size(); i += 1) {
+      current_event_listener = persistent_entity.onInteractionEventListeners[i];
+
+      should_event_continue = should_event_continue && current_event_listener.run(
+        actionName,
+        activator,
+        persistent_entity
+      );
+    }
   }
+
 
   return should_event_continue;
 }
 
-function SU_NpcInteraction_hasEventListenerWithTag(npc: CNewNPC, tag: string): bool {
+function SU_NpcInteraction_hasEventListenerWithTag(npc: CPeristentEntity, tag: string): bool {
   var current_event_listener: SU_InteractionEventListener;
   var i: int;
 

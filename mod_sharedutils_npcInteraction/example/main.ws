@@ -9,7 +9,7 @@ class SU_NotifyOnInteraction extends SU_InteractionEventListener {
   /**
    * Override the run method to run our custom code.
    */
-  public function run(actionName : string, activator : CEntity, receptor: CNewNPC): bool {
+  public function run(actionName : string, activator : CEntity, receptor: CPeristentEntity): bool {
     theGame
       .GetGuiManager()
       .ShowNotification("Player interaction with this NPC, action name = " + actionName);
