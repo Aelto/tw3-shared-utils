@@ -17,6 +17,7 @@ state Progressing in SU_JournalQuestEntry {
 
   entry function Progressing_main() {
     var chapter: SU_JournalQuestChapter;
+    var null: CJournalQuest;
     
     chapter = parent.getCurrentChapter();
 
@@ -29,5 +30,10 @@ state Progressing in SU_JournalQuestEntry {
     parent.current_chapter = parent.next_chapter;
     parent.chapters[parent.current_chapter].GotoState('Progress');
     parent.chapters[parent.current_chapter].track();
+
+    // we also tell the game to update the objective on the right.
+    theGame.GetGuiManager()
+      .GetHudEventController()
+      .RunEvent_QuestsModule_OnQuestTrackingStarted(null);
   }
 }

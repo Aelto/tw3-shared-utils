@@ -317,3 +317,20 @@ function SU_bootstrapQuestEntries(player: CR4Player) {
     }
   }
 }
+
+function SU_getFirstTrackedQuest(out quest_entry: SU_JournalQuestEntry): bool {
+  var entries: array<SU_JournalQuestEntry>;
+  var i: int;
+
+  entries = thePlayer.journal_quest_entries;
+
+  for (i = 0; i < entries.Size(); i += 1) {
+    if (entries[i].is_tracked) {
+      quest_entry = entries[i];
+      
+      return true;
+    }
+  }
+
+  return false;
+}

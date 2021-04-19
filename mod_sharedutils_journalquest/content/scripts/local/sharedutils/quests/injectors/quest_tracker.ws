@@ -1,6 +1,7 @@
 
 function SU_isThereAnyQuestToTrackFromObjectiveHighlight(objective_tag: name, quest_tag: name): bool {
   var quest_entry: SU_JournalQuestEntry;
+  var null: CJournalQuest;
 
   if (!SU_getJournalQuestEntryByUniqueTag(quest_tag, quest_entry)) {
     SU_untrackAllQuestsWithTagsDifferentThan(quest_tag);
@@ -18,6 +19,11 @@ function SU_isThereAnyQuestToTrackFromObjectiveHighlight(objective_tag: name, qu
 
     quest_entry.trackQuest();
     theSound.SoundEvent("gui_journal_track_quest");
+
+    // we also tell the game to update the objective on the right.
+    theGame.GetGuiManager()
+      .GetHudEventController()
+      .RunEvent_QuestsModule_OnQuestTrackingStarted(null);
   }
 
   return true;
