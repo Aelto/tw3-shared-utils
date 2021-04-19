@@ -53,6 +53,7 @@ abstract statemachine class SU_JournalQuestEntry {
    * use the index of the chapters in `this.chapters`
    */
   var current_chapter: int;
+  default current_chapter = -1;
 
   /**
    * an helper function to easily add chapters to the quest.
@@ -193,7 +194,6 @@ abstract statemachine class SU_JournalQuestEntry {
     }
 
     this.is_tracked = true;
-    this.chapters[this.current_chapter].track();
     this.bootstrap();
   }
 
@@ -208,8 +208,26 @@ abstract statemachine class SU_JournalQuestEntry {
   public function bootstrap() {
     var current_chapter: SU_JournalQuestChapter;
 
-    current_chapter = this.chapters[this.current_chapter];
-    current_chapter.GotoState('Bootstrap');
+    // this.current_chapter is at -1 by default to indicate the quest has not
+    // started yet. When it is the case, we put this.current_chapter to 0
+    // but instead of bootstrapping the mod we set its state to `Progress`
+    //
+    // If you're confused about this, read the comment above the Chapter class
+    // about its workflow. TL;DR: the Progress state is the state where 
+    // initialization code should run only the first time the chapter is
+    // bootstrapped.
+    if (this.current_chapter < 0) {
+      this.current_chapter = 0;
+
+      current_chapter = this.chapters[this.current_chapter];
+      current_chapter.GotoState('Progress');
+    }
+    else {
+      current_chapter = this.chapters[this.current_chapter];
+      current_chapter.GotoState('Bootstrap');
+    }
+
+    current_chapter.track();
   }
 }
 
