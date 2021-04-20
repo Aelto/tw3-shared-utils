@@ -497,6 +497,7 @@ class CModMarkers
 	function AdjustZLevel( out marker : SMod3DMarker )
 	{
 		var playerPosition : Vector;
+		playerPosition = thePlayer.GetWorldPosition();
 		
 		switch( marker.visibleType )
 		{
@@ -504,17 +505,16 @@ class CModMarkers
 			case 'User2':
 			case 'User3':
 			case 'User4':
-				playerPosition = thePlayer.GetWorldPosition();
 				marker.position.Z = playerPosition.Z + 0.5;
 				return;
 			case 'MagicLamp':
 			case 'HorseRaceTarget':
 			case 'EnemyDead':
 			case 'GenericFocus':
-				marker.position.Z += 0.5;
+				marker.position.Z = playerPosition.Z + 0.5;
 				return;
 		}
-		marker.position.Z += 2.5;
+		marker.position.Z = playerPosition.Z + 2.5;
 	}
 	
 	function CleanupCurrentOneliners()

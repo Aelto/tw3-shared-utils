@@ -2,7 +2,10 @@
 function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CModMarkers) {
   var current_mappin: SU_MapPin;
   var new_marker: SMod3DMarker;
+  var player_position: Vector;
   var i: int;
+
+  player_position = thePlayer.GetWorldPosition();
 
   for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
     current_mappin = thePlayer.customMapPins[i];
@@ -12,7 +15,10 @@ function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CMod
     new_marker.isDiscovered = true;
     new_marker.isKnown = true;
     new_marker.isDisabled = false;
+
     new_marker.position = current_mappin.position;
+    new_marker.position.Z = player_position.Z;
+
     new_marker.isHighlighted = true;
     new_marker.isActiveQuest = false;
     
@@ -25,7 +31,7 @@ function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CMod
     //   continue;
     // }
 
-    new_marker.description = current_mappin.description;
+    new_marker.description = current_mappin.label;
     new_marker.text = fhud.GetMarkerIconByType(new_marker);
 
     cache.PushBack(new_marker);
