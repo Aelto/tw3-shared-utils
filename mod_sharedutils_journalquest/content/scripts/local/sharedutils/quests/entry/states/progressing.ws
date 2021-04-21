@@ -35,5 +35,7 @@ state Progressing in SU_JournalQuestEntry {
     theGame.GetGuiManager()
       .GetHudEventController()
       .RunEvent_QuestsModule_OnQuestTrackingStarted(null);
+
+    SU_injectCustomJournalUpdate(parent.chapters[parent.current_chapter]);
   }
 }
