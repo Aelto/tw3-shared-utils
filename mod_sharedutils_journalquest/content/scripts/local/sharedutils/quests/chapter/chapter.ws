@@ -116,11 +116,17 @@ statemachine class SU_JournalQuestChapter {
    * show the markers from its list of objectives
    */
   function track() {
+    var null: CJournalQuest;
     var i: int;
 
     for (i = 0; i < this.objectives.Size(); i += 1) {
       this.objectives[i].track();
     }
+
+    // we also tell the game to update the objective on the right.
+    theGame.GetGuiManager()
+      .GetHudEventController()
+      .RunEvent_QuestsModule_OnQuestTrackingStarted(null);
   }
 
   /**
