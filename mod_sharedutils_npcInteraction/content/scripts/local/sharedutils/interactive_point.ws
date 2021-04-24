@@ -1,4 +1,9 @@
 
+/**
+ * This class is used as an invisible interactive point you can place anywhere
+ * in the game. It shows an icon when the player uses the witcher sense and can
+ * also play an animaton on Geralt.
+ */
 class SU_InteractivePoint extends W3MonsterClue {
   /**
    * Change it and geralt will play an animation OnInteraction,

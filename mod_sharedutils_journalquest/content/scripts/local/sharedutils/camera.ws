@@ -1,10 +1,17 @@
 
+/**
+ * This class doesn't offer much, it was initially created to be future proof
+ * in case i want to add methods to the class later.
+ */
 class SU_StaticCamera extends CStaticCamera {
   public function start() {
     this.Run();
   }
 }
 
+/**
+ * helper function to quickly get a SU_StaticCamera
+ */
 latent function SU_getStaticCamera(): SU_StaticCamera {
   var template: CEntityTemplate;
   var camera: SU_StaticCamera;
