@@ -107,6 +107,21 @@ state BaseChapter in SU_JournalQuestChapter {
   }
 
   /**
+   * this function returns if all the supplied entities are dead
+   */
+  public function areAllEntitiesDead(entities: array<CEntity>): bool {
+    var i: int;
+
+    for (i = 0; i < entities.Size(); i += 1) {
+      if (((CActor)entities[i]).GetHealthPercents() >= 0.01) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * corrects the Z position of the supplied vector
    */
   function groundPosition(out position : Vector) {
