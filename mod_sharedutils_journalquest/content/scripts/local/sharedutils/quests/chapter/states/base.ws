@@ -141,7 +141,7 @@ state BaseChapter in SU_JournalQuestChapter {
     }
   }
 
-  function waitUntilPlayerFinishesCombat(entities: array<CEntity>) {
+  latent function waitUntilPlayerFinishesCombat(entities: array<CEntity>) {
     // sleep a bit before entering the loop, to avoid a really fast loop if the
     // player runs away from the monster
     Sleep(3);
@@ -161,7 +161,7 @@ state BaseChapter in SU_JournalQuestChapter {
     player_position = thePlayer.GetWorldPosition();
 
     for (i = 0; i < entities.Size(); i += 1) {
-      if (VecDistanceSquared(entities[i].GetWorldPosition(), player_position) < 20 * 20 * ((int)((CNewNPC)this.entities[i]).IsFlying() + 1)) {
+      if (VecDistanceSquared(entities[i].GetWorldPosition(), player_position) < 20 * 20 * ((int)((CNewNPC)entities[i]).IsFlying() + 1)) {
         return false;
       }
     }
