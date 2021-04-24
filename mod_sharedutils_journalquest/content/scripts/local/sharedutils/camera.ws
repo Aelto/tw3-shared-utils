@@ -7,6 +7,16 @@ class SU_StaticCamera extends CStaticCamera {
   public function start() {
     this.Run();
   }
+
+  public function teleportAndLookAt(position: Vector, target: Vector) {
+    var current_rotation: EulerAngles;
+    
+    current_rotation = VecToRotation(target - position);
+    // because the Pitch (Y axis) is inverted by default
+    current_rotation.Pitch *= -1;
+
+    this.TeleportWithRotation(position, current_rotation);
+  }
 }
 
 /**
