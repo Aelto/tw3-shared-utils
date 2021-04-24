@@ -123,7 +123,10 @@ state BaseChapter in SU_JournalQuestChapter {
     }
   }
 
-  
+  /**
+   * latent function that loops until the player interacted with the given
+   * entity.
+   */
   latent function waitUntilInteraction(entity: CPeristentEntity) {
     var listener: SU_StoreIfInteractedWith;
 
@@ -132,6 +135,39 @@ state BaseChapter in SU_JournalQuestChapter {
     entity.addInteractionEventListener(listener);
 
     listener.waitUntilActivated();
+  }
+
+  /**
+   * helper function that randomly spawns a random number of the supplied entity
+   * in the supplied area.
+   * Useful for creating clues, putting blood on the ground, etc...
+   */
+  latent function randomlySpawnEntityInArea(template_path: string, position: Vector, radius: float, max_count: int, optional min_count: int): array<CEntity> {
+    var template: CEntityTemplate;
+    var current_position: Vector;
+    var output: array<CEntity>;
+    var new_entity: CEntity;
+    var i: int;
+    
+    template = (CEntityTemplate)LoadResourceAsync(template_path, true);
+    max_count = RandRange(max_count, min_count);
+
+    for (i = 0; i < max_count; i += 1) {
+      current_position = position 
+        + VecRingRand(0, radius);
+
+      this.groundPosition(current_position);
+
+      new_entity = theGame.CreateEntity(
+        template,
+        current_position,
+        VecToRotation(VecRingRand(1, 2))
+      );
+
+      output.PushBack(new_entity);
+    }
+
+    return output;
   }
 
 }
