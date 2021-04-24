@@ -121,6 +121,70 @@ state BaseChapter in SU_JournalQuestChapter {
     return true;
   }
 
+  latent function resetEntitiesAttitudes(entities: array<CEntity>) {
+    var i: int;
+
+    for (i = 0; i < entities.Size(); i += 1) {
+      ((CActor)entities[i])
+        .ResetTemporaryAttitudeGroup(AGP_Default);
+    }
+  }
+
+  function makeEntitiesTargetPlayer(entities: array<CEntity>) {
+    var i: int;
+
+    for (i = 0; i < entities.Size(); i += 1) {
+      if (((CActor)entities[i]).GetTarget() != thePlayer && !((CActor)entities[i]).HasAttitudeTowards(thePlayer)) {
+        ((CNewNPC)entities[i]).NoticeActor(thePlayer);
+        ((CActor)entities[i]).SetAttitude(thePlayer, AIA_Hostile);
+      }
+    }
+  }
+
+  function waitUntilPlayerFinishesCombat(entities: array<CEntity>) {
+    // sleep a bit before entering the loop, to avoid a really fast loop if the
+    // player runs away from the monster
+    Sleep(3);
+
+    while (!this.areAllEntitiesDead(entities) && !this.areAllEntitiesFarFromPlayer(entities)) {
+      this.makeEntitiesTargetPlayer(entities);
+      this.removeDeadEntities(entities);
+
+      Sleep(1);
+    }
+  }
+
+  public function areAllEntitiesFarFromPlayer(entities: array<CEntity>): bool {
+    var player_position: Vector;
+    var i: int;
+
+    player_position = thePlayer.GetWorldPosition();
+
+    for (i = 0; i < entities.Size(); i += 1) {
+      if (VecDistanceSquared(entities[i].GetWorldPosition(), player_position) < 20 * 20 * ((int)((CNewNPC)this.entities[i]).IsFlying() + 1)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public function removeDeadEntities(entities: array<CEntity>) {
+     var i: int;
+     var max: int;
+
+     max = entities.Size();
+
+     for (i = 0; i < max; i += 1) {
+       if (!((CActor)entities[i]).IsAlive()) {
+         entities.Remove(entities[i]);
+
+         max -= 1;
+         i -= 1;
+       }
+     }
+  }
+
   /**
    * corrects the Z position of the supplied vector
    */
