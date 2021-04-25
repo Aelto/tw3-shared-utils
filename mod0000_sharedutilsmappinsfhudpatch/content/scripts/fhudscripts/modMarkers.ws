@@ -458,6 +458,7 @@ class CModMarkers
 		ProcessMarkers( cached3DMarkersStatic  );
 		ProcessMarkers( cached3DMarkersDynamic );
 		ProcessMarkers( cached3DMarkersTracked );
+		ProcessMarkers( SU_fhudPatchAddCustomMarkers(this) );
 		
 		CleanupUnusedOneliners();
 	}
@@ -702,6 +703,10 @@ class CModMarkers
 		}
 		marker.onScreen = onScreen;
 		marker.screenPosition = screenPos;
+
+		if (marker.visibleType == 'MonsterQuest') {
+			LogChannel('SUTEST', "description =" + marker.description + " onscreen position = " + VecToString(screenPos) + " world position = " + VecToString(marker.position) + " onscreen = " + onScreen);
+		}
 	}
 	
 	function UpdateMarkerOneliner( out marker : SMod3DMarker )
@@ -768,15 +773,25 @@ class CModMarkers
 
 	function GetScreenPos( out screenPos : Vector, worldPos : Vector, optional noOppositeCamera : bool ) : bool
 	{
-		if( !theCamera.WorldVectorToViewRatio( worldPos, screenPos.X, screenPos.Y ) )
-		{
-			if( noOppositeCamera )
-				return false;
-			GetOppositeCameraScreenPos( worldPos, screenPos.X, screenPos.Y );
-		}
-		screenPos.X = ( screenPos.X + 1 ) / 2;
-		screenPos.Y = ( screenPos.Y + 1 ) / 2;
-		screenPos = hud.GetScaleformPoint( screenPos.X, screenPos.Y );
+		var camera_rotation: EulerAngles;
+		var x: float;
+		var y: float;
+		var pitch: float;
+
+		// we get the normalized X coordinates [0;1] from the angle between the
+		// camera heading and the heading toward the pin.
+		x = AngleDistance(
+			theCamera.GetCameraHeading(),
+			VecHeading(worldPos - theCamera.GetCameraPosition())
+		) / 90 + 0.5;
+
+		camera_rotation = theCamera.GetCameraRotation();
+		pitch = AngleNormalize180(camera_rotation.Pitch) / 45;
+		
+		y = 0.5 + pitch;
+
+		screenPos = hud.GetScaleformPoint( x, y );
+
 		return true;
 	}
 	
@@ -2404,6 +2419,9 @@ class CModMarkers
 				userMarker.visibleType = 'User1';
 				userMarker.position.X = pinX;
 				userMarker.position.Y = pinY;
+
+				LogChannel('SUTEST', "user marker position = " + VecToString(userMarker.position));
+
 				return true;
 			}
 		}
@@ -2564,9 +2582,9 @@ class CModMarkers
 		
 		highlightedObjective = journalManager.GetHighlightedObjective();
 
-		// sharedutils - FHUD patch - BEGIN
-		SU_fhudPatchAddCustomMarkers(cached3DMarkersTracked, this);
-		// sharedutils - FHUD patch - END
+		// // sharedutils - FHUD patch - BEGIN
+		// SU_fhudPatchAddCustomMarkers(cached3DMarkersTracked, this);
+		// // sharedutils - FHUD patch - END
 		
 		if( !highlightedObjective )
 			return;

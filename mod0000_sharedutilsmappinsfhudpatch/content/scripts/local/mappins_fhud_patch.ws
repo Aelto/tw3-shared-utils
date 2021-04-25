@@ -1,11 +1,14 @@
 
-function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CModMarkers) {
+function SU_fhudPatchAddCustomMarkers(fhud: CModMarkers): array<SMod3DMarker> {
   var current_mappin: SU_MapPin;
   var new_marker: SMod3DMarker;
   var player_position: Vector;
+  var first_coords: Vector;
+  var cache: array<SMod3DMarker>;
   var i: int;
 
   player_position = thePlayer.GetWorldPosition();
+
 
   for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
     current_mappin = thePlayer.customMapPins[i];
@@ -36,6 +39,8 @@ function SU_fhudPatchAddCustomMarkers(out cache: array<SMod3DMarker>, fhud: CMod
 
     cache.PushBack(new_marker);
   }
+
+  return cache;
 }
 
 function SU_mapPinTypeToName(type: String): name {
