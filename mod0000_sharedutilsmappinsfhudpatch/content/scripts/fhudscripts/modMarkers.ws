@@ -499,6 +499,9 @@ class CModMarkers
 	{
 		var playerPosition : Vector;
 		playerPosition = thePlayer.GetWorldPosition();
+
+		marker.position.Z = playerPosition.Z + 2.5;
+		return;
 		
 		switch( marker.visibleType )
 		{
@@ -512,10 +515,10 @@ class CModMarkers
 			case 'HorseRaceTarget':
 			case 'EnemyDead':
 			case 'GenericFocus':
-				marker.position.Z = playerPosition.Z + 0.5;
+				marker.position.Z += 0.5;
 				return;
 		}
-		marker.position.Z = playerPosition.Z + 2.5;
+		marker.position.Z += 2.5;
 	}
 	
 	function CleanupCurrentOneliners()
@@ -703,10 +706,6 @@ class CModMarkers
 		}
 		marker.onScreen = onScreen;
 		marker.screenPosition = screenPos;
-
-		if (marker.visibleType == 'MonsterQuest') {
-			LogChannel('SUTEST', "description =" + marker.description + " onscreen position = " + VecToString(screenPos) + " world position = " + VecToString(marker.position) + " onscreen = " + onScreen);
-		}
 	}
 	
 	function UpdateMarkerOneliner( out marker : SMod3DMarker )
@@ -2419,9 +2418,6 @@ class CModMarkers
 				userMarker.visibleType = 'User1';
 				userMarker.position.X = pinX;
 				userMarker.position.Y = pinY;
-
-				LogChannel('SUTEST', "user marker position = " + VecToString(userMarker.position));
-
 				return true;
 			}
 		}
@@ -2582,10 +2578,6 @@ class CModMarkers
 		
 		highlightedObjective = journalManager.GetHighlightedObjective();
 
-		// // sharedutils - FHUD patch - BEGIN
-		// SU_fhudPatchAddCustomMarkers(cached3DMarkersTracked, this);
-		// // sharedutils - FHUD patch - END
-		
 		if( !highlightedObjective )
 			return;
 		
