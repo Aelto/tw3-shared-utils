@@ -106,6 +106,65 @@ state BaseChapter in SU_JournalQuestChapter {
     }
   }
 
+  function getEntitiesInRange(position: Vector, radius: float): array<CEntity> {
+    var gameplay_entities: array<CGameplayEntity>;
+    var output: array<CEntity>;
+    var entity: CEntity;
+    var i: int;
+
+    FindGameplayEntitiesInCylinder(gameplay_entities, position, radius, radius, 100,, FLAG_OnlyAliveActors + FLAG_ExcludePlayer,, 'CEntity');
+
+    for (i = 0; i < gameplay_entities.Size(); i += 1) {
+      entity = (CEntity)gameplay_entities[i];
+      
+      if (entity) {
+        output.PushBack((CEntity)gameplay_entities[i]);
+      }
+    }
+
+    return output;
+  }
+
+  /**
+   * this function finds any creature from the supplied list that is inside the
+   * radius at the given position, and if it is, teleports it OUTSIDE the radius
+   */
+  function keepCreaturesOutsidePoint(position: Vector, radius: float, optional entities: array<CEntity>) {
+    var distance_from_point: float;
+    var old_position: Vector;
+    var new_position: Vector;
+    var i: int;
+
+    if (entities.Size() == 0) {
+      entities = getEntitiesInRange(position, radius);
+    }
+
+    for (i = 0; i < entities.Size(); i += 1) {
+      old_position = entities[i].GetWorldPosition();
+
+      distance_from_point = VecDistanceSquared(
+        old_position,
+        position
+      );
+
+      if (distance_from_point <= radius) {
+        new_position = VecInterpolate(
+          position,
+          old_position,
+          1
+        );
+
+        this.groundPosition(new_position);
+
+        if (new_position.Z < old_position.Z) {
+          new_position.Z = old_position.Z;
+        }
+
+        entities[i].Teleport(new_position);
+      }
+    }
+  }
+
   /**
    * this function returns if all the supplied entities are dead
    */

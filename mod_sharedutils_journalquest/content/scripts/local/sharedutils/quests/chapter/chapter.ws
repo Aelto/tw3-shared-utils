@@ -150,16 +150,20 @@ statemachine class SU_JournalQuestChapter {
     current_state = this.GetCurrentStateName();
 
     if (current_state == 'Progress') {
+      LogChannel('SU', "Chapter [" + this.tag + "] - current state [" + current_state + "] - going to [Bootstrap]");
       this.GotoState('Bootstrap');
     }
     if (current_state == 'Bootstrap') {
+      LogChannel('SU', "Chapter [" + this.tag + "] - current state [" + current_state + "] - going to [Running]");
       this.GotoState('Running');
     }
     if (current_state == 'Running') {
+      LogChannel('SU', "Chapter [" + this.tag + "] - current state [" + current_state + "] - going nowhere");
       // don't do anything, instead you should call the function:
       // SU_JournalQuestEntry::completeCurrentChapterAndGoToNext()
     }
     if (current_state == 'Closing') {
+      LogChannel('SU', "Chapter [" + this.tag + "] - current state [" + current_state + "] - going to [Closed]");
       this.GotoState('Closed');
     }
   }
