@@ -6,7 +6,7 @@ function SU_notifyAcceptedErrandToInjectors(errand_name: string, board: W3Notice
   for (i = 0; i < board.errandInjectors.Size(); i += 1) {
     injector = board.errandInjectors[i];
 
-    injector.accepted(errand_name);
+    injector.accepted(board, errand_name);
   }
 
   return i > 0;

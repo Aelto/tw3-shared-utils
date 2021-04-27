@@ -4,6 +4,11 @@
  * allow you do inject custom errands to it.
  */
 abstract class SU_ErrandInjector {
+  /**
+   * This isn't used by the code but only for you to easily identify your
+   * injectors.
+   */
+  var tag: string; 
 
   /**
    * This method is run every time the game loads the errands for a noticeboard,
@@ -11,7 +16,7 @@ abstract class SU_ErrandInjector {
    * what CDPR calls flaws, basically useless notices that don't lead to any
    * quest.
    */
-  public function run(board: W3NoticeBoard) {
+  function run(board: W3NoticeBoard) {
 
   }
 
@@ -19,13 +24,20 @@ abstract class SU_ErrandInjector {
    * This method is run for every errand picked by the player, not only the
    * errand you injected. It's up to you to filter the results.
    */
-  public function accepted(errand_name: string) {
+  function accepted(board: W3NoticeBoard, errand_name: string) {
   }
 
 }
 
 /**
  * use this function to replace a flaw (a fluff notice) with a real notice
+ * NOTE: the errand_string is a LocStringKey that is used for the title, and
+ * then the vanilla game adds `_text` after the key to get the body.
+ * Example:
+ *    errand_string = fluff_fat_catch_inn_noticeboard_10
+ *    title = GetLocStringByKey(errand_name)
+ *    body = GetLocStringByKey(errand_name + "_text")
+ * This is what the game does and we have no control over it.
  */
 function SU_replaceFlawWithErrand(board: W3NoticeBoard, errand_string: string): bool {
   var current_errand: ErrandDetailsList;
@@ -59,5 +71,93 @@ function SU_runAllErrandInjectors(board: W3NoticeBoard) {
     injector = board.errandInjectors[i];
 
     injector.run(board);
+  }
+}
+
+function SU_hasErrandInjectorWithTag(board: W3NoticeBoard, tag: String): bool {
+  var i: int;
+  var current_injector: SU_ErrandInjector;
+  
+  for (i = 0; i < board.errandInjectors.Size(); i += 1) {
+    current_injector = board.errandInjectors[i];
+
+    if (current_injector.tag == tag) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function SU_removeErrandInjectorByTag(board: W3NoticeBoard, tag: String) {
+  var i: int;
+  var current_injector: SU_ErrandInjector;
+  
+  for (i = 0; i < board.errandInjectors.Size(); i += 1) {
+    current_injector = board.errandInjectors[i];
+
+    if (current_injector.tag != tag) {
+      continue;
+    }
+
+    if (i == board.errandInjectors.Size() - 1) {
+      board.errandInjectors.PopBack();
+      continue;
+    }
+
+    board.errandInjectors.Erase(i);
+    i -= 1;
+  }
+}
+
+function SU_removeErrandInjectorByPredicate(board: W3NoticeBoard, predicate_runner: SU_PredicateInterfaceRemovePin) {
+  var i: int;
+  var current_pin: SU_MapPin;
+  var last_pin: SU_MapPin;
+  
+  for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
+    current_pin = thePlayer.customMapPins[i];
+
+    if (!predicate_runner.predicate(current_pin)) {
+      continue;
+    }
+
+    if (i == thePlayer.customMapPins.Size() - 1) {
+      thePlayer.customMapPins.PopBack();
+      continue;
+    }
+
+    thePlayer.customMapPins.Erase(i);
+    i -= 1;
+  }
+}
+
+/**
+ * This is an abstract class that acts as an interface for any function that
+ * requires some sort of predicate. Because the language doesn't support lambdas
+ * nor function pointers, this is the only viable solution.
+ *
+ * To use it, extend the class and override the right methods according to your
+ * needs.
+ */
+abstract class SU_PredicateInterfaceRemoveErrandInjector {
+  /**
+   * Override the method and return true to perform the action that is described
+   * by the function asking for a PredicateInterface
+   */
+  function predicate(injector: SU_ErrandInjector): bool {
+    return false;
+  }
+}
+
+/**
+ * This is a predicate interface i felt could be useful so it comes prebuilt in
+ * the utility
+ */
+class SU_ErrandInjectorRemoverPredicateTagIncludesSubstring extends SU_PredicateInterfaceRemoveErrandInjector {
+  var substring: String;
+
+  function predicate(injector: SU_ErrandInjector): bool {
+    return StrContains(injector.tag, this.substring);
   }
 }

@@ -45,9 +45,23 @@ class SU_ErrandInjectorExample extends SU_ErrandInjector {
     SU_replaceFlawWithErrand(board, "hello world!");
   }
 
-  public function accepted(errand_name: string) {
+  public function accepted(board: W3NoticeBoard, errand_name: string) {
     theGame
     .GetGuiManager()
     .ShowNotification("accepted errand with name = " + errand_name);
+
+    this.logErrandWithName(board, errand_name);
+  }
+
+  private function logErrandWithName(board: W3NoticeBoard, errand_name: string) {
+    var i: int;
+
+    for (i = 0; i < board.activeErrands.Size(); i += 1) {
+      if (board.activeErrands[i].errandStringKey == errand_name) {
+        LogChannel('SUTEST', "accepted errand with name = " + errand_name);
+        LogChannel('SUTEST', "accepted errand with title = " + GetLocStringByKey(errand_name));
+        LogChannel('SUTEST', "accepted errand with body = " + GetLocStringByKey(errand_name + "_text"));
+      }
+    }
   }
 }
