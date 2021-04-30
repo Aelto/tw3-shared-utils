@@ -16,7 +16,7 @@ abstract class SU_ErrandInjector {
    * what CDPR calls flaws, basically useless notices that don't lead to any
    * quest.
    */
-  function run(board: W3NoticeBoard) {
+  function run(out board: W3NoticeBoard) {
 
   }
 
@@ -24,7 +24,7 @@ abstract class SU_ErrandInjector {
    * This method is run for every errand picked by the player, not only the
    * errand you injected. It's up to you to filter the results.
    */
-  function accepted(board: W3NoticeBoard, errand_name: string) {
+  function accepted(out board: W3NoticeBoard, errand_name: string) {
   }
 
 }
@@ -39,7 +39,7 @@ abstract class SU_ErrandInjector {
  *    body = GetLocStringByKey(errand_name + "_text")
  * This is what the game does and we have no control over it.
  */
-function SU_replaceFlawWithErrand(board: W3NoticeBoard, errand_string: string): bool {
+function SU_replaceFlawWithErrand(out board: W3NoticeBoard, errand_string: string): bool {
   var current_errand: ErrandDetailsList;
   var i: int;
 
