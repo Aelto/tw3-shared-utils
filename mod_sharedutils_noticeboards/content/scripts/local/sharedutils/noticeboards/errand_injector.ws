@@ -43,12 +43,25 @@ function SU_replaceFlawWithErrand(board: W3NoticeBoard, errand_string: string): 
   var current_errand: ErrandDetailsList;
   var i: int;
 
+  // 1.
+  // first we verify it doesn't already exist.
+  for (i = 0; i < board.activeErrands.Size(); i += 1) {
+    current_errand = board.activeErrands[i];
+
+    // 1.1
+    // a flaw with the same name already exists, so we stop now and return false
+    // to notify nothing was added here
+    if (current_errand.errandStringKey == errand_string) {
+      return false;
+    }
+  }
+
+  // 2.
   // looping through the list to see if there is a flaw we can replace
   for (i = 0; i < board.activeErrands.Size(); i += 1) {
     current_errand = board.activeErrands[i];
 
-    // LogChannel('SUTEST', "errand quest fact = " + current_errand.newQuestFact + " string key = " + current_errand.errandStringKey);
-
+    // 2.1
     // it is a flaw, we replace it with our errand
     if (current_errand.newQuestFact == "flaw") {
       board.activeErrands[i].errandStringKey = errand_string;
