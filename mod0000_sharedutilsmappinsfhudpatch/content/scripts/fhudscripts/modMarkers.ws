@@ -500,15 +500,13 @@ class CModMarkers
 		var playerPosition : Vector;
 		playerPosition = thePlayer.GetWorldPosition();
 
-		marker.position.Z = playerPosition.Z + 2.5;
-		return;
-		
 		switch( marker.visibleType )
 		{
 			case 'User1':
 			case 'User2':
 			case 'User3':
 			case 'User4':
+				playerPosition = thePlayer.GetWorldPosition();
 				marker.position.Z = playerPosition.Z + 0.5;
 				return;
 			case 'MagicLamp':
@@ -773,6 +771,7 @@ class CModMarkers
 	function GetScreenPos( out screenPos : Vector, worldPos : Vector, optional noOppositeCamera : bool ) : bool
 	{
 		var camera_rotation: EulerAngles;
+		var rotation: EulerAngles;
 		var x: float;
 		var y: float;
 		var pitch: float;
@@ -785,9 +784,15 @@ class CModMarkers
 		) / 90 + 0.5;
 
 		camera_rotation = theCamera.GetCameraRotation();
-		pitch = AngleNormalize180(camera_rotation.Pitch) / 45;
-		
-		y = 0.5 + pitch;
+
+		rotation = VecToRotation(
+			worldPos - theCamera.GetCameraPosition()
+		);
+
+		y = AngleDistance(
+			camera_rotation.Pitch,
+			rotation.Pitch
+		) / 75 + 0.5;
 
 		screenPos = hud.GetScaleformPoint( x, y );
 
