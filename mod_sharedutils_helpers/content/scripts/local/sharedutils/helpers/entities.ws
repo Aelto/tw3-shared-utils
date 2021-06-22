@@ -54,7 +54,7 @@ function SUH_keepCreaturesOutsidePoint(position: Vector, radius: float, optional
   var i: int;
 
   if (entities.Size() == 0) {
-    entities = getEntitiesInRange(position, radius);
+    entities = SUH_getEntitiesInRange(position, radius);
   }
 
   for (i = 0; i < entities.Size(); i += 1) {
@@ -140,6 +140,22 @@ latent function SUH_resetEntitiesAttitudes(entities: array<CEntity>) {
   for (i = 0; i < entities.Size(); i += 1) {
     ((CActor)entities[i])
       .ResetTemporaryAttitudeGroup(AGP_Default);
+  }
+}
+
+function SUH_removeDeadEntities(out entities: array<CEntity>) {
+  var i: int;
+  var max: int;
+
+  max = entities.Size();
+
+  for (i = 0; i < max; i += 1) {
+    if (!((CActor)entities[i]).IsAlive()) {
+      entities.Remove(entities[i]);
+
+      max -= 1;
+      i -= 1;
+    }
   }
 }
 
