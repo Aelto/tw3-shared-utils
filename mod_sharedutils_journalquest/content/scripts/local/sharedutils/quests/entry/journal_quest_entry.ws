@@ -107,7 +107,7 @@ abstract statemachine class SU_JournalQuestEntry {
    * next chapter.
    * This function does a this.GotoState() to the next chapter's state.
    */
-  public latent function completeCurrentChapterAndGoToNext(optional chapter_tag: string) {
+  public function completeCurrentChapterAndGoToNext(optional chapter_tag: string) {
     if (StrLen(chapter_tag) > 0) {
       this.next_chapter = this.getChapterIndexByTag(chapter_tag);
 

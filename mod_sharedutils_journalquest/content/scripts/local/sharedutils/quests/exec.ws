@@ -3,6 +3,40 @@ exec function SU_clearJournalQuestEntries() {
   thePlayer.journal_quest_entries.Clear();
 }
 
+exec function SU_progress(optional chapter: string) {
+  var qentry: SU_JournalQuestEntry;
+  var i: int;
+
+  NDEBUG("found quests: " + thePlayer.journal_quest_entries.Size());
+  for (i = 0; i < thePlayer.journal_quest_entries.Size(); i += 1) {
+    qentry = thePlayer.journal_quest_entries[i];
+
+    if (!qentry.is_tracked) {
+      continue;
+    }
+
+    qentry.completeCurrentChapterAndGoToNext(chapter);
+  }
+}
+
+exec function SU_rollback() {
+  var qentry: SU_JournalQuestEntry;
+  var chapter: SU_JournalQuestChapter;
+  var i: int;
+
+  NDEBUG("found quests: " + thePlayer.journal_quest_entries.Size());
+  for (i = 0; i < thePlayer.journal_quest_entries.Size(); i += 1) {
+    qentry = thePlayer.journal_quest_entries[i];
+
+    if (!qentry.is_tracked) {
+      continue;
+    }
+
+    chapter = qentry.chapters[qentry.current_chapter - 1];
+    qentry.completeCurrentChapterAndGoToNext(chapter.tag);
+  }
+}
+
 statemachine class SU_QuestTest extends SU_JournalQuestEntry {
   default tag = "SU_QuestTest";
   default unique_tag = 'SU_QuestTest';
