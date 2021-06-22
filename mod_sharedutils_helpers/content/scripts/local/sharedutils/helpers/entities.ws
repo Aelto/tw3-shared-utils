@@ -43,6 +43,43 @@ function SUH_areAllEntitiesFarFromPlayer(entities: array<CEntity>): bool {
   return true;
 }
 
+function SUH_slideEntityToPosition(entity: CEntity, position: Vector, optional duration: float) {
+  var movement_adjustor: CMovementAdjustor;
+  var slide_ticket: SMovementAdjustmentRequestTicket;
+  var translation: Vector;
+
+  if (duration <= 0) {
+    duration = 2; // two seconds
+  }
+
+  translation = position - entity.GetWorldPosition();
+
+  movement_adjustor = ((CActor)entity)
+    .GetMovingAgentComponent()
+    .GetMovementAdjustor();
+
+  // cancel any adjustement made with the same name
+  movement_adjustor.CancelByName('SharedUtilsSlideToPosition');
+
+  // and now we create a new request
+  slide_ticket = movement_adjustor.CreateNewRequest('SharedUtilsSlideToPosition');
+
+  movement_adjustor.AdjustmentDuration(
+    slide_ticket,
+    duration
+  );
+
+  movement_adjustor.SlideTo(
+    slide_ticket,
+    position,
+  );
+
+  movement_adjustor.RotateTo(
+    slide_ticket,
+    VecHeading(translation)
+  );
+}
+
 /**
   * this function finds any creature from the supplied list that is inside the
   * radius at the given position, and if it is, teleports it OUTSIDE the radius
@@ -78,7 +115,7 @@ function SUH_keepCreaturesOutsidePoint(position: Vector, radius: float, optional
         new_position.Z = old_position.Z;
       }
 
-      entities[i].Teleport(new_position);
+      SUH_slideEntityToPosition(entities[i], new_position);
     }
   }
 }
@@ -114,7 +151,7 @@ function SUH_keepCreaturesOnPoint(position: Vector, radius: float, entities: arr
         new_position.Z = old_position.Z;
       }
 
-      entities[i].Teleport(new_position);
+      SUH_slideEntityToPosition(entities[i], new_position);
     }
   }
 }
