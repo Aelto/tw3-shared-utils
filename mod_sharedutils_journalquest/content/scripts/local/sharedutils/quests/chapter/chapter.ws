@@ -8,7 +8,7 @@
  *  - Closing: after calling QuestEntry::completeCurrentChapterAndGoToNext
  *  - Closed: after Closing and when ready to move on to the next chapter
  */
-statemachine class SU_JournalQuestChapter {
+statemachine class SU_JournalQuestChapter extends CEntity {
   /**
    * the unique tag would should be used to identify the chapter among the
    * others.
