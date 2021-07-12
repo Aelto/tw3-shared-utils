@@ -35,7 +35,7 @@ function SUH_areAllEntitiesFarFromPlayer(entities: array<CEntity>): bool {
   player_position = thePlayer.GetWorldPosition();
 
   for (i = 0; i < entities.Size(); i += 1) {
-    if (VecDistanceSquared(entities[i].GetWorldPosition(), player_position) < 20 * 20 * ((int)((CNewNPC)entities[i]).IsFlying() + 1)) {
+    if (VecDistanceSquared2D(entities[i].GetWorldPosition(), player_position) < 20 * 20 * ((int)((CNewNPC)entities[i]).IsFlying() * 5 + 1)) {
       return false;
     }
   }
