@@ -128,6 +128,7 @@ function SUH_keepCreaturesOnPoint(position: Vector, radius: float, entities: arr
   var distance_from_point: float;
   var old_position: Vector;
   var new_position: Vector;
+  var is_flying: bool;
   var i: int;
 
   for (i = 0; i < entities.Size(); i += 1) {
@@ -151,7 +152,9 @@ function SUH_keepCreaturesOnPoint(position: Vector, radius: float, entities: arr
         new_position.Z = old_position.Z;
       }
 
-      SUH_slideEntityToPosition(entities[i], new_position);
+      is_flying = ((CNewNPC)entities[i]).IsFlying();
+
+      SUH_slideEntityToPosition(entities[i], new_position, (int)is_flying * 10 + 1);
     }
   }
 }
