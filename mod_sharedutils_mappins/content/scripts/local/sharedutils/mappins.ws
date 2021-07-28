@@ -142,10 +142,12 @@ function SU_removeCustomPinByTag(tag: String) {
 
     if (i == thePlayer.customMapPins.Size() - 1) {
       thePlayer.customMapPins.PopBack();
+      SU_removeMinimapPin(i);
       continue;
     }
 
     thePlayer.customMapPins.Erase(i);
+    SU_removeMinimapPin(i);
     i -= 1;
   }
 }
@@ -165,10 +167,12 @@ function SU_removeCustomPinByPosition(position: Vector) {
 
     if (i == thePlayer.customMapPins.Size() - 1) {
       thePlayer.customMapPins.PopBack();
+      SU_removeMinimapPin(i);
       continue;
     }
 
     thePlayer.customMapPins.Erase(i);
+    SU_removeMinimapPin(i);
     i -= 1;
   }
 }
@@ -187,10 +191,12 @@ function SU_removeCustomPinByPredicate(predicate_runner: SU_PredicateInterfaceRe
 
     if (i == thePlayer.customMapPins.Size() - 1) {
       thePlayer.customMapPins.PopBack();
+      SU_removeMinimapPin(i);
       continue;
     }
 
     thePlayer.customMapPins.Erase(i);
+    SU_removeMinimapPin(i);
     i -= 1;
   }
 }
@@ -222,5 +228,72 @@ class SU_CustomPinRemoverPredicateTagIncludesSubstring extends SU_PredicateInter
 
   function predicate(pin: SU_MapPin): bool {
     return StrContains(pin.tag, this.substring);
+  }
+}
+
+function SU_updateMinimapPins() {
+  var minimapModule : CR4HudModuleMinimap2;
+  var m_AddMapPin : CScriptedFlashFunction;
+  var m_MovePin : CScriptedFlashFunction;
+  var flashModule : CScriptedFlashSprite;
+  var hud : CR4ScriptedHud;
+  var pin: SU_MapPin;
+  var i: int;
+
+  hud = (CR4ScriptedHud)theGame.GetHud();
+  if (hud) {
+    minimapModule = (CR4HudModuleMinimap2)hud.GetHudModule("Minimap2Module");
+
+    if (minimapModule) {
+      flashModule = minimapModule.GetModuleFlash();
+      m_AddMapPin = flashModule.GetMemberFlashFunction( "AddMapPin" );
+      m_MovePin = flashModule.GetMemberFlashFunction( "MoveMapPin" );
+
+      for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
+        pin = thePlayer.customMapPins[i];
+
+        m_AddMapPin.InvokeSelfNineArgs(
+          FlashArgInt(i),
+          FlashArgString("Enemy"), // tag
+          FlashArgString("Enemy"), 
+          FlashArgNumber(pin.radius), // radius
+          FlashArgBool(true), // can be pointed by arrows
+          FlashArgInt(0), // priority
+          FlashArgBool(true), // is quest pin
+          FlashArgBool(false), // is user pin
+          FlashArgBool(true), // highlighted
+        );
+
+        m_MovePin.InvokeSelfFourArgs(
+          FlashArgInt(i),
+          FlashArgNumber(pin.position.X),
+          FlashArgNumber(pin.position.Y),
+          FlashArgNumber(pin.radius)
+        );
+      }
+    }
+  }
+}
+
+function SU_removeMinimapPin(old_index: int) {
+  var minimapModule : CR4HudModuleMinimap2;
+  var m_DeleteMapPin : CScriptedFlashFunction;
+  var flashModule : CScriptedFlashSprite;
+  var hud : CR4ScriptedHud;
+  var pin: SU_MapPin;
+  var i: int;
+
+  hud = (CR4ScriptedHud)theGame.GetHud();
+  if (hud) {
+    minimapModule = (CR4HudModuleMinimap2)hud.GetHudModule("Minimap2Module");
+
+    if (minimapModule) {
+      flashModule = minimapModule.GetModuleFlash();
+      m_DeleteMapPin = flashModule.GetMemberFlashFunction( "DeleteMapPin" );
+
+      m_DeleteMapPin.InvokeSelfOneArg(
+        FlashArgInt(old_index)
+      );
+    }
   }
 }
