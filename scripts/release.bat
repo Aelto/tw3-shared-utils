@@ -17,6 +17,7 @@ XCOPY "%modpath%\mod_sharedutils_dialogChoices\" "%modpath%\release\mods\mod_sha
 XCOPY "%modpath%\mod_sharedutils_journalquest\" "%modpath%\release\mods\mod_sharedutils_journalquest\" /e /s /y
 XCOPY "%modpath%\mod_sharedutils_npcInteraction\" "%modpath%\release\mods\mod_sharedutils_npcInteraction\" /e /s /y
 XCOPY "%modpath%\mod_sharedutils_noticeboards\" "%modpath%\release\mods\mod_sharedutils_noticeboards\" /e /s /y
+XCOPY "%modpath%\mod_sharedutils_customcooldowns\" "%modpath%\release\mods\mod_sharedutils_customcooldowns\" /e /s /y
 XCOPY "%modpath%\mod0000_sharedutilsmappinsfhudpatch\" "%modpath%\release\mods\mod0000_sharedutilsmappinsfhudpatch\" /e /s /y
 
 :: then the dlcs
