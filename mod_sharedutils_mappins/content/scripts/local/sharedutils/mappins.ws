@@ -53,6 +53,11 @@ class SU_MapPin {
    */
   var region: String;
 
+  /**
+   * Controls whether or not this mappin should appear on the player's minimap.
+   */
+  var appears_on_minimap: bool;
+
   function init(
     _tag: String,
     _position: Vector,
@@ -60,7 +65,8 @@ class SU_MapPin {
     _label: String,
     _type: String,
     _radius: float,
-    _region: String
+    _region: String,
+    _appears_on_minimap: bool
   ): SU_MapPin {
     this.tag = _tag;
     this.position = _position;
@@ -69,6 +75,7 @@ class SU_MapPin {
     this.type = _type;
     this.radius = _radius;
     this.region = _region;
+    this.appears_on_minimap = _appears_on_minimap;
 
     return this;
   }
@@ -251,6 +258,10 @@ function SU_updateMinimapPins() {
 
       for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
         pin = thePlayer.customMapPins[i];
+
+        if (!pin.appears_on_minimap) {
+          continue;
+        }
 
         m_AddMapPin.InvokeSelfNineArgs(
           FlashArgInt(i),
