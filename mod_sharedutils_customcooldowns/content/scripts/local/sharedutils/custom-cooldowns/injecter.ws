@@ -3,8 +3,8 @@ function SU_injectCustomCooldowns(out flash_array: CScriptedFlashArray, value_st
   var current_cooldown: SU_Cooldown;
   var i: int;
 
-  for (i = 0; i < module.customCooldowns.Size(); i += 1) {
-    current_cooldown = module.customCooldowns[i];
+  for (i = 0; i < thePlayer.custom_cooldowns.Size(); i += 1) {
+    current_cooldown = thePlayer.custom_cooldowns[i];
 
     l_flashObject = value_storage.CreateTempFlashObject();
     l_flashObject.SetMemberFlashBool("isVisible", current_cooldown.is_visible);
@@ -34,10 +34,10 @@ function SU_updateCustomCooldownsDuration(offset: int, delta: float, m_fxSetPerc
 
   seconds = theGame.GetEngineTimeAsSeconds();
 
-  for (i = 0; i < module.customCooldowns.Size(); i += 1) {
-    module.customCooldowns[i].tick(delta, seconds);
+  for (i = 0; i < thePlayer.custom_cooldowns.Size(); i += 1) {
+    thePlayer.custom_cooldowns[i].tick(delta, seconds);
 
-    current_cooldown = module.customCooldowns[i];
+    current_cooldown = thePlayer.custom_cooldowns[i];
 
     m_fxSetPercentSFF.InvokeSelfFourArgs(
       FlashArgNumber(i + offset),
