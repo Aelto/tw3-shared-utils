@@ -184,6 +184,11 @@ function SU_removeCustomPinByPosition(position: Vector) {
   }
 }
 
+function SU_removeCustomPinByIndex(index: int) {
+  thePlayer.customMapPins.Erase(index);
+  SU_removeMinimapPin(index);
+}
+
 function SU_removeCustomPinByPredicate(predicate_runner: SU_PredicateInterfaceRemovePin) {
   var i: int;
   var current_pin: SU_MapPin;
