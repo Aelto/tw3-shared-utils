@@ -183,9 +183,13 @@ latent function SUH_resetEntitiesAttitudes(entities: array<CEntity>) {
   }
 }
 
-function SUH_removeDeadEntities(out entities: array<CEntity>) {
+/**
+ * returns how many entities were removed from the array
+ */
+function SUH_removeDeadEntities(out entities: array<CEntity>): int {
   var i: int;
   var max: int;
+  var removed_count: int;
 
   max = entities.Size();
 
@@ -195,8 +199,11 @@ function SUH_removeDeadEntities(out entities: array<CEntity>) {
 
       max -= 1;
       i -= 1;
+      removed_count += 1;
     }
   }
+
+  return removed_count;
 }
 
 latent function SUH_waitUntilPlayerFinishesCombat(entities: array<CEntity>) {
