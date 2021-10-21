@@ -8,7 +8,6 @@ function SU_showCustomBossBar(entity_name: string, use_essence: bool) {
 
     if(bossFocusModule) {
       bossFocusModule.show(entity_name, use_essence);
-      bossFocusModule.setCurrentPercentage(1);
     }
   }
 }
