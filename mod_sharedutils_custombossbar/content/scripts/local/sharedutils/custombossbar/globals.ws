@@ -27,7 +27,7 @@ function SU_setCustomBossBarPercent(value: float) {
   }
 }
 
-function SU_hideCustomBossBarPercent(value: float) {
+function SU_hideCustomBossBar() {
   var bossFocusModule : CR4HudModuleBossFocus;
   var hud : CR4ScriptedHud;
 
