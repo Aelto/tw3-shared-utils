@@ -194,7 +194,7 @@ function SUH_removeDeadEntities(out entities: array<CEntity>): int {
   max = entities.Size();
 
   for (i = 0; i < max; i += 1) {
-    if (!((CActor)entities[i]).IsAlive()) {
+    if (!((CActor)entities[i]).IsAlive() || ((CActor)entities[i]).GetHealthPercents() <= 0.01) {
       entities.Remove(entities[i]);
 
       max -= 1;
