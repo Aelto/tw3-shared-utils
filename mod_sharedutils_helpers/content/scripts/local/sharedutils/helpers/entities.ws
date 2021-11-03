@@ -206,15 +206,35 @@ function SUH_removeDeadEntities(out entities: array<CEntity>): int {
   return removed_count;
 }
 
-latent function SUH_waitUntilPlayerFinishesCombat(entities: array<CEntity>) {
+latent function SUH_waitUntilPlayerFinishesCombat(out entities: array<CEntity>) {
   // sleep a bit before entering the loop, to avoid a really fast loop if the
   // player runs away from the monster
   Sleep(3);
 
-  while (!SUH_areAllEntitiesDead(entities) && !SUH_areAllEntitiesFarFromPlayer(entities)) {
-    SUH_makeEntitiesTargetPlayer(entities);
-    SUH_removeDeadEntities(entities);
+  while (SUH_waitUntilPlayerFinishesCombatStep(entities)) {}
+}
 
-    Sleep(1);
+/**
+ * this is the step function used by the function above: SUH_waitUntilPlayerFinishesCombat
+ * it returns true while the player is still in combat, once the player gets out of combat
+ * it returns false and so the while loop ends.
+ *
+ * This is done this way because in some cases you would want to run custom code in the
+ * loop and so the latent function is not suited. In that case write a while loop yourself
+ * where the condition is this stepper function and then you can add your custom code
+ * in the loop body.
+ *
+ * NOTE: this function sleeps so you don't have to.
+ */
+latent function SUH_waitUntilPlayerFinishesCombatStep(out entities: array<CEntity>): bool {
+  if (SUH_areAllEntitiesDead(entities) || SUH_areAllEntitiesFarFromPlayer(entities)) {
+    return false;
   }
+
+  SUH_makeEntitiesTargetPlayer(entities);
+  SUH_removeDeadEntities(entities);
+
+  Sleep(1);
+
+  return true;
 }
