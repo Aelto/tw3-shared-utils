@@ -4,9 +4,9 @@
  * Each function achieves one thing, you can then combine them. Here is an
  * example of how to do it:
  *
- * SU_getSafeCoordinatesFromPoint(
- *   SU_moveCoordinatesAwayFromSafeAreas(
- *     SU_moveCoordinatesInsideValidAreas(thePlayer.GetWorldPosition())
+ * SUH_getSafeCoordinatesFromPoint(
+ *   SUH_moveCoordinatesAwayFromSafeAreas(
+ *     SUH_moveCoordinatesInsideValidAreas(thePlayer.GetWorldPosition())
  *   )
  * );
  */
@@ -15,14 +15,14 @@
  * returns percent values in the [0;1] range based on the coordinates that were
  * supplied.
  */
-function SU_getPercentValuesFromCoordinates(point: Vector): Vector {
+function SUH_getPercentValuesFromCoordinates(point: Vector): Vector {
   var output: Vector;
   var min_x: float;
   var max_x: float;
   var min_y: float;
   var max_y: float;
 
-  SU_setMinAndMaxFromRegion(min_x, max_x, min_y, max_y);
+  SUH_setMinAndMaxFromRegion(min_x, max_x, min_y, max_y);
 
   output.X = (point.X - min_x) / (max_x - min_x);
   output.Y = (point.Y - min_y) / (max_y - min_y);
@@ -34,7 +34,7 @@ function SU_getPercentValuesFromCoordinates(point: Vector): Vector {
  * because lots of bounties end up in bodies of water, this function returns 
  * the closest piece of land.
  */
-function SU_getSafeCoordinatesFromPoint(point: Vector): Vector {
+function SUH_getSafeCoordinatesFromPoint(point: Vector): Vector {
   // we will use water depth to detect if the point is on land or in water
   // every other functions failed certainly because the game doesn't load
   // the data about the chunks until the player gets close enough.
@@ -128,7 +128,7 @@ function SU_getSafeCoordinatesFromPoint(point: Vector): Vector {
  * and instead add all the translations needed, it creates a sort of "mean"
  * vector that will gracefully move the point outside of ALL areas.
  */
-function SU_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
+function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
   var current_distance_percentage: float;
   var distance_from_center: float;
   var displacement_vector: Vector;
@@ -136,7 +136,7 @@ function SU_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
   var squared_radius: float;
   var i: int;
 
-  safe_areas = SU_getSafeAreasByRegion(
+  safe_areas = SUH_getSafeAreasByRegion(
     AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea())
   );
 
@@ -172,7 +172,7 @@ function SU_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
  *  - 1. it will take the closest valid area
  *  - 2. then we move the point in the closest circle based on its X:Y coordinates.
  */
-function SU_moveCoordinatesInsideValidAreas(point: Vector): Vector {
+function SUH_moveCoordinatesInsideValidAreas(point: Vector): Vector {
   var areas: array<Vector>;
   var closest_area: Vector;
   var distance_from_area: float;
@@ -293,9 +293,9 @@ function SU_moveCoordinatesInsideValidAreas(point: Vector): Vector {
 
   // return output;
 
-  return SU_placeCircleCoordinatesAroundPoint(
-    SU_mapSquareToCircleCoordinates(
-      SU_getPercentValuesFromCoordinates(point)
+  return SUH_placeCircleCoordinatesAroundPoint(
+    SUH_mapSquareToCircleCoordinates(
+      SUH_getPercentValuesFromCoordinates(point)
     ),
     closest_area
   );
@@ -336,7 +336,7 @@ function SUH_isPositionInsideSafeAreas(position: Vector): bool {
  * the safe areas are Vectors where X and Y are used for the coordinates,
  * and Z is the radius. I didn't want to create yet another struct for it.
  */
-function SU_getSafeAreasByRegion(region: string): array<Vector> {
+function SUH_getSafeAreasByRegion(region: string): array<Vector> {
   var areas: array<Vector>;
 
   /*
@@ -421,7 +421,7 @@ function SU_getSafeAreasByRegion(region: string): array<Vector> {
  * The formula used is from this website:
  * https://www.xarg.org/2017/07/how-to-map-a-square-to-a-circle/
  */
-function SU_mapSquareToCircleCoordinates(point: Vector): Vector {
+function SUH_mapSquareToCircleCoordinates(point: Vector): Vector {
   var x, y: float;
   var output: Vector;
 
@@ -449,13 +449,13 @@ function SU_mapSquareToCircleCoordinates(point: Vector): Vector {
  * the input is supposed to be a Vector where only X and Y matter and both values
  * range between -1 and 1 to represent a % value around the center of the circle.
  * You can map square coordinates to circle coordinates with the function:
- * SU_mapSquareToCircleCoordinates
+ * SUH_mapSquareToCircleCoordinates
  *
  * This function however returns real coordinates around the `circle_center` based
  * on the supplied `circle_coordinates` that were supplied.
  * NOTE: the Vector for `circle_center` uses the Z in XYZ for the radius.
  */
-function SU_placeCircleCoordinatesAroundPoint(circle_coordinates: Vector, circle_center: Vector): Vector {
+function SUH_placeCircleCoordinatesAroundPoint(circle_coordinates: Vector, circle_center: Vector): Vector {
   return Vector(
     circle_center.X + circle_center.Z * circle_coordinates.X,
     circle_center.Y + circle_center.Z * circle_coordinates.Y
@@ -466,7 +466,7 @@ function SU_placeCircleCoordinatesAroundPoint(circle_coordinates: Vector, circle
  * internal function:
  * returns the bounds of the current world
  */
-function SU_setMinAndMaxFromRegion(out min_x: float, out max_x: float, out min_y: float, out max_y: float) {
+function SUH_setMinAndMaxFromRegion(out min_x: float, out max_x: float, out min_y: float, out max_y: float) {
   var area: EAreaName;
   var area_string: string;
 
@@ -531,14 +531,14 @@ function SU_setMinAndMaxFromRegion(out min_x: float, out max_x: float, out min_y
  * internal function:
  * returns real world coordinates from the percent values that were supplied.
  */
-function SU_getCoordinatesFromPercentValues(percent_x: float, percent_y: float): Vector {
+function SUH_getCoordinatesFromPercentValues(percent_x: float, percent_y: float): Vector {
   var output: Vector;
   var min_x: float;
   var max_x: float;
   var min_y: float;
   var max_y: float;
 
-  SU_setMinAndMaxFromRegion(min_x, max_x, min_y, max_y);
+  SUH_setMinAndMaxFromRegion(min_x, max_x, min_y, max_y);
 
   output.X = min_x + (max_x - min_x) * percent_x;
   output.Y = min_y + (max_y - min_y) * percent_y;
