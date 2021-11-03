@@ -304,6 +304,34 @@ function SU_moveCoordinatesInsideValidAreas(point: Vector): Vector {
 }
 
 /**
+ * this function returns if the position is inside any safe area. If it is it will
+ * return true, if it is not inside a safe area then it will return false.
+ */
+function SUH_isPositionInsideSafeAreas(position: Vector): bool {
+  var distance_from_center: float;
+  var safe_areas: array<Vector>;
+  var squared_radius: float;
+  var i: int;
+
+  safe_areas = SUH_getSafeAreasByRegion(
+    AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea())
+  );
+
+
+  for (i = 0; i < safe_areas.Size(); i += 1) {
+    squared_radius = safe_areas[i].Z * safe_areas[i].Z;
+    distance_from_center = VecDistanceSquared2D(safe_areas[i], point);
+
+    // the point is not inside the circle, skip
+    if (distance_from_center <= squared_radius) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * internal function:
  * the safe areas are Vectors where X and Y are used for the coordinates,
  * and Z is the radius. I didn't want to create yet another struct for it.
