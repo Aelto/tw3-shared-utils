@@ -320,7 +320,7 @@ function SUH_isPositionInsideSafeAreas(position: Vector): bool {
 
   for (i = 0; i < safe_areas.Size(); i += 1) {
     squared_radius = safe_areas[i].Z * safe_areas[i].Z;
-    distance_from_center = VecDistanceSquared2D(safe_areas[i], point);
+    distance_from_center = VecDistanceSquared2D(safe_areas[i], position);
 
     // the point is not inside the circle, skip
     if (distance_from_center <= squared_radius) {
