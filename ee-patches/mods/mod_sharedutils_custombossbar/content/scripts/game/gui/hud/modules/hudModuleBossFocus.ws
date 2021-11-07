@@ -42,7 +42,7 @@ class CR4HudModuleBossFocus extends CR4HudModuleBase
   public function ShowBossIndicator( enable : bool, bossTag : name, optional bossEntity : CActor ) {
     if (enable) {
       thePlayer.SetBossTag(bossTag); // it's saved in player so it can be restored after load
-      
+
       if (bossEntity) {
         this.m_bossEntity = bossEntity;
       }
@@ -53,7 +53,7 @@ class CR4HudModuleBossFocus extends CR4HudModuleBase
       if (m_bossEntity) {
         this.show(
           m_bossEntity.GetDisplayName(),
-          m_bossEntity.UsesEssence()
+          ((CNewNPC)m_bossEntity).GetHealthBarType()
         );
       }
 
