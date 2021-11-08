@@ -41,6 +41,24 @@ function SU_removeDialogHoverListener(listener: SU_DialogHoverListener): bool {
   return true;
 }
 
+function SU_clearDialogHoverListeners(): bool {
+  var hud: CR4ScriptedHud;
+  var dialogueModule: CR4HudModuleDialog;
+
+  hud = (CR4ScriptedHud)theGame.GetHud();
+
+  if (!hud) {
+    LogChannel('SharedUtils', "SU_setDialogChoicesAndWaitForResponse - could not get HUD");
+
+    return false;
+  }
+
+  dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
+  dialogueModule.dialog_hover_listeners.Clear();
+
+  return true;
+}
+
 function SU_triggerEventListeners(module: CR4HudModuleDialog, choice: SSceneChoice, index: int) {
   var i: int;
 
