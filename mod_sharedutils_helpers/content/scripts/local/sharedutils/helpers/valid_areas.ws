@@ -511,8 +511,8 @@ function SUH_setMinAndMaxFromRegion(out min_x: float, out max_x: float, out min_
       area_string = AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea());
 
       if (area_string == "bob") {
-        min_x = -1500;
-        max_x = 1250;
+        min_x = -1100;
+        max_x = 1100;
         min_y = -2000;
         max_y = 1000;
       }
