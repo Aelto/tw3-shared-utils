@@ -13,7 +13,7 @@ function SUH_makeEntitiesAlliedWith(entities: array<CEntity>, entity: CEntity) {
   var i: int;
 
   for (i = 0; i < entities.Size(); i += 1) {
-    ((CActor)entities[i]).SetAttitude(entity, AIA_Friendly);
+    ((CActor)entities[i]).SetAttitude((CActor)entity, AIA_Friendly);
   }
 }
 
