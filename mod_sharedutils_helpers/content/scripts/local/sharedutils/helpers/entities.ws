@@ -9,6 +9,22 @@ function SUH_makeEntitiesTargetPlayer(entities: array<CEntity>) {
   }
 }
 
+function SUH_makeEntitiesAlliedWith(entities: array<CEntity>, entity: CEntity) {
+  var i: int;
+
+  for (i = 0; i < entities.Size(); i += 1) {
+    ((CActor)entities[i]).SetAttitude(entity, AIA_Friendly);
+  }
+}
+
+function SUH_makeEntitiesAlliedWithEachother(entities: array<CEntity>) {
+  var i: int;
+
+  for (i = 0; i < entities.Size(); i += 1) {
+    SUH_makeEntitiesAlliedWith(entities, entities[i]);
+  }
+}
+
 function SUH_getEntitiesInRange(position: Vector, radius: float): array<CEntity> {
   var gameplay_entities: array<CGameplayEntity>;
   var output: array<CEntity>;
