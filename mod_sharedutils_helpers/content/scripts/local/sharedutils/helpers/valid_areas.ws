@@ -364,10 +364,19 @@ function SUH_getSafeAreasByRegion(region: string): array<Vector> {
     case "novigrad":
     areas.PushBack(Vector(340, 1980, 502)); // novigrad
     areas.PushBack(Vector(1760, 900, 215)); // oxenfurt
+    // huge circle right of oxenfurt in the forest.
+    areas.PushBack(Vector(2854, 1001, 529));
     areas.PushBack(Vector(193, -790, 362)); // lake around fyke island
     // huge circle on the left of the map,
     // a bit below novigrad on the Y axis
-    areas.PushBack(Vector(-1368, 2139, 1778)); 
+    areas.PushBack(Vector(-1368, 2139, 1778));
+
+    // huge circle on top of novigrad,
+    // covering the top left part of the map.
+    areas.PushBack(Vector(240, 2760, 574));
+
+    // wedding zone of HoS
+    areas.PushBack(Vector(2271, 2512, 53));
 
     areas.PushBack(Vector(2369, -235, 310)); // lake on the bottom right part
 
@@ -513,8 +522,8 @@ function SUH_setMinAndMaxFromRegion(out min_x: float, out max_x: float, out min_
       if (area_string == "bob") {
         min_x = -1100;
         max_x = 1100;
-        min_y = -2000;
-        max_y = 1000;
+        min_y = -1800;
+        max_y = 800;
       }
       else {
         min_x = -300;
