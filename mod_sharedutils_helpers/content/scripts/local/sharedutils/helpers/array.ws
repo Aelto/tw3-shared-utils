@@ -5,7 +5,7 @@
  * custom comparison logic in the `isGreaterThan method.
  */
 class SU_ArraySorterData {
-  public value: float;
+  var value: float;
 
   /**
    * returns whether "this" is greater than "other"
