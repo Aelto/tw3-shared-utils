@@ -33,14 +33,23 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
   hud.OnCutsceneStarted();
 
   // wait for the player to accept one of the dialog choices
-  while (!dialogueModule.isAcceptedChoiceAvailable) {
+  while (!dialogueModule.isAcceptedChoiceAvailable
+      && theInput.GetContext() == 'Scene'
+      && theGame.IsDialogOrCutscenePlaying()) {
     SleepOneFrame();
   }
 
-  // he fetch the last accepted choice
+  // we fetch the last accepted choice
   accepted_choice = dialogueModule.lastAcceptedChoice;
   // and we remember to set it back to NULL
   dialogueModule.lastAcceptedChoice = null;
+
+  // when it stopped because of a change of context and not a user selected
+  // choice.
+  if (!dialogueModule.isAcceptedChoiceAvailable) {
+    accepted_choice = null;
+  }
+
   dialogueModule.isAcceptedChoiceAvailable = false;
 
   return accepted_choice;
