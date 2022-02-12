@@ -31,8 +31,7 @@ edit the `name="MyBoostrappedMod"` attribute so that it corresponds with your ne
     <items>
 
       <!--
-        the fake item whose name is the name of your global event listener
-        state.
+        the fake item whose name is the name of the state you created.
        -->
       <item name="MyBoostrappedMod">
         <!-- make sure to add this tag or else the item won't be detected -->
