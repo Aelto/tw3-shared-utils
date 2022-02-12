@@ -17,20 +17,20 @@ edit the `name="MyGlobalEventListener"` attribute so that it corresponds with yo
 ```xml
 <?xml version="1.0" encoding="UTF-16"?>
 <redxml>
-	<definitions>
-		<items>
+  <definitions>
+    <items>
 
       <!--
         the fake item whose name is the name of your global event listener
         state.
        -->
-			<item name="MyGlobalEventListener">
+      <item name="MyGlobalEventListener">
         <!-- make sure to add this tag or else the item won't be detected -->
-				<tags>SU_NpcInteraction_GlobalEventListener</tags>
-			</item>
-			
-		</items>
-	</definitions>	
+        <tags>SU_NpcInteraction_GlobalEventListener</tags>
+      </item>
+      
+    </items>
+  </definitions>
 </redxml>
 ```
 
