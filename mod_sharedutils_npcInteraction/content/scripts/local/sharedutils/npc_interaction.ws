@@ -34,11 +34,142 @@ abstract class SU_InteractionEventListener {
 
 }
 
+/**
+ * This statemachine is stored in the InputManager class for easy access via
+ * `theInput.global_event_handler`. Every time an interaction event is sent,
+ * even if the entity has no event listener from sharedutils it will loop
+ * through all the global event listeners mods could have added to the game.
+ *
+ * The global event handler uses a special trick to ensure compile-time checks
+ * and avoid the users of sharedutils to use a mod like bootstrap to inject
+ * the event listeners. Read the comments in the class to understand how it
+ * works.
+ *
+ * Refer to the examples in the example folder of the mod to see how to make a
+ * global event listener.
+ */
+statemachine class SU_NpcInteraction_GlobalEventHandler {
+  /**
+   * A queue of states to process, read the `onInteraction` comments to learn
+   * more.
+   *
+   * NOTE: with the current implementation of the class, this is a FILO queue.
+   */
+  protected var states_to_process: array<name>;
+
+  /**
+   * these three attributes are used to store the current action name, activator
+   * and receptor for the interaction event. Since the event listeners are
+   * states we cannot pass them parameters like regular functions, we are forced
+   * to do it like this.
+   */
+  var actionName: string;
+  var activator: CEntity;
+  var receptor: CEntity;
+
+  public function init(): SU_NpcInteraction_GlobalEventHandler {
+    this.GotoState('Empty');
+
+    return this;
+  }
+
+  public function onInteraction(actionName : string, activator : CEntity, receptor: CEntity) {
+    var states_to_process: array<name>;
+    var i: int;
+
+    this.actionName = actionName;
+    this.activator = activator;
+    this.receptor = receptor;
+
+    // This is the special trick we talked about in the comment above. To get a
+    // list of state names dynamically at runtime is to use fake items that use
+    // a custom tag. There items have no use but the function returns an array
+    // of names, which happens to be the names of the states we want to run
+    // through.
+    //
+    // This solution is perfect for what we want, it offers a way to add event
+    // listeners without needing to use a mod like bootstrap or to add a script
+    // in the Player class to inject the listener. Since we are adding states
+    // to the statemachine it is also checked at compile time, if two states,
+    // aka global event listeners, share the same name then we will get a
+    // compilation issue.
+    states_to_process = theGame.GetDefinitionsManager()
+      .GetItemsWithTag('SU_NpcInteraction_GlobalEventListener');
+
+    // we now push the state names to the queue
+    for (i = 0; i < states_to_process.Size(); i += 1) {
+      this.states_to_process.PushBack(states_to_process[i]);
+    }
+
+    NLOG("this.GetCurrentStateName() = " + this.GetCurrentStateName());
+
+    if (this.GetCurrentStateName() == 'Empty') {
+      this.GotoState('Waiting');
+    }
+  }
+}
+
+/**
+ * The state all global event listeners should extend. Once your work
+ */
+state GlobalEventListener in SU_NpcInteraction_GlobalEventHandler {
+  event OnEnterState(previous_state_name: name) {
+    super.OnEnterState(previous_state_name);
+    NLOG("SU_NpcInteraction_GlobalEventHandler - state " + parent.GetCurrentStateName());
+  }
+
+  public function finish() {
+    parent.GotoState('Waiting');
+  }
+}
+
+state Empty in SU_NpcInteraction_GlobalEventHandler {}
+state Waiting in SU_NpcInteraction_GlobalEventHandler {
+  event OnEnterState(previous_state_name: name) {
+    super.OnEnterState(previous_state_name);
+    NLOG("SU_NpcInteraction_GlobalEventHandler - state WAITING");
+
+    this.Waiting_main(previous_state_name);
+  }
+
+  entry function Waiting_main(previous_state_name: name) {
+    this.startProcessingLastState();
+  }
+
+  function startProcessingLastState() {
+    var last_state: name;
+    
+    if (parent.states_to_process.Size() <= 0) {
+      parent.GotoState('Empty');
+
+      return;
+    }
+
+    last_state = parent.states_to_process.PopBack();
+    NLOG("last_state = " + last_state);
+
+    parent.GotoState(last_state);
+  }
+}
+
 function SU_NpcInteraction_runAllInteractionListeners(actionName: string, activator: CEntity, receptor: CEntity): bool {
   var current_event_listener: SU_InteractionEventListener;
   var persistent_entity: CPeristentEntity;
   var should_event_continue: bool;
+  var player_input: CPlayerInput;
   var i: int;
+
+  player_input = thePlayer.GetInputHandler();
+  if (!player_input.global_event_handler) {
+    player_input.global_event_handler = (new SU_NpcInteraction_GlobalEventHandler in theInput)
+      .init();
+  }
+
+  player_input.global_event_handler.onInteraction(
+    actionName,
+    activator,
+    receptor
+  );
 
   should_event_continue = true;
 
