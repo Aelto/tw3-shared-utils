@@ -75,13 +75,9 @@ function SUH_getSafeCoordinatesFromPoint(point: Vector): Vector {
     array_of_nodes.PushBack((CNode)signposts[i]);
   }
 
-  NLOG("number of nodes = " + array_of_nodes.Size());
-
   // then find the closest one
   closest_signpost_node = FindClosestNode(point, array_of_nodes);
   closest_signpost_position = closest_signpost_node.GetWorldPosition();
-
-  NLOG("closest signpost position = " + VecToString(closest_signpost_position));
 
   // set the output at the starting point
   output = point;
@@ -95,14 +91,10 @@ function SUH_getSafeCoordinatesFromPoint(point: Vector): Vector {
     // then slowly get closer to the signpost position
     output = VecInterpolate(output, closest_signpost_position, 0.05 * i);
 
-    NLOG("searching safe position at " + VecToString(output));
-
     // update the water depth
     water_depth = theGame.GetWorld().GetWaterDepth(Vector(output.X, output.Y, 2), true);
     
     distance_in_z_level = closest_signpost_position.Z - output.Z;
-
-    NLOG("distance in Z level = " + distance_in_z_level);
 
   // while the water depth is not over 5000 which means there is a body of water
   // at the current position
@@ -111,8 +103,6 @@ function SUH_getSafeCoordinatesFromPoint(point: Vector): Vector {
   // we do it one last time because the water level gets below 500 on shore too,
   // where this is still a bit of water.
   output = VecInterpolate(output, closest_signpost_position, 0.2);
-
-  NLOG("safe position = " + VecToString(output));
 
   return output;
 }
@@ -140,8 +130,6 @@ function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
     AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea())
   );
 
-  NLOG("moveCoordinatesAwayFromSafeAreas 1.");
-
   for (i = 0; i < safe_areas.Size(); i += 1) {
     squared_radius = safe_areas[i].Z * safe_areas[i].Z;
     distance_from_center = VecDistanceSquared2D(safe_areas[i], point);
@@ -153,15 +141,11 @@ function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
 
     current_distance_percentage = distance_from_center / squared_radius;
 
-    NLOG("moveCoordinatesAwayFromSafeAreas, squared radius = " + squared_radius + " distance_percentage = " + current_distance_percentage);
-
     displacement_vector += (
       point 
       - Vector(safe_areas[i].X, safe_areas[i].Y, point.Z)
     ) * (1 - current_distance_percentage);
   }
-
-  NLOG("moveCoordinatesAwayFromSafeAreas 2.");
 
   return point + displacement_vector;
 }

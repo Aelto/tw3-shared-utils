@@ -124,8 +124,6 @@ state Empty in SU_NpcInteraction_GlobalEventHandler {}
 state Waiting in SU_NpcInteraction_GlobalEventHandler {
   event OnEnterState(previous_state_name: name) {
     super.OnEnterState(previous_state_name);
-    NLOG("SU_NpcInteraction_GlobalEventHandler - state WAITING");
-
     this.Waiting_main(previous_state_name);
   }
 
@@ -143,8 +141,6 @@ state Waiting in SU_NpcInteraction_GlobalEventHandler {
     }
 
     last_state = parent.states_to_process.PopBack();
-    NLOG("last_state = " + last_state);
-
     parent.GotoState(last_state);
   }
 }
