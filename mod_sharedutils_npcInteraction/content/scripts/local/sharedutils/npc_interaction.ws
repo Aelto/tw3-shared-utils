@@ -101,8 +101,6 @@ statemachine class SU_NpcInteraction_GlobalEventHandler {
       this.states_to_process.PushBack(states_to_process[i]);
     }
 
-    NLOG("this.GetCurrentStateName() = " + this.GetCurrentStateName());
-
     if (this.GetCurrentStateName() == 'Empty') {
       this.GotoState('Waiting');
     }
@@ -110,12 +108,11 @@ statemachine class SU_NpcInteraction_GlobalEventHandler {
 }
 
 /**
- * The state all global event listeners should extend. Once your work
+ * The state all global event listeners should extend.
  */
 state GlobalEventListener in SU_NpcInteraction_GlobalEventHandler {
   event OnEnterState(previous_state_name: name) {
     super.OnEnterState(previous_state_name);
-    NLOG("SU_NpcInteraction_GlobalEventHandler - state " + parent.GetCurrentStateName());
   }
 
   public function finish() {
