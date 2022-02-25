@@ -43,6 +43,8 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
     SleepOneFrame();
   }
 
+  SleepOneFrame();
+
   // we fetch the last accepted choice
   accepted_choice = dialogueModule.lastAcceptedChoice;
   // and we remember to set it back to NULL
