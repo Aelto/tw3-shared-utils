@@ -19,6 +19,10 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
     return null;
   }
 
+  // while on gamepad, the interact input is directly sent in the dialog choice
+  // it is safer to wait a bit before capturing the input.
+  Sleep(0.25);
+
   // setting the dialog choices
   dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
   dialogueModule.OnDialogChoicesSet( choices, false );
@@ -41,6 +45,9 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
 
   // we fetch the last accepted choice
   accepted_choice = dialogueModule.lastAcceptedChoice;
+
+  SleepOneFrame();
+
   // and we remember to set it back to NULL
   dialogueModule.lastAcceptedChoice = null;
 
