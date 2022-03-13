@@ -14,6 +14,7 @@ state MyBoostrappedMod in SU_TinyBootstrapperManager extends BaseMod {
     super.OnEnterState(previous_state_name);
 
     this.MyBoostrappedMod_main();
+    this.finish();
   }
 
   /**
