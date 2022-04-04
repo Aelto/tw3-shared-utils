@@ -111,20 +111,32 @@ function SUH_getSafeCoordinatesFromPoint(point: Vector): Vector {
  * the goal of this function is to move the supplied from outside pre-defined
  * safe areas in the world. The safe areas were made because the original bounds
  * are rectangular and sometimes to avoid a single unreachable area it would mean
- * removing 50% of the bound width, which i don't want.
- * The safe areas are circles with a radius, and the start by all the safe areas
- * the point is in. And then we add to a displacement vector all the translations
- * needed to move the point out of the areas. Because we don't do it one by one
- * and instead add all the translations needed, it creates a sort of "mean"
- * vector that will gracefully move the point outside of ALL areas.
+ * removing 50% of the bound width, which we don't want.
+ *
+ * The safe areas are circles with a radius. We then loop over all the safe areas
+ * and calculate a mean vector that will eventually move `point` out of ALL the
+ * safe areas.
+ *
+ * The `exception_areas` are areas you can supply where if the point is inside one,
+ * it will short-circuit the function and the point will not be moved by any of the
+ * safe areas.
  */
-function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector): Vector {
+function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector, optional array<Vector>: exception_areas): Vector {
   var current_distance_percentage: float;
   var distance_from_center: float;
   var displacement_vector: Vector;
   var safe_areas: array<Vector>;
   var squared_radius: float;
   var i: int;
+
+  // short-circuit:
+  // If the point is inside any of the exception areas, we leave early and return
+  // the unmodified `point`.
+  for (i = 0; i < exception_areas.Size(); i += 1) {
+    if (SUH_isPositionInsideArea(point, exception_areas[i])) {
+      return point;
+    }
+  }
 
   safe_areas = SUH_getSafeAreasByRegion(
     AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea())
@@ -303,16 +315,19 @@ function SUH_isPositionInsideSafeAreas(position: Vector): bool {
 
 
   for (i = 0; i < safe_areas.Size(); i += 1) {
-    squared_radius = safe_areas[i].Z * safe_areas[i].Z;
-    distance_from_center = VecDistanceSquared2D(safe_areas[i], position);
-
-    // the point is not inside the circle, skip
-    if (distance_from_center <= squared_radius) {
+    if (SUH_isPositionInsideArea(position, safe_areas[i])) {
       return true;
     }
   }
 
   return false;
+}
+
+function SUH_isPositionInsideArea(point: Vector, area: Vector): bool {
+  return VecDistanceSquared2D(
+    Vector(point.X, point.Y, 0),
+    Vector(area.X, area.Y, 0)
+  ) <= area.Z * area.Z;
 }
 
 /**
