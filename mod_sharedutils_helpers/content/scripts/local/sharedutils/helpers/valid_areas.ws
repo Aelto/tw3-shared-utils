@@ -121,7 +121,7 @@ function SUH_getSafeCoordinatesFromPoint(point: Vector): Vector {
  * it will short-circuit the function and the point will not be moved by any of the
  * safe areas.
  */
-function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector, optional array<Vector>: exception_areas): Vector {
+function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector, optional exception_areas: array<Vector>): Vector {
   var current_distance_percentage: float;
   var distance_from_center: float;
   var displacement_vector: Vector;
