@@ -8,6 +8,7 @@
 latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoice>): SSceneChoice {
   var hud: CR4ScriptedHud;
   var dialogueModule: CR4HudModuleDialog;
+  var empty_array: array<SSceneChoice>;
   var accepted_choice: SSceneChoice;
   var null: SSceneChoice;
 
@@ -58,6 +59,9 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
   }
 
   dialogueModule.isAcceptedChoiceAvailable = false;
+
+  // send an empty array to flush the data
+  dialogueModule.OnDialogChoicesSet( empty_array, false );
 
   return accepted_choice;
 }
@@ -116,7 +120,7 @@ function SU_setDialogChoicesAndResponseListener(choices: array<SSceneChoice>, re
 function SU_closeDialogChoiceInterface() {
   var hud : CR4ScriptedHud;
 
-  theInput.SetContext( 'Exploration' );
+  theInput.SetContext(thePlayer.GetExplorationInputContext());
   theGame.SetIsDialogOrCutscenePlaying(false);
   theGame.GetGuiManager().RequestMouseCursor(false);
 
