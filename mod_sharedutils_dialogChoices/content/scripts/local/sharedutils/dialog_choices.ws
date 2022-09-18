@@ -6,11 +6,28 @@
  * If you don't want to use a latent function, use the event based solution.
  */
 latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoice>): SSceneChoice {
-  var hud: CR4ScriptedHud;
   var dialogueModule: CR4HudModuleDialog;
-  var empty_array: array<SSceneChoice>;
-  var accepted_choice: SSceneChoice;
-  var null: SSceneChoice;
+
+  // while on gamepad, the interact input is directly sent in the dialog choice
+  // it is safer to wait a bit before capturing the input.
+  Sleep(0.25);
+
+  dialogueModule = SU_setDialogChoices(choices);
+
+  // wait for the player to accept one of the dialog choices
+  while (SU_isDialogChoiceCurrentlyPlaying(dialogueModule)) {
+    SleepOneFrame();
+  }
+
+  SleepOneFrame();
+
+  return SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule);
+}
+
+function SU_setDialogChoices(choices: array<SSceneChoice>): CR4HudModuleDialog {
+  var dialogueModule: CR4HudModuleDialog;
+  var null: CR4HudModuleDialog;
+  var hud: CR4ScriptedHud;
 
   hud = (CR4ScriptedHud)theGame.GetHud();
 
@@ -19,10 +36,6 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
 
     return null;
   }
-
-  // while on gamepad, the interact input is directly sent in the dialog choice
-  // it is safer to wait a bit before capturing the input.
-  Sleep(0.25);
 
   // setting the dialog choices
   dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
@@ -37,17 +50,22 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
   theGame.SetIsDialogOrCutscenePlaying(true);
   hud.OnCutsceneStarted();
 
-  // wait for the player to accept one of the dialog choices
-  while (!dialogueModule.isAcceptedChoiceAvailable
+  return dialogueModule;
+}
+
+function SU_isDialogChoiceCurrentlyPlaying(dialogueModule: CR4HudModuleDialog): bool {
+  return !dialogueModule.isAcceptedChoiceAvailable
       && theInput.GetContext() == 'Scene'
-      && theGame.IsDialogOrCutscenePlaying()) {
-    SleepOneFrame();
-  }
+      && theGame.IsDialogOrCutscenePlaying();
+}
+
+function SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule: CR4HudModuleDialog): SSceneChoice {
+  var accepted_choice: SSceneChoice;
+  var empty_array: array<SSceneChoice>;
+  var null: SSceneChoice;
 
   // we fetch the last accepted choice
   accepted_choice = dialogueModule.lastAcceptedChoice;
-
-  SleepOneFrame();
 
   // and we remember to set it back to NULL
   dialogueModule.lastAcceptedChoice = null;
@@ -93,18 +111,8 @@ function SU_setDialogChoicesAndResponseListener(choices: array<SSceneChoice>, re
   var accepted_choice: SSceneChoice;
   var null: SSceneChoice;
 
+  dialogueModule = SU_setDialogChoices(choices);
   hud = (CR4ScriptedHud)theGame.GetHud();
-
-  if (!hud) {
-    LogChannel('SharedUtils', "SU_setDialogChoicesAndWaitForResponse - could not get HUD");
-
-    return false;
-  }
-
-  // setting the dialog choices
-  dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
-  dialogueModule.responseListener = response_listener;
-  dialogueModule.OnDialogChoicesSet(choices, false);
 
   theInput.SetContext( 'Scene' );
   theGame.SetIsDialogOrCutscenePlaying(true);
