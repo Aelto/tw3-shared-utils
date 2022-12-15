@@ -8,6 +8,10 @@
 
 class CPlayerInput 
 {
+	
+	private var altSignCasting : bool; 
+	
+
 	private saved 	var actionLocks 	: array<array<SInputActionLock>>;		
 	
 	private	var	totalCameraPresetChange : float;		default totalCameraPresetChange = 0.0f;
@@ -24,7 +28,18 @@ class CPlayerInput
 	{		
 		var missingLocksCount, i : int;
 		var dummy : array<SInputActionLock>;
-
+		
+		
+		var inGameConfigWrapper : CInGameConfigWrapper;
+		
+		inGameConfigWrapper = theGame.GetInGameConfigWrapper();	
+		if(inGameConfigWrapper.GetVarValue('Gameplay', 'EnableAlternateSignCasting') == "1")
+			altSignCasting = true;
+		else
+			altSignCasting = false;
+		theInput.RegisterListener( this, 'OnAltQuen', 'AltQuenCasting' );
+		
+		
 		if(previousInput)
 		{
 			actionLocks = previousInput.actionLocks;
@@ -173,10 +188,13 @@ class CPlayerInput
 	function Destroy()
 	{
 	}
-	
-	// sharedutils - npcInteraction - BEGIN
+
+  // sharedutils - npcInteraction - BEGIN
 	public var global_event_handler: SU_NpcInteraction_GlobalEventHandler;
 	// sharedutils - npcInteraction - END
+	
+	
+	
 	
 	
 	public function FindActionLockIndex(action : EInputActionBlock, sourceName : name) : int
@@ -550,12 +568,32 @@ class CPlayerInput
 	
 	
 	
+	
+	
+	
+	event OnAltQuen( action : SInputAction )
+	{	
+		if(altSignCasting && !theInput.LastUsedPCInput() && IsPressed( action ) && theInput.IsActionPressed('CastSign') && !GetWitcherPlayer().IsCurrentSignChanneled())
+		{
+			AltCastSign(ST_Quen);
+		}
+	}
+	
+	
 	event OnCommSprint( action : SInputAction )
 	{
 		if( IsPressed( action ) )
 		{
-			thePlayer.SetSprintActionPressed(true);
 			
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign') && !GetWitcherPlayer().IsCurrentSignChanneled())
+			{
+				AltCastSign(ST_Aard);
+				return false;
+			}
+			
+			
+			thePlayer.SetSprintActionPressed(true);
+				
 			if ( thePlayer.rangedWeapon )
 				thePlayer.rangedWeapon.OnSprintHolster();
 		}
@@ -567,15 +605,62 @@ class CPlayerInput
 	{
 		if( IsPressed(action) )
 		{
-			if ( thePlayer.GetIsSprintToggled() )
-				thePlayer.SetSprintToggle( false );
-			else
-				thePlayer.SetSprintToggle( true );
+			
+			if( theInput.LastUsedPCInput() || thePlayer.GetLeftStickSprint() )
+			{
+				if ( thePlayer.GetIsSprintToggled() )
+					thePlayer.SetSprintToggle( false );
+				else
+				{
+					thePlayer.SetSprintToggle( true );
+					
+					if ( thePlayer.rangedWeapon )
+						thePlayer.rangedWeapon.OnSprintHolster();
+					
+				}
+			}
 		}
 	}	
 	
+
+	
+	private var holdTimer : float;
+	
+	
 	event OnCommWalkToggle( action : SInputAction )
-	{
+	{	
+		
+		var horse : CNewNPC;
+		var horseWalkState : int;
+		
+		horse = thePlayer.GetHorseCurrentlyMounted();
+		if(horse)
+		{
+			horseWalkState = horse.GetHorseComponent().GetHorseWalkState();
+			if( IsPressed(action) )
+			{
+				holdTimer = theGame.GetEngineTimeAsSeconds();
+			}
+			else if( IsReleased(action) )
+			{
+				if(theGame.GetEngineTimeAsSeconds() - holdTimer > 0.2)
+				{
+					horse.GetHorseComponent().SetHorseWalkState(0); 
+				}
+				else
+				{	
+					if(horseWalkState == 0)
+						horse.GetHorseComponent().SetHorseWalkState(1);	
+					else if(horseWalkState == 1)
+						horse.GetHorseComponent().SetHorseWalkState(2);	
+					else 
+						horse.GetHorseComponent().SetHorseWalkState(0);	
+				}
+			}			
+			return false;
+		}
+		
+	
 		if( IsPressed(action) && !thePlayer.GetIsSprinting() && !thePlayer.modifyPlayerSpeed )
 		{
 			if ( thePlayer.GetIsWalkToggled() )
@@ -592,7 +677,7 @@ class CPlayerInput
 			return false;
 			
 		if ( !thePlayer.IsInsideInteraction() )
-		{
+		{		
 			if (  IsActionAllowed(EIAB_Parry) )
 			{
 				if( IsReleased(action) && thePlayer.GetCurrentStateName() == 'CombatFists' )
@@ -626,49 +711,39 @@ class CPlayerInput
 	
 	event OnCommSpawnHorse( action : SInputAction )
 	{
-		var doubleTap : bool;
+		var isSpawnHorseSecondTap : bool;
+		isSpawnHorseSecondTap = false;
 		
 		if( IsPressed( action ) )
-		{
-			if( pressTimestamp + DOUBLE_TAP_WINDOW >= theGame.GetEngineTimeAsSeconds() )
-			{
-				doubleTap = true;
-			}
-			else
-			{
-				doubleTap = false;
-			}
-			
-			if( IsActionAllowed( EIAB_CallHorse ) && !thePlayer.IsInInterior() && !thePlayer.IsInAir() )
-			{
-				
-				if( doubleTap || theInput.LastUsedPCInput() )
-				{
-					if ( thePlayer.IsHoldingItemInLHand () )
-					{
-						thePlayer.OnUseSelectedItem(true);
-						thePlayer.SetPlayerActionToRestore ( PATR_CallHorse );
-					}
-					else
-					{
-						theGame.OnSpawnPlayerHorse();
-					}
-				}				
-			}
-			else
-			{
-				if( thePlayer.IsInInterior() )
-					thePlayer.DisplayActionDisallowedHudMessage( EIAB_Undefined, false, true );
-				else
-					thePlayer.DisplayActionDisallowedHudMessage( EIAB_CallHorse );
-			}
-			
-			pressTimestamp = theGame.GetEngineTimeAsSeconds();
-			
-			return true;
-		}
+			return false;
 		
-		return false;
+		isSpawnHorseSecondTap = pressTimestamp + DOUBLE_TAP_WINDOW >= theGame.GetEngineTimeAsSeconds();
+
+		if( IsActionAllowed( EIAB_CallHorse ) 
+			&& !thePlayer.IsInInterior() && !thePlayer.IsInAir()
+			&& (isSpawnHorseSecondTap || theInput.LastUsedPCInput()) )
+		{
+			if ( thePlayer.IsHoldingItemInLHand () )
+			{
+				thePlayer.OnUseSelectedItem(true);
+				thePlayer.SetPlayerActionToRestore ( PATR_CallHorse );
+			}
+			else
+			{
+				theGame.OnSpawnPlayerHorse();
+			}			
+		}
+		else if( isSpawnHorseSecondTap || theInput.LastUsedPCInput() )
+		{
+			if( thePlayer.IsInInterior() )
+				thePlayer.DisplayActionDisallowedHudMessage( EIAB_Undefined, false, true );
+			else
+				thePlayer.DisplayActionDisallowedHudMessage( EIAB_CallHorse );
+		}
+			
+		pressTimestamp = theGame.GetEngineTimeAsSeconds();
+			
+		return true;
 	}
 	
 	
@@ -1136,27 +1211,61 @@ class CPlayerInput
 	{
 		if( IsPressed( action ) )
 		{
-			switch( action.aName )
+			
+			if(altSignCasting)
 			{
-				case 'SelectAard' :
-					GetWitcherPlayer().SetEquippedSign(ST_Aard);
-					break;
-				case 'SelectYrden' :
-					GetWitcherPlayer().SetEquippedSign(ST_Yrden);
-					break;
-				case 'SelectIgni' :
-					GetWitcherPlayer().SetEquippedSign(ST_Igni);
-					break;
-				case 'SelectQuen' :
-					GetWitcherPlayer().SetEquippedSign(ST_Quen);
-					break;
-				case 'SelectAxii' :
-					GetWitcherPlayer().SetEquippedSign(ST_Axii);
-					break;
-				default :
-					break;
+				switch( action.aName )
+				{				
+					case 'SelectAard' :
+						AltCastSign(ST_Aard);
+						break;
+					case 'SelectYrden' :
+						AltCastSign(ST_Yrden);
+						break;
+					case 'SelectIgni' :
+						AltCastSign(ST_Igni);
+						break;
+					case 'SelectQuen' :
+						AltCastSign(ST_Quen);
+						break;
+					case 'SelectAxii' :
+						AltCastSign(ST_Axii);
+						break;
+					default :
+						break;
+				}
+			}
+			
+			else
+			{
+				switch( action.aName )
+				{
+					case 'SelectAard' :
+						GetWitcherPlayer().SetEquippedSign(ST_Aard);
+						break;
+					case 'SelectYrden' :
+						GetWitcherPlayer().SetEquippedSign(ST_Yrden);
+						break;
+					case 'SelectIgni' :
+						GetWitcherPlayer().SetEquippedSign(ST_Igni);
+						break;
+					case 'SelectQuen' :
+						GetWitcherPlayer().SetEquippedSign(ST_Quen);
+						break;
+					case 'SelectAxii' :
+						GetWitcherPlayer().SetEquippedSign(ST_Axii);
+						break;
+					default :
+						break;
+				}
 			}
 		}
+		
+		else if (IsReleased( action ) && altSignCasting && GetWitcherPlayer().IsCurrentSignChanneled())
+		{
+			thePlayer.AbortSign();
+		}
+		
 	}
 	
 	event OnToggleSigns( action : SInputAction )
@@ -1514,7 +1623,41 @@ class CPlayerInput
 	
 	event OnExpFocus( action : SInputAction )
 	{
-		if(IsActionAllowed(EIAB_ExplorationFocus))
+		
+		if(!thePlayer.IsCiri())
+		{
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			{
+				if(IsPressed( action ))
+				{
+					theGame.GetFocusModeController().Deactivate(); 
+					AltCastSign(ST_Igni);
+					return false;
+				} 
+				else if (IsReleased( action ) && GetWitcherPlayer().IsCurrentSignChanneled())
+				{
+					thePlayer.AbortSign();
+				}
+			}
+		}
+		
+		if(thePlayer.IsCiri() && IsActionAllowed(EIAB_ExplorationFocus))
+		{
+			if( IsPressed( action ) )
+			{
+				if( thePlayer.GoToCombatIfNeeded() )
+				{
+					OnCommGuard( action );
+					return false;
+				}
+				theGame.GetFocusModeController().Activate();
+			}
+			else if( IsReleased( action ) )
+			{
+				theGame.GetFocusModeController().Deactivate();
+			}
+		}
+		else if(IsActionAllowed(EIAB_ExplorationFocus) && !GetWitcherPlayer().IsCurrentSignChanneled()) 
 		{
 			if( IsPressed( action ) )
 			{
@@ -1612,6 +1755,15 @@ class CPlayerInput
 		
 		if( IsPressed(action) )
 		{
+			
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			{
+				AltCastSign(ST_Axii);
+				return false;
+			}
+			
+			
+			
 			if( IsActionAllowed(EIAB_LightAttacks)  )
 			{
 				if (thePlayer.GetBIsInputAllowed())
@@ -1657,6 +1809,21 @@ class CPlayerInput
 		
 		if ( thePlayer.GetBIsInputAllowed() )
 		{
+			
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			{
+				if(IsPressed( action ))
+				{
+					AltCastSign(ST_Yrden);
+					return false;
+				}
+				else if (IsReleased( action ))
+				{
+					return false;
+				}
+			}
+			
+		
 			if( IsActionAllowed(EIAB_HeavyAttacks) )
 			{
 				allowed = false;
@@ -1805,6 +1972,13 @@ class CPlayerInput
 	
 	event OnCbtSpecialAttackLight( action : SInputAction )
 	{
+		
+		if(!theInput.LastUsedPCInput() && IsPressed( action ) && theInput.GetActionValue( 'CastSign' ) > 0)
+		{
+			return false;
+		}
+		
+	
 		if ( IsReleased( action )  )
 		{
 			thePlayer.CancelHoldAttacks();
@@ -1826,7 +2000,7 @@ class CPlayerInput
 		}
 		
 		if( IsPressed(action) && thePlayer.CanUseSkill(S_Sword_s01) )	
-		{	
+		{			
 			thePlayer.PrepareToAttack();
 			thePlayer.SetPlayedSpecialAttackMissingResourceSound(false);
 			thePlayer.AddTimer( 'IsSpecialLightAttackInputHeld', 0.00001, true );
@@ -1835,13 +2009,20 @@ class CPlayerInput
 
 	event OnCbtSpecialAttackHeavy( action : SInputAction )
 	{
+		
+		if(!theInput.LastUsedPCInput() && IsPressed( action ) && theInput.GetActionValue( 'CastSign' ) > 0)
+		{
+			return false;
+		}
+		
+	
 		if ( IsReleased( action )  )
 		{
 			thePlayer.CancelHoldAttacks();
 			return true;
 		}
 		
-		if ( !IsPlayerAbleToPerformSpecialAttack() )
+		if ( !IsPlayerAbleToPerformSpecialAttack() || GetWitcherPlayer().IsInCombatAction_SpecialAttackHeavy() ) 
 			return false;
 		
 		if( !IsActionAllowed(EIAB_HeavyAttacks))
@@ -2023,13 +2204,25 @@ class CPlayerInput
 	}
 	
 	event OnCbtDodge( action : SInputAction )
-	{
+	{		
 		if ( IsPressed(action) )
-			thePlayer.EvadePressed(EBAT_Dodge);
+		{
+			
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			{
+				
+				
+			}			
+			else
+			
+			{
+				thePlayer.EvadePressed(EBAT_Dodge);
+			}
+		}
 	}
 	
 	event OnCbtRoll( action : SInputAction )
-	{
+	{		
 		if ( theInput.LastUsedPCInput() )
 		{
 			if ( IsPressed( action ) )
@@ -2041,7 +2234,16 @@ class CPlayerInput
 		{
 			if ( IsPressed( action ) )
 			{
-				thePlayer.StartDodgeTimer();
+				
+				if(altSignCasting && theInput.IsActionPressed('CastSign'))
+				{
+					return false;					
+				}
+				
+				else
+				{
+					thePlayer.StartDodgeTimer();
+				}
 			}
 			else if ( IsReleased( action ) )
 			{
@@ -2052,6 +2254,63 @@ class CPlayerInput
 						thePlayer.EvadePressed(EBAT_Roll);
 				}
 				
+			}
+		}
+	}
+	
+	
+	public function GetIsAltSignCasting() : bool
+	{
+		return altSignCasting;
+	}
+
+	public function GetIsAltSignCastingPressed() : bool
+	{
+		return altSignCasting  &&  theInput.IsActionPressed('CastSign');
+	}
+	
+	public function SetIsAltSignCasting(enable : bool)
+	{
+		altSignCasting = enable;
+	}
+	
+	private function AltCastSign(signType : ESignType)
+	{
+		var signSkill : ESkill;	
+		
+		if( !thePlayer.GetBIsInputAllowed() )
+		{	
+			return;
+		}
+	
+		if( !IsActionAllowed(EIAB_Signs) || GetWitcherPlayer().IsSignBlocked(signType) )
+		{				
+			thePlayer.DisplayActionDisallowedHudMessage(EIAB_Signs);
+			return;
+		}
+		if ( thePlayer.IsHoldingItemInLHand() && thePlayer.IsUsableItemLBlocked() )
+		{
+			thePlayer.DisplayActionDisallowedHudMessage(EIAB_Undefined, false, false, true);
+			return;
+		}
+
+		signSkill = SignEnumToSkillEnum(signType);
+		if( signSkill != S_SUndefined )
+		{
+			if(!thePlayer.CanUseSkill(signSkill))
+			{
+				thePlayer.DisplayActionDisallowedHudMessage(EIAB_Signs, false, false, true);
+				return;
+			}
+		
+			if( thePlayer.HasStaminaToUseSkill( signSkill, false ) )
+			{
+				GetWitcherPlayer().SetEquippedSign(signType);				
+				thePlayer.SetupCombatAction( EBAT_CastSign, BS_Pressed );
+			}
+			else
+			{
+				thePlayer.SoundEvent("gui_no_stamina");
 			}
 		}
 	}
@@ -2081,7 +2340,34 @@ class CPlayerInput
 	event OnCastSign( action : SInputAction )
 	{
 		var signSkill : ESkill;
-	
+
+		if( altSignCasting )
+			thePlayer.ApplyCastSettings(); 
+		
+		
+		if(altSignCasting && !theInput.LastUsedPCInput())
+		{
+			if(IsPressed( action ) && (theInput.GetActionValue( 'LockAndGuard' ) > 0)) 
+			{
+				AltCastSign(ST_Igni);
+			}
+			else if(IsPressed( action ))
+			{
+				thePlayer.BlockAction(EIAB_Interactions, 'NGE_CastSign_Block');
+				thePlayer.BlockAction(EIAB_InteractionAction, 'NGE_CastSign_Block');
+				thePlayer.BlockAction(EIAB_InteractionContainers, 'NGE_CastSign_Block');
+			}
+			else if(IsReleased( action ))
+			{
+				thePlayer.UnblockAction(EIAB_Interactions, 'NGE_CastSign_Block');
+				thePlayer.UnblockAction(EIAB_InteractionAction, 'NGE_CastSign_Block');
+				thePlayer.UnblockAction(EIAB_InteractionContainers, 'NGE_CastSign_Block');
+			}
+			
+			return false;
+		}
+		
+		
 		if( !thePlayer.GetBIsInputAllowed() )
 		{	
 			return false;
@@ -2099,6 +2385,7 @@ class CPlayerInput
 				thePlayer.DisplayActionDisallowedHudMessage(EIAB_Undefined, false, false, true);
 				return false;
 			}
+			
 			signSkill = SignEnumToSkillEnum( thePlayer.GetEquippedSign() );
 			if( signSkill != S_SUndefined )
 			{
@@ -2116,14 +2403,13 @@ class CPlayerInput
 						
 						
 					}
-					
 					thePlayer.SetupCombatAction( EBAT_CastSign, BS_Pressed );
 				}
 				else
 				{
 					thePlayer.SoundEvent("gui_no_stamina");
 				}
-			}
+			}			
 		}
 	}
 	
@@ -2524,6 +2810,13 @@ class CPlayerInput
 		
 		if( IsReleased(action) )
 		{
+			
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign') && GetWitcherPlayer().IsCurrentSignChanneled())
+			{				
+				thePlayer.AbortSign();
+			}
+			
+		
 			thePlayer.SetGuarded(false);
 			thePlayer.OnGuardedReleased();	
 		}
@@ -2536,6 +2829,15 @@ class CPlayerInput
 		
 		if( IsPressed(action) )
 		{
+			
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			{
+				AltCastSign(ST_Igni);
+				return false;
+			}
+			
+		
+		
 			if( !IsActionAllowed(EIAB_Parry) )
 			{
 				if ( IsActionBlockedBy(EIAB_Parry,'UsableItem') )
@@ -2897,12 +3199,11 @@ class CPlayerInput
 		var openedPanel : name;
 		openedPanel = theGame.GetMenuToOpen(); 
 		
-		if( IsReleased(action) && openedPanel != 'GlossaryTutorialsMenu' && !theGame.GetGuiManager().IsAnyMenu() ) 
+		if( IsReleased(action) 
+			&& openedPanel != 'GlossaryTutorialsMenu' 
+			&& !theGame.GetGuiManager().IsAnyMenu() 
+			&& !theGame.IsBlackscreenOrFading() ) 
 		{
-			if ( theGame.IsBlackscreenOrFading() )
-			{
-				return false;
-			}
 			theGame.SetMenuToOpen( '' );
 			theGame.RequestMenu('CommonIngameMenu' );
 		}
