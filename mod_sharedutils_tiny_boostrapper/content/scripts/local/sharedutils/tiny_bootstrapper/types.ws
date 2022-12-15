@@ -1,5 +1,6 @@
 statemachine class SU_TinyBootstrapperManager {
   protected var states_to_process: array<name>;
+  protected var entities: array<CEntity>;
 
   var receptor: CEntity;
 
@@ -10,6 +11,19 @@ statemachine class SU_TinyBootstrapperManager {
     this.GotoState('Waiting');
 
     return this;
+  }
+
+  public function getEntityByTag(tag: name): CEntity {
+    var null: CEntity;
+    var i: int;
+
+    for (i = 0; i < this.entities.Size(); i += 1) {
+      if (this.entities[i].HasTag(tag)) {
+        return this.entities[i];
+      }
+    }
+
+    return null;
   }
 }
 
@@ -23,6 +37,10 @@ state BaseMod in SU_TinyBootstrapperManager {
 
   public function finish() {
     parent.GotoState('Waiting');
+  }
+
+  public function store(entity: CEntity) {
+    parent.entities.PushBack(entity);
   }
 }
 
