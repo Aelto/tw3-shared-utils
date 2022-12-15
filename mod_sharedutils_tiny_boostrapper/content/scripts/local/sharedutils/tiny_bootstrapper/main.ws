@@ -5,5 +5,5 @@ function SU_tinyBootstrappedInit(player: CPlayer) {
 }
 
 function SUTB_getEntityByTag(tag: name): CEntity {
-  thePlayer.tiny_bootstrapper.getEntityByTag(tag);
+  return thePlayer.tiny_bootstrapper.getEntityByTag(tag);
 }
