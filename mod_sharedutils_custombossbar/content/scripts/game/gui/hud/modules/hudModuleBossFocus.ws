@@ -209,7 +209,7 @@ class CR4HudModuleBossFocus extends CR4HudModuleBase
 
     if (this.m_lastHealthPercentage != percent) {
       m_fxSetBossHealth.InvokeSelfOneArg(FlashArgInt((int)percent));
-      this.m_lastHealthPercentage = percent;
+      this.m_lastHealthPercentage = (int)percent;
     }
   }
 }
