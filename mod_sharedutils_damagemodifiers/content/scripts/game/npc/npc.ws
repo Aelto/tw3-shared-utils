@@ -130,8 +130,8 @@ statemachine import class CNewNPC extends CActor
 	// modSharedutils_damagemodifiers - BEGIN
 	public var sharedutils_damage_modifiers: array<SU_BaseDamageModifier>;
 	// modSharedutils_damagemodifiers - END
-	
-	
+
+
 	private var tauntedToAttackTimeStamp 		: float;
 	
 	
@@ -1187,7 +1187,8 @@ statemachine import class CNewNPC extends CActor
 		
 		if ( stats.HasAbility( 'NPCDoNotGainBoost' ) ) return;
 		if ( stats.HasAbility( 'animal_rat_base' ) ) return;
-		if ( stats.HasAbility( 'mon_djinn' ) ) return;	
+		if ( stats.HasAbility( 'mon_djinn' ) ) return;
+		if ( IsAnimal() ) return;
 		
 		
 		levelBonusesComputedAtPlayerLevel = playerLevel;
