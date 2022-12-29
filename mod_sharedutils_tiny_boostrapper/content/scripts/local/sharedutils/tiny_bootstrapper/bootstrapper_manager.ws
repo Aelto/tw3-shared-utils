@@ -1,109 +1,157 @@
-statemachine class SU_TinyBootstrapperManager {
-  /// Used internally by the manager to store the list of states that will
-  /// bootstrap the mods.
-  protected var states_to_process: array<name>;
+//---------------------------------------------------
+//-- Class: -----------------------------------------
+//---------------------------------------------------
 
-  /// The persistent list with the user-made mods
-  protected saved var mods: array<SU_BaseBootstrappedMod>;
+statemachine class SU_TinyBootstrapperManager
+{
+	// Used internally by the manager to store the list of states that will bootstrap the mods.
+	protected var states_to_process: array<name>;
 
-  /// Cleared before bootstrapping mods, then contains the names of the mods
-  /// that were bootstrapped this session. Meaning they were injected BEFORE
-  /// but no longer have a state that bootstraps them.
-  protected var bootstrapped_mods_this_session: array<name>;
+	// The persistent list with the user-made mods
+	protected saved var mods: array<SU_BaseBootstrappedMod>;
 
-  public function init(): SU_TinyBootstrapperManager {
-    this.bootstrapped_mods_this_session.Clear();
-    this.states_to_process = theGame.GetDefinitionsManager()
-      .GetItemsWithTag('SU_TinyBootstrapperManager');
+	// Cleared before bootstrapping mods, then contains the names of the mods that were bootstrapped this session.
+	// Meaning they were injected BEFORE but no longer have a state that bootstraps them.
+	protected var bootstrapped_mods_this_session: array<name>;
 
-    this.GotoState('Waiting');
+	//---------------------------------------------------
+	//-- Function: Initialise Mod -----------------------
+	//---------------------------------------------------
+	
+	public function init(): SU_TinyBootstrapperManager 
+	{
+		this.bootstrapped_mods_this_session.Clear();
+		this.states_to_process = theGame.GetDefinitionsManager().GetItemsWithTag('SU_TinyBootstrapperManager');
+		
+		this.GotoState('Waiting');
+		return this;
+	}
 
-    return this;
-  }
+	//---------------------------------------------------
+	//-- Function: Start Mods ---------------------------
+	//---------------------------------------------------
+	
+	protected function startMods()
+	{
+		var mod: SU_BaseBootstrappedMod;
+		var i: int;
 
-  protected function startMods() {
-    var mod: SU_BaseBootstrappedMod;
-    var i: int;
+		for (i = 0; i < this.mods.Size(); i += 1) 
+		{
+			mod = this.mods[i];
+			mod.start();
+		}
+	}
 
-    for (i = 0; i < this.mods.Size(); i += 1) {
-      mod = this.mods[i];
+	//---------------------------------------------------
+	//-- Function: Stop Mods (Shutdown) -----------------
+	//---------------------------------------------------
+	
+	public function stopMods() 
+	{
+		var mod: SU_BaseBootstrappedMod;
+		var i: int;
 
-      mod.stop();
-    }
-  }
+		for (i = 0; i < this.mods.Size(); i += 1) 
+		{
+			mod = this.mods[i];
+			mod.stop();
+		}
+	}
+	
+	//---------------------------------------------------
+	//-- Function: Remove All Unused Mods --------------- Remove the non bootstrapped mods from the list. The ones that were injected
+	//--------------------------------------------------- previously but no longer have a state that bootstrapps them.
+	
+	protected function removeUnusedMods() 
+	{
+		var unused_tags: array<name>;
+		var tag: name;
+		var i: int;
 
-  protected function stopMods() {
-    var mod: SU_BaseBootstrappedMod;
-    var i: int;
+		for (i = 0; i < this.bootstrapped_mods_this_session.Size(); i += 1) 
+		{
+			tag = this.bootstrapped_mods_this_session[i];
 
-    for (i = 0; i < this.mods.Size(); i += 1) {
-      mod = this.mods[i];
+			if (this.hasModWithTag(tag)) {
+				continue;
+			}
+			unused_tags.PushBack(tag);
+		}
 
-      mod.stop();
-    }
-  }
+		for (i = 0; i < unused_tags.Size(); i += 1)
+		{
+				tag = unused_tags[i];
+				this.removeMod(this.getModByTag(tag));
+		}
+	}
 
-  /// Remove the non bootstrapped mods from the list. The ones that were injected
-  /// previously but no longer have a state that bootstrapps them.
-  protected function removeUnusedMods() {
-    var unused_tags: array<name>;
-    var tag: name;
-    var i: int;
+	//---------------------------------------------------
+	//-- Function: Has Mod With Tag ---------------------
+	//---------------------------------------------------
+	
+	public function hasModWithTag(tag: name): bool
+	{
+		var i: int;
 
-    for (i = 0; i < parent.bootstrapped_mods_this_session.Size(); i += 1) {
-      tag = parent.bootstrapped_mods_this_session[i];
+		for (i = 0; i < this.mods.Size(); i += 1) 
+		{
+			if (this.mods[i].tag == tag) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-      if (parent.hasModWithTag(tag)) {
-        continue;
-      }
+	//---------------------------------------------------
+	//-- Function: Get Mod By Tag -----------------------
+	//---------------------------------------------------
+	
+	public function getModByTag(tag: name): SU_BaseBootstrappedMod
+	{
+		var i: int;
 
-      unused_tags.PushBack(tag);
-    }
+		for (i = 0; i < this.mods.Size(); i += 1)
+		{
+			if (this.mods[i].tag == tag)
+			{
+				return this.mods[i];
+			}
+		}
+		return NULL;
+	}
 
-    for (i = 0; i < parent.unused_tags.Size(); i += 1) {
-      tag = parent.unused_tags[i];
+	//---------------------------------------------------
+	//-- Function: Add New Mod --------------------------
+	//---------------------------------------------------
+	
+	public function addMod(mod: SU_BaseBootstrappedMod)
+	{
+		if (mod.tag == '') {
+			return;
+		}
+		this.mods.PushBack(mod);
+	}
 
-      parent.removeMod(parent.getModByTag(tag));
-    }
-  }
+	//---------------------------------------------------
+	//-- Function: Removed Unused Mod -------------------
+	//---------------------------------------------------
+	
+	public function removeMod(mod: SU_BaseBootstrappedMod)
+	{
+		this.mods.Remove(mod);
+	}
 
-  public function hasModWithTag(tag: name): bool {
-    var i: int;
+	//---------------------------------------------------
+	//-- Function: Mark Mod As Bootstrapped -------------
+	//---------------------------------------------------
 
-    for (i = 0; i < this.entities.Size(); i += 1) {
-      if (this.entities[i].tag == tag) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  public function getModByTag(tag: name): SU_BaseBootstrappedMod {
-    var i: int;
-
-    for (i = 0; i < this.entities.Size(); i += 1) {
-      if (this.entities[i].tag == tag) {
-        return this.entities[i];
-      }
-    }
-
-    return NULL;
-  }
-
-  public function addMod(mod: SU_BaseBootstrappedMod) {
-    if (mod.tag == '') {
-      return;
-    }
-
-    this.mods.PushBack(mod);
-  }
-
-  public function removeMod(mod: SU_BaseBootstrappedMod) {
-    this.mods.Remove(mod);
-  }
-
-  protected public function markModBootstrapped(tag: name) {
-    this.bootstrapped_mods_this_session.PushBack(tag);
-  }
+	protected function markModBootstrapped(tag: name)
+	{
+		this.bootstrapped_mods_this_session.PushBack(tag);
+	}
 }
+
+//---------------------------------------------------
+//-- End Of Code ------------------------------------
+//---------------------------------------------------

@@ -9,18 +9,34 @@
  * this is intended to ensure good compatibility between mods. For this reason
  * you must use unique names.
  */ 
-state MyBootstrappedMod in SU_TinyBootstrapperManager extends BaseMod {
-  public function getTag(): name {
-    return 'MyBootstrappedMod';
-  }
 
-  public function getMod(): SU_BaseBootstrappedMod {
-    return new MyBootstrappedMod in parent;
-  }
+//---------------------------------------------------
+//-- State: (Example) -------------------------------
+//---------------------------------------------------
+
+state MyBootstrappedMod in SU_TinyBootstrapperManager extends BaseMod
+{
+	public function getTag(): name
+	{
+		return 'MyBootstrappedMod';
+	}
+
+	//---------------------------------------------------
+	
+	public function getMod(): SU_BaseBootstrappedMod
+	{
+		return new MyBootstrappedMod in parent;
+	}
 }
 
-class MyBootstrappedMod extends SU_BaseBootstrappedMod {
-  public function start() {
-    // ... do whatever you want
-  }
+//---------------------------------------------------
+//-- Class: (Example) -------------------------------
+//---------------------------------------------------
+
+class MyBootstrappedMod extends SU_BaseBootstrappedMod 
+{
+	public function start()
+	{
+		// ... do whatever you want
+	}
 }
