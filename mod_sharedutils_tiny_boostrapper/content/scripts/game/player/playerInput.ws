@@ -24,9 +24,8 @@ class CPlayerInput
 	
 		default potionModeHold = true;
   
-  // SU - tiny_bootstrapper - BEGIN
-  public saved var SU_tiny_bootstrapper_manager: SU_TinyBootstrapperManager;
-  // SU - tiny_bootstrapper - END
+	
+	public saved var SU_tiny_bootstrapper_manager: SU_TinyBootstrapperManager; // SU - tiny_bootstrapper
 		
 	public function Initialize(isFromLoad : bool, optional previousInput : CPlayerInput)
 	{		
@@ -187,17 +186,15 @@ class CPlayerInput
 		
 		theInput.RegisterListener( this, 'OnToggleHud', 'ToggleHud' );
 
-    // SU - tiny_bootstrapper - BEGIN
-    SU_tinyBootstrapperInit(this);
-    // SU - tiny_bootstrapper - END
+   
+		SU_tinyBootstrapperInit(this);  // SU - tiny_bootstrapper
+
 	}
 	 
 	
 	function Destroy()
 	{
-		// SU - tiny_bootstrapper - BEGIN
-		SU_tinyBootstrapperStop(this);
-		// SU - tiny_bootstrapper - END
+		SU_tinyBootstrapperStop(this); // SU - tiny_bootstrapper - BEGIN
 	}
 	
 	
