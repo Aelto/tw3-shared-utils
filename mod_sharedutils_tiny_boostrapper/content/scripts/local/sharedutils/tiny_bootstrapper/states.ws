@@ -1,39 +1,28 @@
-//---------------------------------------------------
-//-- State: (BaseMod) -------------------------------
-//---------------------------------------------------
 
 //The state all global event listeners should extend.
- 
 state BaseMod in SU_TinyBootstrapperManager 
 {
 	event OnEnterState(previous_state_name: name) 
 	{
 		super.OnEnterState(previous_state_name);
-		SU_Logger("SU_TinyBootstrapperManager Entered state [BaseMod]", false);
+		SUTB_Logger(
+			"SU_TinyBootstrapperManager Entered state [BaseMod]", false);
 		
 		this.registerMod();
 		this.finish(); 
 	}
-
-	//---------------------------------------------------
 	
 	public function getTag(): name {
 		return '';
 	}
-
-	//---------------------------------------------------
 	
 	public function getMod(): SU_BaseBootstrappedMod {
 		return new SU_BaseBootstrappedMod in parent;
 	}
-
-	//---------------------------------------------------
 	
 	public final function finish() {
 		parent.GotoState('Initialising');
 	}
-
-	//---------------------------------------------------
 	
 	public final function registerMod() {
 		
@@ -48,23 +37,16 @@ state BaseMod in SU_TinyBootstrapperManager
 	}
 }
 
-//---------------------------------------------------
-//-- State: (Empty) ---------------------------------
-//---------------------------------------------------
-
 state Empty in SU_TinyBootstrapperManager
-{
-	//---------------------------------------------------
-	
+{	
 	event OnEnterState(previous_state_name: name) 
 	{
 		super.OnEnterState(previous_state_name);
-		SU_Logger("SU_TinyBootstrapperManager Entered state [Empty]", false);
+		SUTB_Logger(
+			"SU_TinyBootstrapperManager Entered state [Empty]", false);
 		
 		this.Empty_main();
 	}
-
-	//---------------------------------------------------
 	
 	entry function Empty_main() 
 	{
@@ -73,21 +55,16 @@ state Empty in SU_TinyBootstrapperManager
 	}
 }
 
-//---------------------------------------------------
-//-- State: (Initialising) --------------------------
-//---------------------------------------------------
-
 state Initialising in SU_TinyBootstrapperManager 
 {
 	event OnEnterState(previous_state_name: name) 
 	{
 		super.OnEnterState(previous_state_name);
-		SU_Logger("SU_TinyBootstrapperManager Entered state [Initialising]", false);
+		SUTB_Logger(
+			"SU_TinyBootstrapperManager Entered state [Initialising]", false);
 		
 		this.Initialising_main();
 	}
-
-	//---------------------------------------------------
 	
 	entry function Initialising_main() 
 	{
@@ -99,28 +76,21 @@ state Initialising in SU_TinyBootstrapperManager
 	}
 }
 
-//---------------------------------------------------
-//-- State: (Waiting) -------------------------------
-//---------------------------------------------------
-
 state Waiting in SU_TinyBootstrapperManager 
 {
 	event OnEnterState(previous_state_name: name) 
 	{
 		super.OnEnterState(previous_state_name);
-		SU_Logger("SU_TinyBootstrapperManager Entered state [Waiting]", false);
+		SUTB_Logger(
+			"SU_TinyBootstrapperManager Entered state [Waiting]", false);
 		
 		this.Waiting_main(previous_state_name);
 	}
-
-	//---------------------------------------------------
 	
 	entry function Waiting_main(previous_state_name: name) 
 	{
 		this.startProcessingLastState();
 	}
-
-	//---------------------------------------------------
 	
 	function startProcessingLastState() {
 		var last_state: name;
@@ -135,7 +105,3 @@ state Waiting in SU_TinyBootstrapperManager
 		parent.GotoState(last_state);
 	}
 }
-
-//---------------------------------------------------
-//-- End Of Code ------------------------------------
-//---------------------------------------------------

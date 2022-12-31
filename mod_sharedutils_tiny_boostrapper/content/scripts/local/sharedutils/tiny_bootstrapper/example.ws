@@ -10,28 +10,18 @@
  * you must use unique names.
  */ 
 
-//---------------------------------------------------
-//-- State: (Example) -------------------------------
-//---------------------------------------------------
-
 state MyBootstrappedMod in SU_TinyBootstrapperManager extends BaseMod
 {
 	public function getTag(): name
 	{
 		return 'MyBootstrappedMod';
 	}
-
-	//---------------------------------------------------
 	
 	public function getMod(): SU_BaseBootstrappedMod
 	{
 		return new MyBootstrappedMod in parent;
 	}
 }
-
-//---------------------------------------------------
-//-- Class: (Example) -------------------------------
-//---------------------------------------------------
 
 class MyBootstrappedMod extends SU_BaseBootstrappedMod 
 {
