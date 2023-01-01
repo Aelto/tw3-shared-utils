@@ -6,6 +6,13 @@ class SU_MapPin {
    var tag: String;
 
   /**
+   * when set to true the map pin will appear under the 'Quests' label
+   * on the world map filter pane.
+   */
+   var isQuest: bool;
+   default isQuest = false;
+   
+  /**
    * represents the position of the pin, only X and Y values matter as the map
    * is in 2D.
    */
@@ -66,7 +73,8 @@ class SU_MapPin {
     _type: String,
     _radius: float,
     _region: String,
-    _appears_on_minimap: bool
+    _appears_on_minimap: bool,
+	_isQuest: bool
   ): SU_MapPin {
     this.tag = _tag;
     this.position = _position;
@@ -76,6 +84,7 @@ class SU_MapPin {
     this.radius = _radius;
     this.region = _region;
     this.appears_on_minimap = _appears_on_minimap;
+	this.isQuest = _isQuest;
 
     return this;
   }
@@ -128,7 +137,7 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
     flash_object.SetMemberFlashString("type", current_pin.type);
     flash_object.SetMemberFlashNumber("radius", RoundF(current_pin.radius));
 
-    flash_object.SetMemberFlashBool("isQuest", false);
+    flash_object.SetMemberFlashBool("isQuest", current_pin.isQuest);
     flash_object.SetMemberFlashBool("isPlayer", false);
     flash_object.SetMemberFlashNumber("rotation", 0);
 
