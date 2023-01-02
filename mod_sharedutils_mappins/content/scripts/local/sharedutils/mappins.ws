@@ -90,7 +90,7 @@ class SU_MapPin {
   }
 }
 
-function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage) {
+function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage, shown_area: EAreaName) {
   var flash_object: CScriptedFlashObject;
   var custom_pins: array<SU_MapPin>;
   var current_pin: SU_MapPin;
@@ -124,7 +124,7 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
     }
 
     // the player is not in the right region, we skip the pin.
-    if (pin_region != region) {
+    if (pin_region != region || pin_region != AreaTypeToName(shown_area)) {
       continue;
     }
 
