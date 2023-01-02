@@ -430,8 +430,8 @@ class CR4MapMenu extends CR4MenuBase
 				UpdateUserMapPin( i, flashArray );
 			}
 
-      // sharedutils - mappins - BEGIN
-			SU_updateCustomMapPins(flashArray, GetMenuFlashValueStorage());
+			// sharedutils - mappins - BEGIN
+			if (m_shownArea == m_currentArea) { SU_updateCustomMapPins(flashArray, GetMenuFlashValueStorage()); }
 			// sharedutils - mappins - END
 		}
 	}
