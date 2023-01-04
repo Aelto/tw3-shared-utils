@@ -239,22 +239,22 @@ exec function suhashmap() {
     map.insert(i, hm_fromInt(i));
   }
 
-  // NLOG("map has " + map.buckets_count + " buckets");
+  SULOG("map has " + map.buckets_count + " buckets");
 
   for (i = 0; i < map.buckets.Size(); i += 1) {
-    // NLOG("map bucket[" + i + "] has " + map.buckets[i].items.Size() + " items");
+    SULOG("map bucket[" + i + "] has " + map.buckets[i].items.Size() + " items");
   }
 
   result = (SU_HashMapValueString)map.get(23490);
 
   if (result) {
-    NLOG(result.value);
+    SULOG(result.value);
   }
 
   result = (SU_HashMapValueString)map.get(9045);
 
   if (result) {
-    NLOG(result.value);
+    SULOG(result.value);
   }
 }
 
