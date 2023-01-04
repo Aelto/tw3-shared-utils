@@ -6,6 +6,13 @@ class SU_MapPin {
    var tag: String;
 
   /**
+   * when set to true the map pin will appear under the 'Quests' label
+   * on the world map filter pane.
+   */
+   var isQuest: bool;
+   default isQuest = false;
+   
+  /**
    * represents the position of the pin, only X and Y values matter as the map
    * is in 2D.
    */
@@ -25,17 +32,19 @@ class SU_MapPin {
 
   /**
    * The type of the pin, it changes the icon of the pin.
-   * Here is a list of all available types:
-   * - QuestReturn
-   * - MonsterQuest
-   * - QuestGiverStory
-   * - QuestGiverChapter
-   * - QuestGiverSide
-   * - TreasureQuest
+   * A full list of available pins can be found at the bottom of this script.
    */
   var type: String;
   default type = "MonsterQuest";
 
+  /**
+   * The filtered type of the pin, this is the filter that the map pin will 
+   * fall under, it is best to try use something nothing else is like "QuestReturn".
+   * Using a common type will group your pins together with them.
+   */
+  var filteredtype: String;
+  default filteredtype = "QuestReturn";
+  
   /**
    * The radius of the quest on the map, it controls the radius of the yellow,
    * low opacity circle around the marker.
@@ -64,74 +73,66 @@ class SU_MapPin {
     _description: String,
     _label: String,
     _type: String,
+	_filteredtype: string,
     _radius: float,
     _region: String,
-    _appears_on_minimap: bool
+    _appears_on_minimap: bool,
+	_isQuest: bool
   ): SU_MapPin {
     this.tag = _tag;
     this.position = _position;
     this.description = _description;
     this.label = _label;
     this.type = _type;
+	this.filteredtype = _filteredtype;
     this.radius = _radius;
     this.region = _region;
     this.appears_on_minimap = _appears_on_minimap;
+	this.isQuest = _isQuest;
 
     return this;
   }
 }
 
-function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage) {
+function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage, shown_area: EAreaName) {
   var flash_object: CScriptedFlashObject;
   var custom_pins: array<SU_MapPin>;
   var current_pin: SU_MapPin;
-  var pin_region: String;
-  var region: String;
+  var region, shown_region: String;
   var i: int;
 
   custom_pins = thePlayer.customMapPins;
 
-  region = AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea());
-
-  // this is done to sub regions into the same region. Prolog or ProloWinter are
-  // both White Orchard. And noMansLand and Novigrad are both Velen.
-  if (region == "prolog_village_winter") {
-    region = "prolog_village";
-  }
-  if (region == "novigrad") {
-    region = "no_mans_land";
-  }
+  region = SUH_getCurrentRegion();
+  shown_region = AreaTypeToName(shown_area);
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
     current_pin = custom_pins[i];
-
-    pin_region = current_pin.region;
-
-    if (pin_region == "prolog_village_winter") {
-      pin_region = "prolog_village";
-    }
-    if (pin_region == "novigrad") {
-      pin_region = "no_mans_land";
-    }
-
-    // the player is not in the right region, we skip the pin.
-    if (pin_region != region) {
+	
+    // the player is not in the right region or right map view, we skip the pin.
+	
+	if (current_pin.region != region && current_pin.region != shown_region) {
       continue;
     }
 
     flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
-    flash_object.SetMemberFlashUInt("id", NameToFlashUInt('User'));
+	flash_object.SetMemberFlashString("type", current_pin.type);
+	flash_object.SetMemberFlashString("filteredType", current_pin.filteredtype);
+	flash_object.SetMemberFlashString("label", current_pin.label);
+	flash_object.SetMemberFlashString("description", current_pin.description);
     flash_object.SetMemberFlashNumber("posX", current_pin.position.X);
     flash_object.SetMemberFlashNumber("posY", current_pin.position.Y);
-    flash_object.SetMemberFlashString("description", current_pin.description);
-    flash_object.SetMemberFlashString("label", current_pin.label);
-    flash_object.SetMemberFlashString("type", current_pin.type);
     flash_object.SetMemberFlashNumber("radius", RoundF(current_pin.radius));
-
-    flash_object.SetMemberFlashBool("isQuest", false);
+	flash_object.SetMemberFlashBool("isQuest", current_pin.isQuest);
+    
+	//Constants - Should not be modified from these values for our purposes.
+	flash_object.SetMemberFlashUInt("id", NameToFlashUInt('User'));
+	flash_object.SetMemberFlashNumber("rotation", 0);
     flash_object.SetMemberFlashBool("isPlayer", false);
-    flash_object.SetMemberFlashNumber("rotation", 0);
-
+	flash_object.SetMemberFlashBool("isUserPin", false);
+	flash_object.SetMemberFlashBool("highlighted", false);
+	flash_object.SetMemberFlashBool("tracked", false);
+	flash_object.SetMemberFlashBool("hidden", false);
     flash_array.PushBackFlashObject(flash_object);
   }
 }
@@ -313,3 +314,121 @@ function SU_removeMinimapPin(old_index: int) {
     }
   }
 }
+
+/*
+"RoadSign"
+"Harbor"
+"NoticeBoardFull"
+"NoticeBoard"
+"PlayerStash"
+"PlayerStashDiscoverable"
+"Horse"
+"StoryQuest"
+"ChapterQuest"
+"SideQuest"
+"MonsterQuest"
+"TreasureQuest"
+"QuestReturn"
+"HorseRace"
+"NonQuestHorseRace"
+"BoatRace"
+"QuestBelgard"
+"QuestCoronata"
+"QuestVermentino"
+"QuestAvailable"
+"QuestAvailableHoS"
+"QuestAvailableBaW"
+"Entrance"
+"NotDiscoveredPOI"
+"NotDiscoveredPOI_1"
+"NotDiscoveredPOI_2"
+"NotDiscoveredPOI_3"
+"MonsterNest"
+"MonsterNest_1"
+"MonsterNest_2"
+"MonsterNest_3"
+"MonsterNestDisabled"
+"TreasureHuntMappin"
+"TreasureHuntMappin_1"
+"TreasureHuntMappin_2"
+"TreasureHuntMappin_3"
+"TreasureHuntMappinDisabled"
+"SpoilsOfWar"
+"SpoilsOfWar_1"
+"SpoilsOfWar_2"
+"SpoilsOfWar_3"
+"SpoilsOfWarDisabled"
+"BanditCamp"
+"BanditCamp_1"
+"BanditCamp_2"
+"BanditCamp_3"
+"BanditCampDisabled"
+"BanditCampfire"
+"BanditCampfire_1"
+"BanditCampfire_2"
+"BanditCampfire_3"
+"BanditCampfireDisabled"
+"BossAndTreasure"
+"BossAndTreasure_1"
+"BossAndTreasure_2"
+"BossAndTreasure_3"
+"BossAndTreasureDisabled"
+"Contraband"
+"Contraband_1"
+"Contraband_2"
+"Contraband_3"
+"ContrabandDisabled"
+"ContrabandShip"
+"ContrabandShip_1"
+"ContrabandShip_2"
+"ContrabandShip_3"
+"ContrabandShipDisabled"
+"RescuingTown"
+"RescuingTown_1"
+"RescuingTown_2"
+"RescuingTown_3"
+"RescuingTownDisabled"
+"DungeonCrawl"
+"DungeonCrawl_1"
+"DungeonCrawl_2"
+"DungeonCrawl_3"
+"DungeonCrawlDisabled"
+"Hideout"
+"HideoutDisabled"
+"InfestedVineyard"
+"InfestedVineyard_1"
+"InfestedVineyard_2"
+"InfestedVineyard_3"
+"InfestedVineyardDisabled"
+"Plegmund"
+"WineContract"
+"KnightErrant"
+"SignalingStake"
+"Boat"
+"Shopkeeper"
+"Archmaster"
+"Blacksmith"
+"Armorer"
+"Hairdresser"
+"Alchemic"
+"Herbalist"
+"Innkeeper"
+"Enchanter"
+"Prostitute"
+"Hairdresser"
+"Torch"
+"WineMerchant"
+"DyeMerchant"
+"Cammerlengo"
+"PlaceOfPower"
+"PlaceOfPower_1"
+"PlaceOfPower_2"
+"PlaceOfPower_3"
+"PlaceOfPowerDisabled"
+"Whetstone"
+"GrindStone"
+"ArmorRepairTable"
+"AlchemyTable"
+"MutagenDismantle"
+"Bookshelf"
+*/
