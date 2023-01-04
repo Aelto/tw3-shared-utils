@@ -9,8 +9,8 @@ class SU_MapPin {
    * when set to true the map pin will appear under the 'Quests' label
    * on the world map filter pane.
    */
-   var isQuest: bool;
-   default isQuest = false;
+   var is_quest: bool;
+   default is_quest = false;
    
   /**
    * represents the position of the pin, only X and Y values matter as the map
@@ -42,8 +42,8 @@ class SU_MapPin {
    * fall under, it is best to try use something nothing else is like "QuestReturn".
    * Using a common type will group your pins together with them.
    */
-  var filteredtype: String;
-  default filteredtype = "QuestReturn";
+  var filtered_type: String;
+  default filtered_type = "QuestReturn";
   
   /**
    * The radius of the quest on the map, it controls the radius of the yellow,
@@ -73,22 +73,22 @@ class SU_MapPin {
     _description: String,
     _label: String,
     _type: String,
-	_filteredtype: string,
+  _filtered_type: string,
     _radius: float,
     _region: String,
     _appears_on_minimap: bool,
-	_isQuest: bool
+  _is_quest: bool
   ): SU_MapPin {
     this.tag = _tag;
     this.position = _position;
     this.description = _description;
     this.label = _label;
     this.type = _type;
-	this.filteredtype = _filteredtype;
+    this.filtered_type = _filtered_type;
     this.radius = _radius;
     this.region = _region;
     this.appears_on_minimap = _appears_on_minimap;
-	this.isQuest = _isQuest;
+    this.is_quest = _is_quest;
 
     return this;
   }
@@ -108,31 +108,31 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
     current_pin = custom_pins[i];
-	
+  
     // the player is not in the right region or right map view, we skip the pin.
-	
-	if (current_pin.region != region && current_pin.region != shown_region) {
-      continue;
-    }
+  
+  if (current_pin.region != region && current_pin.region != shown_region) {
+    continue;
+  }
 
-    flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
-	flash_object.SetMemberFlashString("type", current_pin.type);
-	flash_object.SetMemberFlashString("filteredType", current_pin.filteredtype);
-	flash_object.SetMemberFlashString("label", current_pin.label);
-	flash_object.SetMemberFlashString("description", current_pin.description);
-    flash_object.SetMemberFlashNumber("posX", current_pin.position.X);
-    flash_object.SetMemberFlashNumber("posY", current_pin.position.Y);
-    flash_object.SetMemberFlashNumber("radius", RoundF(current_pin.radius));
-	flash_object.SetMemberFlashBool("isQuest", current_pin.isQuest);
+  flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
+  flash_object.SetMemberFlashString("type", current_pin.type);
+  flash_object.SetMemberFlashString("filteredType", current_pin.filtered_type);
+  flash_object.SetMemberFlashString("label", current_pin.label);
+  flash_object.SetMemberFlashString("description", current_pin.description);
+  flash_object.SetMemberFlashNumber("posX", current_pin.position.X);
+  flash_object.SetMemberFlashNumber("posY", current_pin.position.Y);
+  flash_object.SetMemberFlashNumber("radius", RoundF(current_pin.radius));
+  flash_object.SetMemberFlashBool("is_quest", current_pin.is_quest);
     
-	//Constants - Should not be modified from these values for our purposes.
-	flash_object.SetMemberFlashUInt("id", NameToFlashUInt('User'));
-	flash_object.SetMemberFlashNumber("rotation", 0);
-    flash_object.SetMemberFlashBool("isPlayer", false);
-	flash_object.SetMemberFlashBool("isUserPin", false);
-	flash_object.SetMemberFlashBool("highlighted", false);
-	flash_object.SetMemberFlashBool("tracked", false);
-	flash_object.SetMemberFlashBool("hidden", false);
+  //Constants - Should not be modified from these values for our purposes.
+  flash_object.SetMemberFlashUInt("id", NameToFlashUInt('User'));
+  flash_object.SetMemberFlashNumber("rotation", 0);
+  flash_object.SetMemberFlashBool("isPlayer", false);
+  flash_object.SetMemberFlashBool("isUserPin", false);
+  flash_object.SetMemberFlashBool("highlighted", false);
+  flash_object.SetMemberFlashBool("tracked", false);
+  flash_object.SetMemberFlashBool("hidden", false);
     flash_array.PushBackFlashObject(flash_object);
   }
 }
