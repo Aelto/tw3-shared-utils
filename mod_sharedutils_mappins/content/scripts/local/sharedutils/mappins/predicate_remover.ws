@@ -52,3 +52,17 @@ class SU_CustomPinRemoverPredicateTagIncludesSubstring extends SU_PredicateInter
     return StrContains(pin.tag, this.substring);
   }
 }
+
+class SU_CustomPinRemoverPredicateTagStartsWith extends SU_PredicateInterfaceRemovePin {
+  var prefix: String;
+
+  function predicate(pin: SU_MapPin): bool {
+    return StrContains(pin.tag, this.prefix);
+  }
+
+  function init(prefix: String): SU_CustomPinRemoverPredicateTagStartsWith {
+    this.prefix = prefix;
+
+    return this;
+  }
+}
