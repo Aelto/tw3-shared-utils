@@ -15,3 +15,8 @@ most utilities have an example folder and extensive comments explaining how to u
 - [Dialog choice](mod_sharedutils_dialogChoices/example/main.ws) lets you display the dialogue choice UI whenever you want, and allows you to detect when the player picks a choice
 - [Dialog hover](mod_sharedutils_dialogHover/) lets you detect when the player puts the cursor over a dialog choice
 - [Tiny Bootstrapper](mod_sharedutils_tiny_bootstrapper/) allows you to bootstrap a persistent class after every reload automatically and with no extra merge for the end-users
+
+## Shipping mods that depend on shared-utils
+The code available in this repository can be considered public domain. You may use, edit, and share this code with no restriction. Editing sharedutils rather than submitting PRs may be counter productive though, but you can freely ship the sharedutils alongside your own mods on any website even those with monetary rewards.
+
+The primary goal of the shared-utils package is to simplify mod making and reduce complexity while shipping mods by decreasing the amount of merge conflicts for the end-users.
