@@ -29,9 +29,8 @@ function SU_removeMinimapPin(old_index: int) {
 }
 
 function SU_removeCustomPinByPredicate(predicate_runner: SU_PredicateInterfaceRemovePin) {
-  var i: int;
   var current_pin: SU_MapPin;
-  var last_pin: SU_MapPin;
+  var i: int;
   
   i = thePlayer.customMapPins.Size();
   while (i >= 0) {
