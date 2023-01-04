@@ -73,11 +73,11 @@ class SU_MapPin {
     _description: String,
     _label: String,
     _type: String,
-  _filtered_type: string,
+    _filtered_type: string,
     _radius: float,
     _region: String,
     _appears_on_minimap: bool,
-  _is_quest: bool
+    _is_quest: bool
   ): SU_MapPin {
     this.tag = _tag;
     this.position = _position;
@@ -110,29 +110,28 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
     current_pin = custom_pins[i];
   
     // the player is not in the right region or right map view, we skip the pin.
-  
-  if (current_pin.region != region && current_pin.region != shown_region) {
-    continue;
-  }
+    if (current_pin.region != region && current_pin.region != shown_region) {
+      continue;
+    }
 
-  flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
-  flash_object.SetMemberFlashString("type", current_pin.type);
-  flash_object.SetMemberFlashString("filteredType", current_pin.filtered_type);
-  flash_object.SetMemberFlashString("label", current_pin.label);
-  flash_object.SetMemberFlashString("description", current_pin.description);
-  flash_object.SetMemberFlashNumber("posX", current_pin.position.X);
-  flash_object.SetMemberFlashNumber("posY", current_pin.position.Y);
-  flash_object.SetMemberFlashNumber("radius", RoundF(current_pin.radius));
-  flash_object.SetMemberFlashBool("is_quest", current_pin.is_quest);
-    
-  //Constants - Should not be modified from these values for our purposes.
-  flash_object.SetMemberFlashUInt("id", NameToFlashUInt('User'));
-  flash_object.SetMemberFlashNumber("rotation", 0);
-  flash_object.SetMemberFlashBool("isPlayer", false);
-  flash_object.SetMemberFlashBool("isUserPin", false);
-  flash_object.SetMemberFlashBool("highlighted", false);
-  flash_object.SetMemberFlashBool("tracked", false);
-  flash_object.SetMemberFlashBool("hidden", false);
+    flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
+    flash_object.SetMemberFlashString("type", current_pin.type);
+    flash_object.SetMemberFlashString("filteredType", current_pin.filtered_type);
+    flash_object.SetMemberFlashString("label", current_pin.label);
+    flash_object.SetMemberFlashString("description", current_pin.description);
+    flash_object.SetMemberFlashNumber("posX", current_pin.position.X);
+    flash_object.SetMemberFlashNumber("posY", current_pin.position.Y);
+    flash_object.SetMemberFlashNumber("radius", RoundF(current_pin.radius));
+    flash_object.SetMemberFlashBool("is_quest", current_pin.is_quest);
+      
+    //Constants - Should not be modified from these values for our purposes.
+    flash_object.SetMemberFlashUInt("id", NameToFlashUInt('User'));
+    flash_object.SetMemberFlashNumber("rotation", 0);
+    flash_object.SetMemberFlashBool("isPlayer", false);
+    flash_object.SetMemberFlashBool("isUserPin", false);
+    flash_object.SetMemberFlashBool("highlighted", false);
+    flash_object.SetMemberFlashBool("tracked", false);
+    flash_object.SetMemberFlashBool("hidden", false);
     flash_array.PushBackFlashObject(flash_object);
   }
 }
