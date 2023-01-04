@@ -57,10 +57,14 @@ class SU_MapPinsBuilder {
     // 1.
     // remove all pins that start with the supplied prefix if it exists
     if (this.tag_prefix != "") {
-      SU_removeCustomPinByPredicate(
-        (new SU_CustomPinRemoverPredicateTagStartsWith in this)
-          .init(this.tag_prefix)
-      );
+      SU_removeCustomPinByTagPrefix(this.tag_prefix);
+    }
+
+    // 1.1
+    // remove all pins that have the exact same tag than the supplied one if it
+    // exists
+    if (this.tag != "") {
+      SU_removeCustomPinByTag(this.tag);
     }
 
     // 2.
