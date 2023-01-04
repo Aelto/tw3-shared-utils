@@ -45,3 +45,6 @@ edit the `name="MyBoostrappedMod"` attribute so that it corresponds with your ne
 
 Bundle the mod/dlc and make a script mod with your state, launch the game, load a save
 and confirm the log entry in the log file.
+
+### Persistence
+If you wish to store data in between sessions or loading screens, the bootstrapped class that you create and which `extends SU_BaseBootstrappedMod` supports `saved var`iables. Meaning that you can mark any of its properties as `saved` and it will persist through reloads. This works for primitive types as well as complex ones like structs and classes. If a class is marked as saved then everything in it will be saved, no need to mark its properties as saved.
