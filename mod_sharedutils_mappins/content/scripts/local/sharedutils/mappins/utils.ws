@@ -64,8 +64,10 @@ class SU_CustomPinRemoverPredicatePositionEquals extends SU_PredicateInterfaceRe
   var position: Vector;
 
   function predicate(pin: SU_MapPin): bool {
-    return pin.position.X == this.position.X
-        && pin.position.Y == this.position.Y;
+    return VecDistanceSquared2D(
+      pin.position,
+      this.position
+    ) < MaxF(pin.radius * pin.radius, 5 * 5);
   }
 
   function init(position: Vector): SU_CustomPinRemoverPredicatePositionEquals {
