@@ -14,4 +14,4 @@ most utilities have an example folder and extensive comments explaining how to u
 - [Custom bossbar](mod_sharedutils_custombossbar/content/scripts/local/sharedutils/custombossbar/globals.ws) gives you three easy to use functions to use boss bars as progress bars
 - [Dialog choice](mod_sharedutils_dialogChoices/example/main.ws) lets you display the dialogue choice UI whenever you want, and allows you to detect when the player picks a choice
 - [Dialog hover](mod_sharedutils_dialogHover/) lets you detect when the player puts the cursor over a dialog choice
-- [Tiny Bootstrapper](mod_sharedutils_tinybootstrapper/) allows you to bootstrap a persistent class after every reload automatically and with no extra merge for the end-users
+- [Tiny Bootstrapper](mod_sharedutils_tiny_bootstrapper/) allows you to bootstrap a persistent class after every reload automatically and with no extra merge for the end-users
