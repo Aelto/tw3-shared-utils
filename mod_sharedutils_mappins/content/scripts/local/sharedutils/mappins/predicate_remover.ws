@@ -38,7 +38,6 @@ function SU_removeCustomPinByPredicate(predicate_runner: SU_PredicateInterfaceRe
 
     if (predicate_runner.predicate(current_pin)) {
       SU_removeCustomPinByIndex(i);
-      SU_removeMinimapPin(i);
     }
 
     i -= 1;
