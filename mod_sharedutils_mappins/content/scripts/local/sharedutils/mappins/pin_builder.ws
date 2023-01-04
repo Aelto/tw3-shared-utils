@@ -19,15 +19,15 @@ class SU_MapPinsBuilder {
     return this;
   }
 
-  public function pin(): SU_MapPinsBuilder {
+  public function pin(): SU_MapPinBuilder {
     // If a specific tag was supplied to the builder, all child pins inherit
     // that specific tag.
     if (this.tag != "") {
-      return (SU_MapPinBuilder in this).init(this)
+      return (new SU_MapPinBuilder in this).consume_pins_builder(this)
         .tag(this.tag);
     }
 
-    return (SU_MapPinBuilder in this).init(this);
+    return (new SU_MapPinBuilder in this).consume_pins_builder(this);
   }
 
   /**
@@ -70,6 +70,8 @@ class SU_MapPinsBuilder {
     // 2.
     // add the pins to the custom pins buffer
     for (i = 0; i < this.pins.Size(); i += 1) {
+      SULOG("Adding pin, "+ this.pins[i].tag + " - " + VecToString(this.pins[i].position));
+
       thePlayer.addCustomPin(this.pins[i]);
     }
 
@@ -89,19 +91,20 @@ class SU_MapPinBuilder {
   /**
    * Used to properly initialize the PinBuilder to safely construct a single pin
    */
-  public function new(): SU_MapPinBuilder {
-    this.pin = new SU_MapPin in this;
+  public function init(): SU_MapPinBuilder {
+    this.pin = new SU_MapPin in thePlayer;
 
-    return this;
+    return this
+      .region(SUH_getCurrentRegion());
   }
 
   /**
    * Internal function, do not use it.
    */
-  public function init(pins_builder: SU_MapPinsBuilder): SU_MapPinBuilder {
+  public function consume_pins_builder(pins_builder: SU_MapPinsBuilder): SU_MapPinBuilder {
     this.pins_builder = pins_builder;
     
-    return this.new();
+    return this.init();
   }
 
   public function tag(tag: string): SU_MapPinBuilder {
