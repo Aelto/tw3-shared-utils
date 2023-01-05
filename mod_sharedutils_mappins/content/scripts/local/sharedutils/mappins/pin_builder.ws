@@ -173,6 +173,18 @@ class SU_MapPinBuilder {
     return this;
   }
 
+  public function pointed_by_arrow(pointed_by_arrow: bool): SU_MapPinBuilder {
+    this.pin.pointed_by_arrow = pointed_by_arrow;
+
+    return this;
+  }
+ 
+  public function highlighted(highlighted: bool): SU_MapPinBuilder {
+    this.pin.highlighted = highlighted;
+
+    return this;
+  }
+  
   /**
    * Internal function, do not use it.
    * Consume `this` to add the inner SU_MapPin to the current SU_MapPinsBuilder.

@@ -62,10 +62,29 @@ class SU_MapPin {
    */
   var region: String;
 
+////////////////////////////////////////////////////////////////////////////////
+//                               Mini Map Options                             //
+////////////////////////////////////////////////////////////////////////////////
+  
   /**
    * Controls whether or not this mappin should appear on the player's minimap.
    */
   var appears_on_minimap: bool;
+  default appears_on_minimap = false;
+
+  /**
+   * Controls whether or not this mappin should have arrow pointers
+   * on the mini map border.
+   */  
+  var pointed_by_arrow: bool;
+  default pointed_by_arrow = true;
+
+  /**
+   * Controls whether or not this mappin's pointers should be highlighted
+   * on the mini map border.
+   */   
+  var highlighted: bool;
+  default highlighted = true;
 
   function init(
     _tag: String,
@@ -77,6 +96,8 @@ class SU_MapPin {
     _radius: float,
     _region: String,
     _appears_on_minimap: bool,
+	_pointed_by_arrow: bool,
+	_highlighted: bool,
     _is_quest: bool
   ): SU_MapPin {
     this.tag = _tag;
@@ -88,6 +109,8 @@ class SU_MapPin {
     this.radius = _radius;
     this.region = _region;
     this.appears_on_minimap = _appears_on_minimap;
+	this.pointed_by_arrow = _pointed_by_arrow;
+	this.highlighted = _highlighted;
     this.is_quest = _is_quest;
 
     return this;
