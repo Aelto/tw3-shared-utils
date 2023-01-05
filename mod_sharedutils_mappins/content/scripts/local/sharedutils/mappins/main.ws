@@ -73,11 +73,11 @@ function SU_updateMinimapPins() {
           FlashArgString("Enemy"), // tag
           FlashArgString("Enemy"), 
           FlashArgNumber(pin.radius), // radius
-          FlashArgBool(true), // can be pointed by arrows
+          FlashArgBool(pin.pointed_by_arrow), // can be pointed by arrows
           FlashArgInt(0), // priority
           FlashArgBool(true), // is quest pin
           FlashArgBool(false), // is user pin
-          FlashArgBool(true), // highlighted
+          FlashArgBool(pin.highlighted), // highlighted
         );
 
         m_MovePin.InvokeSelfFourArgs(
