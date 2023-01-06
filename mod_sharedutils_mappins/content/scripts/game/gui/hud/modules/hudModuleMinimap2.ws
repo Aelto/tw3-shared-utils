@@ -64,9 +64,6 @@ class CR4HudModuleMinimap2 extends CR4HudModuleBase
 		var manager : CCommonMapManager;
 		var flashModule : CScriptedFlashSprite;
 		var hud : CR4ScriptedHud;
-		
-		
-		var inGameConfigWrapper : CInGameConfigWrapper;
 
 		m_flashValueStorage = GetModuleFlashValueStorage();
 		m_anchorName = "mcAnchorMiniMap"; 
@@ -113,10 +110,10 @@ class CR4HudModuleMinimap2 extends CR4HudModuleBase
 		{
 			
 			
-			hud.UpdateHudConfig('Minimap2Module', true);		
+			hud.UpdateHudConfig('Minimap2Module', true);	
 			// sharedutils - mappins - BEGIN
 			SU_updateMinimapPins();
-			// sharedutils - mappins - END
+			// sharedutils - mappins - END			
 		}
 		
 		manager = theGame.GetCommonMapManager();
@@ -130,139 +127,10 @@ class CR4HudModuleMinimap2 extends CR4HudModuleBase
 				, HINT_WAYPOINTS_PATHFIND_TOLERANCE
 				, HINT_WAYPOINTS_MAX_COUNT );
 		}
-		
-		
-		inGameConfigWrapper = (CInGameConfigWrapper)theGame.GetInGameConfigWrapper();
-		minimapDuringFocusCombat = inGameConfigWrapper.GetVarValue('Hud', 'MinimapDuringFocusCombat');
-		
 	}
-	
-	
-	private var isInCombat : bool;
-	private var isInFocus : bool;
-	private var dlgPlaying : bool;
-	public function SetIsInDlg(dlg : bool)
-	{
-		if(!minimapDuringFocusCombat)
-			return;
-	
-		dlgPlaying = dlg;
-		
-		if(dlg)
-		{			
-			currentlyFading = false;
-			isFading = false;
-			SetEnabled(false);
-		}
-		else
-		{
-			currentlyFading = false;
-			isFading = false;
-		}
-	}
-	
-	public function SetIsInCombat(combat : bool)
-	{
-		isInCombat = combat;
-	}
-	
-	public function SetIsInFocus(focus : bool)
-	{
-		isInFocus = focus;
-	}
-	
-	private var minimapDuringFocusCombat : bool;
-	public function GetMinimapDuringFocusCombat() : bool
-	{
-		return minimapDuringFocusCombat;
-	}
-	
-	public function SetMinimapDuringFocusCombat(enable : bool)
-	{
-		var hud : CR4ScriptedHud;
-	
-		minimapDuringFocusCombat = enable;
-		if(!minimapDuringFocusCombat)
-		{
-			hud = (CR4ScriptedHud)theGame.GetHud();
-			if ( hud )
-				hud.UpdateHudConfig('Minimap2Module', true);	
-		}
-		else
-		{
-			fadeInTimer = 5.5;
-		}
-	}
-	
-	private var fadeInTimer : float;
-	private var isFading, currentlyFading : bool;
-	private var fadeOutTime : float;	default fadeOutTime = 0.3f;
-	private var fadeTime : float;
-	
-	private function FadeMinimapOut(dt : float)
-	{		
-		if(dlgPlaying)
-			return;
-	
-		fadeInTimer -= dt;
-		if(fadeInTimer > 0)
-			return;
-	
-		currentlyFading = true;
-		fadeTime -= dt;
-		
-		if(!theGame.IsDialogOrCutscenePlaying() && !theGame.IsFading())
-			GetModuleFlash().SetAlpha( 100 * MaxF( 0, fadeTime / fadeOutTime ) );
-		
-		if(fadeTime <= 0)
-		{
-			SetEnabled(false);
-			currentlyFading = false;
-			isFading = false;
-		}
-	}
-	
 	
 	event  OnTick( timeDelta : float )
 	{
-		
-		var hud : CR4ScriptedHud;		
-		var horseRacing, dlg : bool;
-		
-		horseRacing = false;
-
-		if(!dlgPlaying && minimapDuringFocusCombat)
-		{		
-			if(thePlayer.GetIsHorseRacing())
-				horseRacing = true;
-		
-			if(currentlyFading || (isFading && !isInFocus && !isInCombat && !horseRacing))
-			{
-				FadeMinimapOut(timeDelta);
-				UpdatePlayerPositionAndRotation( timeDelta );
-				
-			}		
-		
-			else if(!currentlyFading && (isInFocus || isInCombat || horseRacing))
-			{
-				hud = (CR4ScriptedHud)theGame.GetHud();
-				if ( hud )
-				{
-					hud.UpdateHudConfig('Minimap2Module', true);
-					fadeInTimer = 5.5f;
-					isFading = false;
-				}
-			}
-			else if (!isFading && GetEnabled())
-			{
-				isFading = true;
-				fadeTime = fadeOutTime;
-				FadeMinimapOut(timeDelta);
-				
-			}
-		}
-		
-	
 		UpdateZoom();
 		UpdatePlayerPositionAndRotation( timeDelta );
 		
