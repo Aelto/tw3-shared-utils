@@ -1,8 +1,8 @@
-function SUTB_getManager(): SU_TinyBootstrapperManager {
+function SUTB_getManager(player_input: CPlayerInput): SU_TinyBootstrapperManager {
 	var manager: SU_TinyBootstrapperManager;
 	var storage: SU_Storage;
 	
-	storage = SU_getStorage();
+	storage = SU_getStorageFromInput(player_input);
 	manager = (SU_TinyBootstrapperManager)storage.getItem("SU_TinyBootstrapperManager");
 
 	if (!manager) {
@@ -16,17 +16,17 @@ function SUTB_getManager(): SU_TinyBootstrapperManager {
 
 function SU_tinyBootstrapperInit(player_input: CPlayerInput)
 {
-	SUTB_getManager().init();
+	SUTB_getManager(player_input).init();
 }
 
 function SU_tinyBootstrapperStop(player_input: CPlayerInput) 
 {
-	SUTB_getManager().stopMods();
+	SUTB_getManager(player_input).stopMods();
 }
 
 function SUTB_getModByTag(tag: name): SU_BaseBootstrappedMod
 {
-	return SUTB_getManager().getModByTag(tag);
+	return SUTB_getManager(thePlayer.GetInputHandler()).getModByTag(tag);
 }
 
 function SUTB_Logger(message: string, optional informGUI: bool)
