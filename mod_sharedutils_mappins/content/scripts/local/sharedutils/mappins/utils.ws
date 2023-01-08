@@ -20,6 +20,22 @@ function SU_removeCustomPinByPosition(position: Vector) {
   );
 }
 
+function SUMP_getManager(): SUMP_Manager {
+	var manager: SUMP_Manager;
+	var storage: SU_Storage;
+	
+	storage = SU_getStorage();
+	manager = (SUMP_Manager)storage.getItem("SUMP_Manager");
+
+	if (!manager) {
+		manager = new SUMP_Manager in storage;
+
+		storage.setItem(manager);
+	}
+
+	return manager;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //       A series of prebuilt predicate removers that may be useful           //
 ////////////////////////////////////////////////////////////////////////////////
