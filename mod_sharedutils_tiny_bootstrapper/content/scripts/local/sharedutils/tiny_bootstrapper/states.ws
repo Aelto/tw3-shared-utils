@@ -25,8 +25,9 @@ state BaseMod in SU_TinyBootstrapperManager
 	}
 	
 	public final function registerMod() {
-		
-		var tag: name = this.getTag();
+		var tag: name;
+
+		tag = this.getTag();
 		parent.markModBootstrapped(tag);
 
 		if (parent.hasModWithTag(tag)) 
