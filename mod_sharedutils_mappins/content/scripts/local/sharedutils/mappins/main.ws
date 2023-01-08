@@ -104,3 +104,11 @@ function SUMP_addCustomPin(pin: SU_MapPin) {
 function SUMP_getCustomPins(): array<SU_MapPin> {
   return SUMP_getManager().mappins;
 }
+
+function SUMP_Logger(message: string, optional informGUI: bool) {
+	LogChannel('SUMP', message);
+	
+	if (informGUI) {
+		theGame.GetGuiManager().ShowNotification("SUMP: " + message, 5, true);
+	}
+}

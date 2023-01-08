@@ -29,7 +29,7 @@ function SUTB_getModByTag(tag: name): SU_BaseBootstrappedMod
 	return SUTB_getManager().getModByTag(tag);
 }
 
-function SUTB_Logger(message: string, informGUI: bool)
+function SUTB_Logger(message: string, optional informGUI: bool)
 {
 	LogChannel('SUTB', message);
 	

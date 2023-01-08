@@ -17,15 +17,24 @@ class SU_Storage {
   public function getItem(tag: string): SU_StorageItem {
     var i: int;
 
-    if (tag == "") {
+    SUST_Logger("SU_Storage::getItem(tag), tag = " + tag);
+
+    if (!this.isTagValid(tag)) {
+      SUST_Logger("SU_Storage::getItem(tag), invalid tag");
+
       return NULL;
     }
 
+    SUST_Logger("SU_Storage::getItem(tag), items.Size() = " + this.items.Size());
     for (i = 0; i < this.items.Size(); i += 1) {
       if (this.items[i].tag == tag) {
+        SUST_Logger("SU_Storage::getItem(tag), matching item found, i = " + i);
+
         return this.items[i];
       }
     }
+
+    SUST_Logger("SU_Storage::getItem(tag), no matching item found");
 
     return NULL;
   }
