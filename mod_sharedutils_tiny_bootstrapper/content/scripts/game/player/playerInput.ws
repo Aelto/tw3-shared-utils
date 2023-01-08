@@ -11,7 +11,6 @@ class CPlayerInput
 	
 	private var altSignCasting : bool; 
 	
-	public saved var SU_tiny_bootstrapper_manager: SU_TinyBootstrapperManager; // SU - tiny_bootstrapper
 	private saved 	var actionLocks 	: array<array<SInputActionLock>>;		
 	
 	private	var	totalCameraPresetChange : float;		default totalCameraPresetChange = 0.0f;

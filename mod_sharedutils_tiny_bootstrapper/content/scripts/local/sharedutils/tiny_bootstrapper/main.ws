@@ -1,22 +1,32 @@
+function SUTB_getManager(): SU_TinyBootstrapperManager {
+	var manager: SU_TinyBootstrapperManager;
+	var storage: SU_Storage;
+	
+	storage = SU_getStorage();
+	manager = (SU_TinyBootstrapperManager)storage.getItem("SU_TinyBootstrapperManager");
+
+	if (!manager) {
+		manager = new SU_TinyBootstrapperManager in storage;
+
+		storage.setItem(manager);
+	}
+
+	return manager;
+}
+
 function SU_tinyBootstrapperInit(player_input: CPlayerInput)
 {
-	if (!player_input.SU_tiny_bootstrapper_manager) 
-	{
-		player_input.SU_tiny_bootstrapper_manager
-			= new SU_TinyBootstrapperManager in player_input;
-	}
-	player_input.SU_tiny_bootstrapper_manager.init();
+	SUTB_getManager().init();
 }
 
 function SU_tinyBootstrapperStop(player_input: CPlayerInput) 
 {
-	player_input.SU_tiny_bootstrapper_manager.stopMods();
+	SUTB_getManager().stopMods();
 }
 
 function SUTB_getModByTag(tag: name): SU_BaseBootstrappedMod
 {
-	return thePlayer.GetInputHandler()
-		.SU_tiny_bootstrapper_manager.getModByTag(tag);
+	return SUTB_getManager().getModByTag(tag);
 }
 
 function SUTB_Logger(message: string, informGUI: bool)
