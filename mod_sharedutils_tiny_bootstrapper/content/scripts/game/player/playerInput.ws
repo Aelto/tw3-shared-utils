@@ -172,6 +172,7 @@ class CPlayerInput
 			theInput.RegisterListener( this, 'OnDbgTeleportToPin', 'Debug_TeleportToPin' );
 		}
 		
+		
 		SU_tinyBootstrapperInit(this);  // SU - tiny_bootstrapper
 		theInput.RegisterListener( this, 'OnChangeCameraPreset', 'CameraPreset' );
 		theInput.RegisterListener( this, 'OnChangeCameraPresetByMouseWheel', 'CameraPresetByMouseWheel' );
