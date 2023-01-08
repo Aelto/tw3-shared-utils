@@ -21,7 +21,7 @@ state BaseMod in SU_TinyBootstrapperManager
 	}
 	
 	public final function finish() {
-		parent.GotoState('Initialising');
+		parent.GotoState('Waiting');
 	}
 	
 	public final function registerMod() {

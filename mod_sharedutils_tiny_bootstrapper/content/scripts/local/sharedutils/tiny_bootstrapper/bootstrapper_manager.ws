@@ -20,7 +20,7 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		this.states_to_process = theGame.GetDefinitionsManager()
 			.GetItemsWithTag('SU_TinyBootstrapperManager');
 		
-		this.GotoState('Waiting');
+		this.GotoState('Initialising');
 		return this;
 	}
 	
