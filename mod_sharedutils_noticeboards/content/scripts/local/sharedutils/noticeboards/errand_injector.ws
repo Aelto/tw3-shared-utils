@@ -123,28 +123,6 @@ function SU_removeErrandInjectorByTag(board: W3NoticeBoard, tag: String) {
   }
 }
 
-function SU_removeErrandInjectorByPredicate(board: W3NoticeBoard, predicate_runner: SU_PredicateInterfaceRemovePin) {
-  var i: int;
-  var current_pin: SU_MapPin;
-  var last_pin: SU_MapPin;
-  
-  for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
-    current_pin = thePlayer.customMapPins[i];
-
-    if (!predicate_runner.predicate(current_pin)) {
-      continue;
-    }
-
-    if (i == thePlayer.customMapPins.Size() - 1) {
-      thePlayer.customMapPins.PopBack();
-      continue;
-    }
-
-    thePlayer.customMapPins.Erase(i);
-    i -= 1;
-  }
-}
-
 /**
  * This is an abstract class that acts as an interface for any function that
  * requires some sort of predicate. Because the language doesn't support lambdas
