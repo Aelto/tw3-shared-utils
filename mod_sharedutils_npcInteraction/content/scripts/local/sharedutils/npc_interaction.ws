@@ -48,7 +48,9 @@ abstract class SU_InteractionEventListener {
  * Refer to the examples in the example folder of the mod to see how to make a
  * global event listener.
  */
-statemachine class SU_NpcInteraction_GlobalEventHandler {
+statemachine class SU_NpcInteraction_GlobalEventHandler extends SU_StorageItem {
+  default tag = "SU_NpcInteraction_GlobalEventHandler";
+
   /**
    * A queue of states to process, read the `onInteraction` comments to learn
    * more.
@@ -147,18 +149,21 @@ state Waiting in SU_NpcInteraction_GlobalEventHandler {
 
 function SU_NpcInteraction_runAllInteractionListeners(actionName: string, activator: CEntity, receptor: CEntity): bool {
   var current_event_listener: SU_InteractionEventListener;
+  var handler: SU_NpcInteraction_GlobalEventHandler;
   var persistent_entity: CPeristentEntity;
   var should_event_continue: bool;
   var player_input: CPlayerInput;
   var i: int;
 
-  player_input = thePlayer.GetInputHandler();
-  if (!player_input.global_event_handler) {
-    player_input.global_event_handler = (new SU_NpcInteraction_GlobalEventHandler in theInput)
+  handler = (SU_NpcInteraction_GlobalEventHandler)SU_getStorage().getItem("SU_NpcInteraction_GlobalEventHandler");
+  if (!handler) {
+    handler = (new SU_NpcInteraction_GlobalEventHandler in theInput)
       .init();
+
+    SU_getStorage().setItem(handler);
   }
 
-  player_input.global_event_handler.onInteraction(
+  handler.onInteraction(
     actionName,
     activator,
     receptor
