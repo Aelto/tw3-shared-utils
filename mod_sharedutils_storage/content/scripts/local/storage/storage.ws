@@ -75,6 +75,10 @@ class SU_Storage {
     return true;
   }
 
+  public function removeItem(item: SU_StorageItem) {
+    this.items.Remove(item);
+  }
+
   private function setItemAt(index: int, item: SU_StorageItem): bool {
     // out of bound
     if (index < 0 || index >= this.items.Size()) {
