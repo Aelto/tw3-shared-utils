@@ -7,7 +7,7 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
   var region, shown_region: String;
   var i: int;
 
-  custom_pins = thePlayer.customMapPins;
+  custom_pins = SUMP_getCustomPins();
 
   region = SUH_getCurrentRegion();
   shown_region = AreaTypeToName(shown_area);
@@ -48,6 +48,7 @@ function SU_updateMinimapPins() {
   var m_AddMapPin : CScriptedFlashFunction;
   var m_MovePin : CScriptedFlashFunction;
   var flashModule : CScriptedFlashSprite;
+  var custom_pins: array<SU_MapPin>;
   var hud : CR4ScriptedHud;
   var pin: SU_MapPin;
   var i: int;
@@ -61,8 +62,10 @@ function SU_updateMinimapPins() {
       m_AddMapPin = flashModule.GetMemberFlashFunction( "AddMapPin" );
       m_MovePin = flashModule.GetMemberFlashFunction( "MoveMapPin" );
 
-      for (i = 0; i < thePlayer.customMapPins.Size(); i += 1) {
-        pin = thePlayer.customMapPins[i];
+      custom_pins = SUMP_getCustomPins();
+
+      for (i = 0; i < custom_pins.Size(); i += 1) {
+        pin = custom_pins[i];
 
         if (!pin.appears_on_minimap) {
           continue;
@@ -89,4 +92,23 @@ function SU_updateMinimapPins() {
       }
     }
   }
+}
+
+function SUMP_addCustomPin(pin: SU_MapPin) {
+  var manager: SUMP_Manager;
+
+  manager = SUMP_getManager();
+  manager.mappins.PushBack(pin);
+}
+
+function SUMP_getCustomPins(): array<SU_MapPin> {
+  return SUMP_getManager().mappins;
+}
+
+function SUMP_Logger(message: string, optional informGUI: bool) {
+	LogChannel('SUMP', message);
+	
+	if (informGUI) {
+		theGame.GetGuiManager().ShowNotification("SUMP: " + message, 5, true);
+	}
 }

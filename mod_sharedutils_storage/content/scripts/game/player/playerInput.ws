@@ -11,6 +11,8 @@ class CPlayerInput
 	
 	private var altSignCasting : bool; 
 	
+
+	public saved var SU_storage: SU_Storage; // SU - Storage
 	private saved 	var actionLocks 	: array<array<SInputActionLock>>;		
 	
 	private	var	totalCameraPresetChange : float;		default totalCameraPresetChange = 0.0f;
@@ -172,8 +174,6 @@ class CPlayerInput
 			theInput.RegisterListener( this, 'OnDbgTeleportToPin', 'Debug_TeleportToPin' );
 		}
 		
-		
-		SU_tinyBootstrapperInit(this);  // SU - tiny_bootstrapper
 		theInput.RegisterListener( this, 'OnChangeCameraPreset', 'CameraPreset' );
 		theInput.RegisterListener( this, 'OnChangeCameraPresetByMouseWheel', 'CameraPresetByMouseWheel' );
 		theInput.RegisterListener( this, 'OnMeditationAbort', 'MeditationAbort');
@@ -187,7 +187,6 @@ class CPlayerInput
 	
 	function Destroy()
 	{
-		SU_tinyBootstrapperStop(this); // SU - tiny_bootstrapper
 	}
 	
 	

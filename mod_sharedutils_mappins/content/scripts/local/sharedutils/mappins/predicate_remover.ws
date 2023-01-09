@@ -1,7 +1,11 @@
 
 
 function SU_removeCustomPinByIndex(index: int) {
-  thePlayer.customMapPins.Erase(index);
+  var manager: SUMP_Manager;
+
+  manager = SUMP_getManager();
+  manager.mappins.Erase(index);
+
   SU_removeMinimapPin(index);
 }
 
@@ -29,12 +33,14 @@ function SU_removeMinimapPin(old_index: int) {
 }
 
 function SU_removeCustomPinByPredicate(predicate_runner: SU_PredicateInterfaceRemovePin) {
+  var custom_pins: array<SU_MapPin>;
   var current_pin: SU_MapPin;
   var i: int;
   
-  i = thePlayer.customMapPins.Size();
+  custom_pins = SUMP_getCustomPins();
+  i = custom_pins.Size();
   while (i >= 0) {
-    current_pin = thePlayer.customMapPins[i];
+    current_pin = custom_pins[i];
 
     if (predicate_runner.predicate(current_pin)) {
       SU_removeCustomPinByIndex(i);

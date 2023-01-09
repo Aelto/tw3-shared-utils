@@ -72,7 +72,7 @@ class SU_MapPinsBuilder {
     for (i = 0; i < this.pins.Size(); i += 1) {
       SULOG("Adding pin, "+ this.pins[i].tag + " - " + VecToString(this.pins[i].position));
 
-      thePlayer.addCustomPin(this.pins[i]);
+      SUMP_addCustomPin(this.pins[i]);
     }
 
     // 3.

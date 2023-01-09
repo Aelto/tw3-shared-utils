@@ -1,5 +1,7 @@
-statemachine class SU_TinyBootstrapperManager
+statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 {
+	default tag = "SU_TinyBootstrapperManager";
+
 	// Used internally by the manager to store the list of states 
 	// that will bootstrap the mods.
 	protected var states_to_process: array<name>;
@@ -18,7 +20,7 @@ statemachine class SU_TinyBootstrapperManager
 		this.states_to_process = theGame.GetDefinitionsManager()
 			.GetItemsWithTag('SU_TinyBootstrapperManager');
 		
-		this.GotoState('Waiting');
+		this.GotoState('Initialising');
 		return this;
 	}
 	
