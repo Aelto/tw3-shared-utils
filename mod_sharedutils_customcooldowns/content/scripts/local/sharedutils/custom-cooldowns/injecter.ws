@@ -27,6 +27,7 @@ function SU_injectCustomCooldowns(out flash_array: CScriptedFlashArray, value_st
 }
 
 function SU_updateCustomCooldownsDuration(offset: int, delta: float, m_fxSetPercentSFF : CScriptedFlashFunction, module: CR4HudModuleBuffs) {
+  var should_refresh_interface: bool;
   var current_cooldown: SU_Cooldown;
   var seconds: float;
   var time: float;
@@ -34,10 +35,19 @@ function SU_updateCustomCooldownsDuration(offset: int, delta: float, m_fxSetPerc
 
   seconds = theGame.GetEngineTimeAsSeconds();
 
+  should_refresh_interface = false;
   for (i = 0; i < thePlayer.custom_cooldowns.Size(); i += 1) {
     thePlayer.custom_cooldowns[i].tick(delta, seconds);
 
     current_cooldown = thePlayer.custom_cooldowns[i];
+
+    if (!current_cooldown) {
+      thePlayer.custom_cooldowns.EraseFast(i);
+      should_refresh_interface = true;
+      i -= 1;
+
+      continue;
+    }
 
     m_fxSetPercentSFF.InvokeSelfFourArgs(
       FlashArgNumber(i + offset),
@@ -49,5 +59,9 @@ function SU_updateCustomCooldownsDuration(offset: int, delta: float, m_fxSetPerc
     if (current_cooldown.shouldEnd() && current_cooldown.onComplete()) {
       SU_removeCustomCooldown(current_cooldown);
     }
+  }
+
+  if (should_refresh_interface) {
+    SU_refreshCustomCooldownInterface(SU_getBuffsModule());
   }
 }
