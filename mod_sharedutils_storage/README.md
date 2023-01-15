@@ -7,7 +7,7 @@ to use the storage, greatly reducing the amount of merges created by the modules
 # Using it
 Start by creating the type that will hold your data:
 ```js
-class MyData extends SU_StorageEntry {
+class MyData extends SU_StorageItem {
   default tag = "MyData";
 
   var anything: string;
@@ -18,7 +18,7 @@ make yourself a function to retrieve and create the data if it's the first retri
 function getMyData(): MyData {
   var data: MyData;
 
-  data = SU_getStorage().getItem("MyData");
+  data = (MyData)SU_getStorage().getItem("MyData");
   // create the data if it's the first time:
   if (!data) {
     data = new MyData in thePlayer;
