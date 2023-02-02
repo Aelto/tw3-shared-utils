@@ -7,6 +7,14 @@ function SU_removeGlossaryEntry(glossary_entry: SU_GlossaryEntry) {
   SUG_getManager().removeEntry(glossary_entry);
 }
 
+function SU_removeAllGlossaryEntriesByPrefix(tag_prefix: name) {
+  SUG_getManager().removeEntriesByPrefix(tag_prefix);
+}
+
+function SU_removeAllGlossaryEntriesContaining(tag_segment: name) {
+  SUG_getManager().removeEntriesBySegment(tag_segment);
+}
+
 function SUG_getManager(): SU_GlossaryManager {
 	var manager: SU_GlossaryManager;
 	var storage: SU_Storage;
