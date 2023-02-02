@@ -174,6 +174,7 @@ class CPlayerInput
 			theInput.RegisterListener( this, 'OnDbgTeleportToPin', 'Debug_TeleportToPin' );
 		}
 		
+		
 		theInput.RegisterListener( this, 'OnChangeCameraPreset', 'CameraPreset' );
 		theInput.RegisterListener( this, 'OnChangeCameraPresetByMouseWheel', 'CameraPresetByMouseWheel' );
 		theInput.RegisterListener( this, 'OnMeditationAbort', 'MeditationAbort');
@@ -1622,7 +1623,7 @@ class CPlayerInput
 		
 		if(!thePlayer.IsCiri())
 		{
-			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign') && !GetWitcherPlayer().IsCurrentSignChanneled())
 			{
 				if(IsPressed( action ))
 				{
@@ -1752,7 +1753,7 @@ class CPlayerInput
 		if( IsPressed(action) )
 		{
 			
-			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign') && !GetWitcherPlayer().IsCurrentSignChanneled())
 			{
 				AltCastSign(ST_Axii);
 				return false;
@@ -1806,7 +1807,7 @@ class CPlayerInput
 		if ( thePlayer.GetBIsInputAllowed() )
 		{
 			
-			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign') && !GetWitcherPlayer().IsCurrentSignChanneled())
 			{
 				if(IsPressed( action ))
 				{
@@ -2343,7 +2344,7 @@ class CPlayerInput
 		
 		if(altSignCasting && !theInput.LastUsedPCInput())
 		{
-			if(IsPressed( action ) && (theInput.GetActionValue( 'LockAndGuard' ) > 0)) 
+			if(IsPressed( action ) && (theInput.GetActionValue( 'LockAndGuard' ) > 0) && !GetWitcherPlayer().IsCurrentSignChanneled()) 
 			{
 				AltCastSign(ST_Igni);
 			}
@@ -2826,7 +2827,7 @@ class CPlayerInput
 		if( IsPressed(action) )
 		{
 			
-			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign'))
+			if(altSignCasting && !theInput.LastUsedPCInput() && theInput.IsActionPressed('CastSign') && !GetWitcherPlayer().IsCurrentSignChanneled())
 			{
 				AltCastSign(ST_Igni);
 				return false;
@@ -3198,7 +3199,8 @@ class CPlayerInput
 		if( IsReleased(action) 
 			&& openedPanel != 'GlossaryTutorialsMenu' 
 			&& !theGame.GetGuiManager().IsAnyMenu() 
-			&& !theGame.IsBlackscreenOrFading() ) 
+			&& !theGame.IsBlackscreenOrFading() 
+			&& FactsQuerySum("nge_pause_menu_disabled") <= 0 ) 
 		{
 			theGame.SetMenuToOpen( '' );
 			theGame.RequestMenu('CommonIngameMenu' );
