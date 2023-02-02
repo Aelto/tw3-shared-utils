@@ -17,7 +17,7 @@ class SU_GlossaryManager extends SU_StorageItem {
       return false;
     }
 
-    return this.isTitleValid(item.getTitle()) && this.isTagValid(item.getTag());
+    return this.isTitleValid(item.getTitle()) && this.isTagValid(item.entry_unique_id);
   }
 
   public function getEntry(tag: name): SU_GlossaryEntry {
@@ -28,7 +28,7 @@ class SU_GlossaryManager extends SU_StorageItem {
     }
 
     for (i = 0; i < this.entries.Size(); i += 1) {
-      if (this.entries[i].getTag() == tag) {
+      if (this.entries[i].entry_unique_id == tag) {
         return this.entries[i];
       }
     }
@@ -44,7 +44,7 @@ class SU_GlossaryManager extends SU_StorageItem {
     }
 
     for (i = 0; i < this.entries.Size(); i += 1) {
-      if (this.entries[i].getTag() == tag) {
+      if (this.entries[i].entry_unique_id == tag) {
         return i;
       }
     }
@@ -64,7 +64,7 @@ class SU_GlossaryManager extends SU_StorageItem {
     }
 
     // if an entry with the same title already exists, replace it:
-    if (!this.setEntryAt(this.indexOfEntry(item.getTag()), item)) {
+    if (!this.setEntryAt(this.indexOfEntry(item.entry_unique_id), item)) {
       // otherwise push it to the array of entries:
       this.entries.PushBack(item);  
     }
@@ -80,8 +80,9 @@ class SU_GlossaryManager extends SU_StorageItem {
     var i: int;
 	
 	for (i = 0; i < this.entries.Size(); i += 1) {
-		if (StrStartsWith(NameToString(this.entries[i].getTag()), tag_prefix)) {
-			removeEntry(this.entries[i]);
+		if (StrStartsWith(NameToString(this.entries[i].entry_unique_id), tag_prefix)) {
+			this.entries.Erase(i);
+			i -= 1;
 		}
 	}
   }
@@ -90,8 +91,9 @@ class SU_GlossaryManager extends SU_StorageItem {
     var i: int;
 	
 	for (i = 0; i < this.entries.Size(); i += 1) {
-		if (StrContains(NameToString(this.entries[i].getTag()), tag_segment)) {
-			removeEntry(this.entries[i]);
+		if (StrContains(NameToString(this.entries[i].entry_unique_id), tag_segment)) {
+			this.entries.Erase(i);
+			i -= 1;
 		}
 	}
   }

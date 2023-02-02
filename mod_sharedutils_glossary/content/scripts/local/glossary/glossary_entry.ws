@@ -33,8 +33,4 @@ class SU_GlossaryEntry {
   function getIsNew(): bool {
     return this.is_new;
   }
-
-  function getTag(): name {
-    return this.entry_unique_id;
-  }
 }
