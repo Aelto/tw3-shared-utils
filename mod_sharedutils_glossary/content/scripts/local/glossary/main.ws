@@ -34,6 +34,15 @@ function SUG_populateListData(out flashDataList : CScriptedFlashArray, out m_fla
 
   for (i = 0; i < manager.entries.Size(); i += 1) {
     glossary_entry = manager.entries[i];
+	
+	if (!manager.entries[i]) {
+		LogChannel('SU Glossary', "Array Position [" + i + "] Is Empty");
+		manager.entries.Erase(i);
+		i -= 1;
+		continue;
+	}
+	
+	LogChannel('SU Glossary', "Array Position [" + i + "] = Book Tag [" + glossary_entry.entry_unique_id + "]");
 
     dataObject = m_flashValueStorage.CreateTempFlashObject();
     dataObject.SetMemberFlashUInt("sortIdx", glossary_entry.sort_index);

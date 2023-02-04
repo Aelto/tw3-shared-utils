@@ -16,7 +16,7 @@ exec function SUG_example() {
 exec function SUG_exampleRemove() {
   var book: SU_GlossaryEntry;
 
-  book = SUG_getManager().getEntry("Custom glossary entry example");
+  book = SUG_getManager().getEntry('SUGentryUniqueIdExample');
 
   if (book) {
     SU_removeGlossaryEntry(book);
@@ -26,7 +26,7 @@ exec function SUG_exampleRemove() {
 exec function SUG_exampleChangeIcon() {
   var book: SU_GlossaryEntry;
 
-  book = SUG_getManager().getEntry("Custom glossary entry example");
+  book = SUG_getManager().getEntry('SUGentryUniqueIdExample');
 
   if (book) {
     book.icon_path = "icons/inventory/scrolls/scroll1.dds";
