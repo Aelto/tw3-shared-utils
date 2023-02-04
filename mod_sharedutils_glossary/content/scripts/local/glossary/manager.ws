@@ -75,28 +75,6 @@ class SU_GlossaryManager extends SU_StorageItem {
   public function removeEntry(item: SU_GlossaryEntry) {
     this.entries.Remove(item);
   }
-
-  public function removeEntriesByPrefix(tag_prefix: name) {
-    var i: int;
-	
-	for (i = 0; i < this.entries.Size(); i += 1) {
-		if (StrStartsWith(NameToString(this.entries[i].entry_unique_id), tag_prefix)) {
-			this.entries.Erase(i);
-			i -= 1;
-		}
-	}
-  }
-
-  public function removeEntriesBySegment(tag_segment: name) {
-    var i: int;
-	
-	for (i = 0; i < this.entries.Size(); i += 1) {
-		if (StrContains(NameToString(this.entries[i].entry_unique_id), tag_segment)) {
-			this.entries.Erase(i);
-			i -= 1;
-		}
-	}
-  }
   
   private function setEntryAt(index: int, item: SU_GlossaryEntry): bool {
     // out of bound
