@@ -14,12 +14,15 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
     current_pin = custom_pins[i];
-  
+	
     // the player is not in the right region or right map view, we skip the pin.
-    if (current_pin.region != region && current_pin.region != shown_region) {
+    if (current_pin.region != shown_region) {
+	 // LogChannel('TEST', "Pin: " + current_pin.tag + " " + current_pin.region + " " + region + " " + shown_region + " NODISPLAY");
       continue;
     }
-
+	/
+	//LogChannel('TEST', "Pin: " + current_pin.tag + " " + current_pin.region + " " + region + " " + shown_region);
+	
     flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
     flash_object.SetMemberFlashString("type", current_pin.type);
     flash_object.SetMemberFlashString("filteredType", current_pin.filtered_type);
