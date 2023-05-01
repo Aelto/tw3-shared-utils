@@ -184,6 +184,12 @@ class SU_MapPinBuilder {
 
     return this;
   }
+
+  public function fast_travel(fast_travel: bool): SU_MapPinBuilder {
+    this.pin.is_fast_travel = fast_travel;
+
+    return this;
+  }
   
   /**
    * Internal function, do not use it.

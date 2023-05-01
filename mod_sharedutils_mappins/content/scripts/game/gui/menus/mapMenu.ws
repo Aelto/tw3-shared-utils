@@ -1195,7 +1195,13 @@ class CR4MapMenu extends CR4MenuBase
 		var contentTag : name;
 		var progress : float;
 		var rootMenu : CR4Menu;
-		
+
+		// sharedutils - mappins - BEGIN
+		if (SUMP_onPinUsed(pinTag, areaId)) {
+			return true;
+		}
+		// sharedutils - mappins - END
+
 		manager	= theGame.GetCommonMapManager();
 		if ( !manager )
 		{
