@@ -4,6 +4,7 @@ class SU_Oneliner {
   var text: string;
   var visible: bool;
   var position: Vector;
+  var offset: Vector;
   
   /// if set to a value above 0, will be used as a maximum render distance for
   /// the OL.
@@ -46,6 +47,12 @@ class SU_Oneliner {
     return this;
   }
 
+  public function setOffset(value: Vector): SU_Oneliner {
+    this.offset = offset;
+
+    return this;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
 
   function getVisible(player_position: Vector): bool {
@@ -60,7 +67,7 @@ class SU_Oneliner {
   }
 
   function getPosition(): Vector {
-    return this.position;
+    return this.position + this.offset;
   }
 
   function getScreenPosition(hud: CR4ScriptedHud, out screen_position: Vector): bool {
