@@ -108,6 +108,19 @@ function SUMP_getCustomPins(): array<SU_MapPin> {
   return SUMP_getManager().mappins;
 }
 
+function SUMP_updateCustomPinsLabel(tag: string, label: string) {
+  var custom_pins: array<SU_MapPin> = SUMP_getManager().mappins;
+  var i: int;
+  
+  for (i = 0; i < custom_pins.Size(); i += 1) {
+	if (custom_pins[i].tag == tag) {
+		custom_pins[i].label = label;
+		return;
+	}
+  }
+  SUMP_Logger("Unable to update label for map pin: " + tag);
+}
+
 function SUMP_Logger(message: string, optional informGUI: bool) {
 	LogChannel('SUMP', message);
 	
