@@ -5,6 +5,9 @@ class SU_MapPin {
    */
    var tag: String;
 
+   var pin_tag: name;
+   default pin_tag = 'User';
+
   /**
    * when set to true the map pin will appear under the 'Quests' label
    * on the world map filter pane.
@@ -44,6 +47,8 @@ class SU_MapPin {
    */
   var filtered_type: String;
   default filtered_type = "QuestReturn";
+
+  var is_fast_travel: bool;
   
   /**
    * The radius of the quest on the map, it controls the radius of the yellow,
@@ -96,8 +101,8 @@ class SU_MapPin {
     _radius: float,
     _region: String,
     _appears_on_minimap: bool,
-	_pointed_by_arrow: bool,
-	_highlighted: bool,
+    _pointed_by_arrow: bool,
+    _highlighted: bool,
     _is_quest: bool
   ): SU_MapPin {
     this.tag = _tag;
@@ -109,11 +114,21 @@ class SU_MapPin {
     this.radius = _radius;
     this.region = _region;
     this.appears_on_minimap = _appears_on_minimap;
-	this.pointed_by_arrow = _pointed_by_arrow;
-	this.highlighted = _highlighted;
+    this.pointed_by_arrow = _pointed_by_arrow;
+    this.highlighted = _highlighted;
     this.is_quest = _is_quest;
 
     return this;
+  }
+
+  public function onPinUsed() {
+    var destination: Vector;
+
+    if (this.is_fast_travel) {
+      destination = this.position;
+
+      thePlayer.DebugTeleportToPin(destination.X, destination.Y);
+    }
   }
 }
 
