@@ -8,6 +8,7 @@ most utilities have an example folder and extensive comments explaining how to u
 - [NPC interaction](/mod_sharedutils_npcInteraction/README.md) offers a simple way to run custom code when the player interacts with an NPC.
 - [Noticeboards](/mod_sharedutils_noticeboards/content/scripts/local/sharedutils/noticeboards/example.ws) offers a simple way to detect when the player picks a notice from a noticeboard.
 - [Mappins](/mod_sharedutils_mappins/example/) offers a simple way to add custom markers on the player map & minimap
+- [Oneliners/3D Markers](/mod_sharedutils_oneliners/) offers a way to add floating text/image elements to the world
 - [Journal Quest](/mod_sharedutils_journalquest/) offers a way to create script based quests
 - [Helpers](mod_sharedutils_helpers/content/scripts/local/sharedutils/helpers) contains a set of utility functions you may find useful while creating mods
 - [Custom cooldowns](mod_sharedutils_customcooldowns/example/main.ws) allows you to add custom cooldown icons to the player and to add event listeners for when they finish

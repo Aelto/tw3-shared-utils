@@ -42,8 +42,6 @@ state Render in SUOL_Manager {
 				}
 
 				if (oneliner.getScreenPosition(parent.module_hud, screen_position)) {
-					SUOL_Logger("render on =" + VecToString(screen_position));
-
 					sprite.SetPosition(screen_position.X, screen_position.Y);
 					sprite.SetVisible(true);
 				} else {
