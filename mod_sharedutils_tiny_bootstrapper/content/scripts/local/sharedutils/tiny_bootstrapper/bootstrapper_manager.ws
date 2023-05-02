@@ -17,6 +17,7 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 	public function init(): SU_TinyBootstrapperManager 
 	{
 		this.bootstrapped_mods_this_session.Clear();
+		this.removeNullMods();
 		this.states_to_process = theGame.GetDefinitionsManager()
 			.GetItemsWithTag('SU_TinyBootstrapperManager');
 		
@@ -46,6 +47,22 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 			mod = this.mods[i];
 			mod.stop();
 		}
+	}
+
+	protected function removeNullMods()
+	{
+		var new_mods: array<SU_BaseBootstrappedMod>;
+		var i: int;
+
+		for (i = 0; i < this.mods.Size(); i += 1)
+		{
+			if (this.mods[i])
+			{
+				new_mods.PushBack(this.mods[i]);
+			}
+		}
+
+		this.mods = new_mods;
 	}
 
 	// Remove the non bootstrapped mods from the list. The ones that were
