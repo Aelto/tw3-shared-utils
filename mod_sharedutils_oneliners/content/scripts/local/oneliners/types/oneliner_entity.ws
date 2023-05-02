@@ -4,6 +4,6 @@ class SU_OnelinerEntity extends SU_Oneliner {
   var entity: CEntity;
   
   function getPosition(): Vector {
-    return this.entity.GetWorldPosition();
+    return this.entity.GetWorldPosition() + Vec(0,0,2);
   }
 }
