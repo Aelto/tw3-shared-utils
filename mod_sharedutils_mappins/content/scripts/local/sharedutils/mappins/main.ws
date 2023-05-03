@@ -16,12 +16,15 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
     current_pin = custom_pins[i];
-  
+	
     // the player is not in the right region or right map view, we skip the pin.
-    if (current_pin.region != region && current_pin.region != shown_region) {
+    if (current_pin.region != shown_region) {
+	 // LogChannel('TEST', "Pin: " + current_pin.tag + " " + current_pin.region + " " + region + " " + shown_region + " NODISPLAY");
       continue;
     }
-
+	/
+	//LogChannel('TEST', "Pin: " + current_pin.tag + " " + current_pin.region + " " + region + " " + shown_region);
+	
     flash_object = value_storage.CreateTempFlashObject("red.game.witcher3.data.StaticMapPinData");
     flash_object.SetMemberFlashString("type", current_pin.type);
     flash_object.SetMemberFlashString("filteredType", current_pin.filtered_type);
@@ -126,6 +129,19 @@ function SUMP_addCustomPin(pin: SU_MapPin) {
 
 function SUMP_getCustomPins(): array<SU_MapPin> {
   return SUMP_getManager().mappins;
+}
+
+function SUMP_updateCustomPinsLabel(tag: string, label: string) {
+  var custom_pins: array<SU_MapPin> = SUMP_getManager().mappins;
+  var i: int;
+  
+  for (i = 0; i < custom_pins.Size(); i += 1) {
+	if (custom_pins[i].tag == tag) {
+		custom_pins[i].label = label;
+		return;
+	}
+  }
+  SUMP_Logger("Unable to update label for map pin: " + tag);
 }
 
 function SUMP_Logger(message: string, optional informGUI: bool) {
