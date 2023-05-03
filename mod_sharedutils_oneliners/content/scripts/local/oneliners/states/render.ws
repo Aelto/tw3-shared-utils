@@ -20,16 +20,24 @@ state Render in SUOL_Manager {
 
 		var player_position: Vector;
 		var screen_position: Vector;
+
+		var last_frame_time: float;
+		var current_frame_time: float;
+		var delta: float;
+
 		screen_position = thePlayer.GetWorldPosition();
 		player_position = thePlayer.GetWorldPosition();
+		last_frame_time = theGame.GetEngineTimeAsSeconds();
+		current_frame_time = theGame.GetEngineTimeAsSeconds();
 
 		while (true) {
-			oneliners_count = parent.oneliners.Size();
+			oneliners_count = parent.oneliners.Size() + parent.status_bar_oneliners.Size();
 
 			if (oneliners_count <= 0) {
 				break;
 			}
 
+			oneliners_count = parent.oneliners.Size();
 			player_position = thePlayer.GetWorldPosition();
 
 			for (i = 0; i < oneliners_count; i += 1) {
@@ -39,6 +47,28 @@ state Render in SUOL_Manager {
 				if (!oneliner.getVisible(player_position)) {
 					sprite.SetVisible(false);
 					continue;	
+				}
+
+				if (oneliner.getScreenPosition(parent.module_hud, screen_position)) {
+					sprite.SetPosition(screen_position.X, screen_position.Y);
+					sprite.SetVisible(true);
+				} else {
+					sprite.SetVisible(false);
+				}
+			}
+
+			current_frame_time = theGame.GetEngineTimeAsSeconds();
+			delta = current_frame_time - last_frame_time;
+			last_frame_time = current_frame_time;
+			oneliners_count = parent.status_bar_oneliners.Size();
+			for (i = 0; i < oneliners_count; i += 1) {
+				oneliner = parent.status_bar_oneliners[i];
+				sprite = parent.module_flash.GetChildFlashSprite("mcOneliner" + oneliner.id);
+
+				oneliner.position.X += delta * 0.03;
+
+				if (oneliner.position.X + oneliner.offset.X >= 1.25) {
+					oneliner.position.X = 0;
 				}
 
 				if (oneliner.getScreenPosition(parent.module_hud, screen_position)) {

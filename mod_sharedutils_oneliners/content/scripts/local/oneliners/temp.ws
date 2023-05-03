@@ -18,3 +18,11 @@ exec function suol_example() {
     thePlayer.GetHorseWithInventory()
   );
 }
+
+exec function suol_status() {
+  SU_onelinerStatus("Breaking news: Village slain by forest creature!");
+}
+
+exec function suol_statuss() {
+  SU_onelinerStatus("Today's question: Are witchers supposed to stay neutral at all cost?");
+}
