@@ -7,19 +7,19 @@ most utilities have an example folder and extensive comments explaining how to u
 
 | Name | Description | Dependencies (other modules it depends on) |
 | ---- | ----------- | ------------------------------------------ |
-| [NPC interaction](/mod_sharedutils_npcInteraction/README.md) | Run custom code when the player interacts with an NPC | `Storage` |
-| [Noticeboards](/mod_sharedutils_noticeboards/content/scripts/local/sharedutils/noticeboards/example.ws) | Detect when the player picks a notice from a noticeboard |   |
-| [Mappins](/mod_sharedutils_mappins/example/) | Add custom markers on the player map & minimap | `Storage` |
-| [Oneliners/3D Markers](/mod_sharedutils_oneliners/) | Add floating text/image elements to the world | `Storage`|
-| [Journal Quest](/mod_sharedutils_journalquest/) | Create script based quests |  |
 | [Helpers](mod_sharedutils_helpers/content/scripts/local/sharedutils/helpers) | Functions you may find useful while creating mods | |
-| [Custom cooldowns](mod_sharedutils_customcooldowns/example/main.ws) | Add custom cooldown icons to the player and to add event listeners for when they finish | `Storage` |
+| [Storage](mod_sharedutils_storage) | Store persistent objects in the save with no extra merge. Most sharedutils module rely on this one for internal data storage | |
+| [Noticeboards](/mod_sharedutils_noticeboards/content/scripts/local/sharedutils/noticeboards/example.ws) | Detect when the player picks a notice from a noticeboard |   |
+| [Journal Quest](/mod_sharedutils_journalquest/) | Create script based quests |  |
 | [Custom bossbar](mod_sharedutils_custombossbar/content/scripts/local/sharedutils/custombossbar/globals.ws) | Three easy to use functions to use boss bars as progress bars |
 | [Dialog choice](mod_sharedutils_dialogChoices/example/main.ws) | Display the dialogue choice UI whenever you want, and allows you to detect when the player picks a choice |  |
 | [Dialog hover](mod_sharedutils_dialogHover/) | Detect when the player puts the cursor over a dialog choice | |
-| [Tiny Bootstrapper](mod_sharedutils_tiny_bootstrapper/) | Bootstrap a persistent class after every reload automatically and with no extra merge for the end-users | `Storage`
-| [Storage](mod_sharedutils_storage) | Store persistent objects in the save with no extra merge. Most sharedutils module rely on this one for internal data storage | |
 | [Glossary](mod_sharedutils_glossary/content/scripts/local/glossary/example.ws) | Add custom glossary entries with dynamic descriptions if needed | |
+| [Tiny Bootstrapper](mod_sharedutils_tiny_bootstrapper/) | Bootstrap a persistent class after every reload automatically and with no extra merge for the end-users | `Storage`
+| [Mappins](/mod_sharedutils_mappins/example/) | Add custom markers on the player map & minimap | `Storage` |
+| [Oneliners/3D Markers](/mod_sharedutils_oneliners/) | Add floating text/image elements to the world | `Storage`|
+| [Custom cooldowns](mod_sharedutils_customcooldowns/example/main.ws) | Add custom cooldown icons to the player and to add event listeners for when they finish | `Storage` |
+| [NPC interaction](/mod_sharedutils_npcInteraction/README.md) | Run custom code when the player interacts with an NPC | `Storage` |
 
 ## Shipping mods that depend on shared-utils
 The code available in this repository can be considered public domain. You may use, edit, and share this code with no restriction. Editing sharedutils rather than submitting PRs may be counter productive though, but you can freely ship the sharedutils alongside your own mods on any website even those with monetary rewards.
