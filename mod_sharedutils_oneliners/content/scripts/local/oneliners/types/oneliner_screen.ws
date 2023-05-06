@@ -3,9 +3,7 @@
 /// would mean in the middle of the screen.
 class SU_OnelinerScreen extends SU_Oneliner {
   function getScreenPosition(hud: CR4ScriptedHud, out screen_position: Vector): bool {
-    var position: Vector = this.getPosition();
-
-    screen_position = hud.GetScaleformPoint(position.X, position.Y);
+    screen_position = hud.GetScaleformPoint(this.position.X, this.position.Y);
 
     return true;
   }

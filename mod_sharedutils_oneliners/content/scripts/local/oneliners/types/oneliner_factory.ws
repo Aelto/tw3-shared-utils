@@ -30,13 +30,3 @@ function SU_onelinerEntity(text: string, entity: CEntity): SU_OnelinerEntity {
 
   return oneliner;
 }
-
-function SU_onelinerStatus(text: string): SU_OnelinerStatus {
-  var oneliner: SU_OnelinerStatus;
-
-  oneliner = new SU_OnelinerStatus in thePlayer;
-  oneliner.text = text;
-  oneliner.register();
-
-  return oneliner;
-}
