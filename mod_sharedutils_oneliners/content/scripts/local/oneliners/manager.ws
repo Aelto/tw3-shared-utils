@@ -69,6 +69,7 @@ statemachine class SUOL_Manager extends SU_StorageItem {
 
   /// Updates the flash values with the oneliner's new/current text
   public function updateOneliner(oneliner: SU_Oneliner) {
+    this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
     this.fxCreateOnelinerSFF.InvokeSelfTwoArgs(
       FlashArgInt(oneliner.id),
       FlashArgString(oneliner.text)
