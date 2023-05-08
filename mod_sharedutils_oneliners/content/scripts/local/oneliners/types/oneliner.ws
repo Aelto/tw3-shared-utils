@@ -1,5 +1,9 @@
 
 class SU_Oneliner {
+  /// the tag is not used in the display logic, but can be used to identify
+  /// oneliners that belong to your code vs oneliners that don't.
+  var tag: string;
+
   var id: int;
   var text: string;
   var visible: bool;

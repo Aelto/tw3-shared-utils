@@ -25,3 +25,15 @@ function SUOL_Logger(message: string, optional informGUI: bool) {
 		theGame.GetGuiManager().ShowNotification("SUOL: " + message, 5, true);
 	}
 }
+
+function SUOL_findOnelinersWithTag(tag: string): array<SU_Oneliner> {
+	var manager: SUOL_Manager;
+
+	manager.findByPredicate((new SUOL_PredicateTag in manager).init(tag));
+}
+
+function SUOL_findOnelinersWithTagPrefix(suffix: string): array<SU_Oneliner> {
+	var manager: SUOL_Manager;
+
+	manager.findByPredicate((new SUOL_PredicateTagStartsWith in manager).init(suffix));
+}

@@ -81,5 +81,47 @@ statemachine class SUOL_Manager extends SU_StorageItem {
     this.oneliners_garbage.PushBack(oneliner.id);
     this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
   }
+
+  public function findByPredicate(predicate: SUOL_Predicate): array<SU_Oneliner> {
+    var output: array<SU_Oneliner>;
+    var i: int;
+
+    for (i = 0; i < this.oneliners.Size(); i += 1) {
+      if (predicate.filter(this.oneliners[i], i, this)) {
+        output.PushBack(predicate.transform(this.oneliners[i]));
+      }
+    }
+
+    return output;
+  }
+
+  public function removeByPredicate(predicate: SUOL_Predicate): array<SU_Oneliner> {
+    var output: array<SU_Oneliner>;
+    var i: int;
+
+    output = this.findByPredicate(predicate);
+
+    for (i = 0; i < output.Size(); i += 1) {
+      this.deleteOneliner(output[i]);
+    }
+
+    return output;
+  }
+
+  public function updateByPredicate(predicate: SUOL_Predicate): array<SU_Oneliner> {
+    var output: array<SU_Oneliner>;
+    var i: int;
+
+    for (i = 0; i < this.oneliners.Size(); i += 1) {
+      if (predicate.filter(this.oneliners[i], i, this)) {
+        // make sure to push the value before the update:
+        output.PushBack(this.oneliners[i]);
+
+        this.oneliners[i] = predicate.transform(this.oneliners[i]);
+      }
+    }
+
+    return output;
+  }
 }
 
