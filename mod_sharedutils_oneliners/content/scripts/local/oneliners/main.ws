@@ -26,14 +26,9 @@ function SUOL_Logger(message: string, optional informGUI: bool) {
 	}
 }
 
-function SUOL_findOnelinersWithTag(tag: string): array<SU_Oneliner> {
-	var manager: SUOL_Manager;
+exec function SUOL_deleteByTagPrefix(prefix: string) {
+	var output: array<SU_Oneliner>;
 
-	manager.findByPredicate((new SUOL_PredicateTag in manager).init(tag));
-}
-
-function SUOL_findOnelinersWithTagPrefix(suffix: string): array<SU_Oneliner> {
-	var manager: SUOL_Manager;
-
-	manager.findByPredicate((new SUOL_PredicateTagStartsWith in manager).init(suffix));
+	output = SUOL_getManager().deleteByTagPrefix(prefix);
+	SUOL_Logger("removed " + output.Size() + " oneliners");
 }

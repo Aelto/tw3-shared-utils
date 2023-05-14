@@ -57,6 +57,12 @@ class SU_Oneliner {
     return this;
   }
 
+  public function setTag(value: string): SU_Oneliner {
+    this.tag = value;
+
+    return this;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
 
   function getVisible(player_position: Vector): bool {
