@@ -11,7 +11,7 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
   custom_pins = SUMP_getCustomPins();
 
   region = SUH_getCurrentRegion();
-  shown_region = AreaTypeToName(shown_area);
+  shown_region = SUH_normalizeRegion(AreaTypeToName(shown_area));
   journal_area = theGame.GetCommonMapManager().GetCurrentJournalArea();
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
