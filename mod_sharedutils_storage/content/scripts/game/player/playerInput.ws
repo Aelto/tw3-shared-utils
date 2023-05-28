@@ -12,8 +12,10 @@ class CPlayerInput
 	private var altSignCasting : bool; 
 	
 
-	public saved var SU_storage: SU_Storage; // SU - Storage
 	private saved 	var actionLocks 	: array<array<SInputActionLock>>;		
+	// SU - Storage - BEGIN
+	public saved var SU_storage: SU_Storage;
+	// SU - Storage - END
 	
 	private	var	totalCameraPresetChange : float;		default totalCameraPresetChange = 0.0f;
 	private var potAction 				: SInputAction;
