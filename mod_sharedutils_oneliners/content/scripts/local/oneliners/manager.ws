@@ -9,10 +9,6 @@ statemachine class SUOL_Manager extends SU_StorageItem {
   /// A list of all the active oneliners
   protected var oneliners: array<SU_Oneliner>;
 
-  /// A garbage type of array that stores the IDs of old, deleted sprites so
-  /// that when asking for a new ID it returns an old recycled one instead.
-  private var oneliners_garbage: array<int>;
-
   //////////////////////////////////////////////////////////////////////////////
   // statemachine workflow code:
 
@@ -33,16 +29,11 @@ statemachine class SUOL_Manager extends SU_StorageItem {
   }
 
   private function getNewId(): int {
-    var id: int;
-
-    if (this.oneliners_garbage.Size() > 0) {
-      id = this.oneliners_garbage.PopBack();
-    }
-    else {
-      this.oneliner_counter += 1;
-      id = this.oneliner_counter;
-    }
-
+    var id: int = Max(this.oneliner_counter, (int)theGame.GetLocalTimeAsMilliseconds());
+	this.oneliner_counter = id + 1;
+	
+	LogChannel('SUOL', "ID Gen - " + this.oneliner_counter);
+	
     return id;
   }
 
@@ -78,7 +69,6 @@ statemachine class SUOL_Manager extends SU_StorageItem {
 
   public function deleteOneliner(oneliner: SU_Oneliner) {
     this.oneliners.Remove(oneliner);
-    this.oneliners_garbage.PushBack(oneliner.id);
     this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
   }
 
