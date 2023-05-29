@@ -1,4 +1,24 @@
 
+function SU_removeCustomPin(pin: SU_MapPin): bool {
+  var manager: SUMP_Manager;
+  var i: int;
+
+  if (!manager) {
+    SUMP_Logger("SU_removeCustomPin(), manager not found");
+
+    return;
+  }
+
+  i = manager.mappins.FindFirst(pin);
+  if (i >= 0) {
+    manager.mappins.EraseFast(i);
+
+    return true;
+  }
+  
+  return false;
+}
+
 function SU_removeCustomPinByTagPrefix(prefix: string) {
   SU_removeCustomPinByPredicate(
     (new SU_CustomPinRemoverPredicateTagStartsWith in thePlayer)
