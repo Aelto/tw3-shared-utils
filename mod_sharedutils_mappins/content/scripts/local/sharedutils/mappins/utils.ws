@@ -3,20 +3,20 @@ function SU_removeCustomPin(pin: SU_MapPin): bool {
   var manager: SUMP_Manager;
   var i: int;
 
+  manager = SUMP_getManager();
   if (!manager) {
     SUMP_Logger("SU_removeCustomPin(), manager not found");
 
-    return;
+    return false;
   }
 
   i = manager.mappins.FindFirst(pin);
-  if (i >= 0) {
-    manager.mappins.EraseFast(i);
-
-    return true;
+  if (i < 0) {
+    return false;
   }
-  
-  return false;
+
+  manager.mappins.EraseFast(i);
+  return true;
 }
 
 function SU_removeCustomPinByTagPrefix(prefix: string) {
