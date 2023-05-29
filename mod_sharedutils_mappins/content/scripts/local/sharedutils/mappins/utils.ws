@@ -1,9 +1,11 @@
 
-function SU_removeCustomPin(pin: SU_MapPin): bool {
-  var manager: SUMP_Manager;
+function SU_removeCustomPin(pin: SU_MapPin, optional manager: SUMP_Manager): bool {
   var i: int;
 
-  manager = SUMP_getManager();
+  if (!manager) {
+    manager = SUMP_getManager();
+  }
+
   if (!manager) {
     SUMP_Logger("SU_removeCustomPin(), manager not found");
 
