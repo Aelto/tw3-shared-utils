@@ -50,3 +50,24 @@ function SUH_toggleHUD() {
     hud.ToggleHudByUser();
   }
 }
+
+/// Display a tutorial popup only when the given menu toggle is at `true`. If it
+/// is displayed, the given toggle is automatically set to `false`
+///
+/// 
+function SUH_tutorialWhen(menu: name, field: name, string_key: string): bool {
+  var sus: SUS_Wrapper = SUS();
+
+  if (sus.bool(menu, name)) {
+    SUH_tutorial(
+      GetLocStringByKey(string_key+"_title"),
+      GetLocStringByKey(string_key+"_body"),
+    );
+
+    sus.write(menu, name, false);
+
+    return true;
+  }
+
+  return false;
+}
