@@ -30,10 +30,7 @@ statemachine class SUOL_Manager extends SU_StorageItem {
 
   private function getNewId(): int {
     var id: int = Max(this.oneliner_counter, (int)theGame.GetLocalTimeAsMilliseconds());
-	this.oneliner_counter = id + 1;
-	
-	LogChannel('SUOL', "ID Gen - " + this.oneliner_counter);
-	
+	this.oneliner_counter = id + 1;	
     return id;
   }
 

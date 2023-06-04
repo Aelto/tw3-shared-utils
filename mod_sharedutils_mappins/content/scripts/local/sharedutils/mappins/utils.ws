@@ -1,18 +1,19 @@
 
-function SU_removeCustomPin(pin: SU_MapPin): bool {
-  var manager: SUMP_Manager;
+function SU_removeCustomPin(pin: SU_MapPin, optional manager : SUMP_Manager): bool {
   var i: int;
 
   if (!manager) {
+    manager = SUMP_getManager();
+  }  
+  
+  if (!manager) {
     SUMP_Logger("SU_removeCustomPin(), manager not found");
-
-    return;
+    return false;
   }
 
   i = manager.mappins.FindFirst(pin);
   if (i >= 0) {
     manager.mappins.EraseFast(i);
-
     return true;
   }
   
