@@ -7,7 +7,9 @@ state Render in SUOL_Manager {
 	}
 
 	entry function Render_main() {
-		this.renderingLoop();
+		if (!thePlayer.IsCiri()) {
+			this.renderingLoop();
+		}
 
 		parent.GotoState('Idle');
 	}
