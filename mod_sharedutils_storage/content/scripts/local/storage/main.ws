@@ -35,6 +35,16 @@ function SU_getBufferFromInput(player_input: CPlayerInput): SU_Storage {
 	return player_input.SU_buffer;
 }
 
+exec function sustuninstall(tag: string) {
+	var storage: SU_Storage;
+
+	storage = SU_getStorage();
+
+	if (storage.hasItem(tag)) {
+		storage.removeItem(storage.getItem(tag));
+	}
+}
+
 function SUST_Logger(message: string, optional informGUI: bool) {
 	LogChannel('SUST', message);
 	
