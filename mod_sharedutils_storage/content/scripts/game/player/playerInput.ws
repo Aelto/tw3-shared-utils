@@ -13,6 +13,7 @@ class CPlayerInput
 	
 
 	public saved var SU_storage: SU_Storage; // SU - Storage
+	public var SU_buffer: SU_Storage; // SU - Storage
 	private saved 	var actionLocks 	: array<array<SInputActionLock>>;		
 	
 	private	var	totalCameraPresetChange : float;		default totalCameraPresetChange = 0.0f;

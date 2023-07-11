@@ -17,6 +17,24 @@ function SU_getStorageFromInput(player_input: CPlayerInput): SU_Storage {
 	return player_input.SU_storage;
 }
 
+function SU_getBuffer(): SU_Storage {
+	SUST_Logger("SU_getBuffer()");
+
+	return SU_getBufferFromInput(thePlayer.GetInputHandler());
+}
+
+function SU_getBufferFromInput(player_input: CPlayerInput): SU_Storage {
+	SUST_Logger("SU_getBufferFromInput()");
+
+	if (!player_input.SU_buffer) {
+		SUST_Logger("SU_getBufferFromInput(), no buffer, instantiating");
+
+		player_input.SU_buffer = new SU_Storage in player_input;
+	}
+
+	return player_input.SU_buffer;
+}
+
 function SUST_Logger(message: string, optional informGUI: bool) {
 	LogChannel('SUST', message);
 	
