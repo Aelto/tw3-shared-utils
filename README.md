@@ -25,3 +25,12 @@ most utilities have an example folder and extensive comments explaining how to u
 The code available in this repository can be considered public domain. You may use, edit, and share this code with no restriction. Editing sharedutils rather than submitting PRs may be counter productive though, but you can freely ship the sharedutils alongside your own mods on any website even those with monetary rewards.
 
 The primary goal of the shared-utils package is to simplify mod making and reduce complexity while shipping mods by decreasing the amount of merge conflicts for the end-users.
+
+# Known mods that are using Sharedutils
+- [Faen/Progress-On-The-Path](https://github.com/Faen668/Progress-On-The-Path)
+- [Faen/Botanist](https://github.com/Faen668/Botanist)
+- [RasitAyaz/Alternative-Radial-Menu](https://www.nexusmods.com/witcher3/mods/8237)
+- [Aelto/tw3-random-encounters-reworked](https://github.com/Aelto/tw3-random-encounters-reworked)
+- [Aelto/tw3-crow](https://github.com/Aelto/tw3-crow)
+- [Aelto/tw3-a-gwent-empire](https://github.com/Aelto/tw3-a-gwent-empire)
+- [Aelto/tw3-consumables-on-cooldown](https://github.com/Aelto/tw3-consumables-on-cooldowns)
