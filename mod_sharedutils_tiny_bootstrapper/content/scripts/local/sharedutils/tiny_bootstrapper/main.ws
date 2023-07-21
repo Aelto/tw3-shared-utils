@@ -39,3 +39,21 @@ function SUTB_Logger(message: string, optional informGUI: bool)
 			.ShowNotification("SUTB: " + message, 5, true);
 	}
 }
+
+function _sutbuninstall(tag: string) {
+	var manager: SU_BaseBootstrappedMod;
+	var mod: SU_BaseBootstrappedMod;
+
+	manager = SUTB_getManager(thePlayer.GetInputHandler());
+
+	if (manager.hasModWithTag(tag)) {
+		mod = manager.getModByTag(tag);
+
+		if (mod) {
+			manager.removeMod(mod);
+		}
+	}
+}
+exec function sutbuninstall(tag: string) {
+	_sutbuninstall(tag);
+}

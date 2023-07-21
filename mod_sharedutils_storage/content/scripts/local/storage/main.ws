@@ -35,7 +35,7 @@ function SU_getBufferFromInput(player_input: CPlayerInput): SU_Storage {
 	return player_input.SU_buffer;
 }
 
-exec function sustuninstall(tag: string) {
+function _sustuninstall(tag: string) {
 	var storage: SU_Storage;
 
 	storage = SU_getStorage();
@@ -43,6 +43,9 @@ exec function sustuninstall(tag: string) {
 	if (storage.hasItem(tag)) {
 		storage.removeItem(storage.getItem(tag));
 	}
+}
+exec function sustuninstall(tag: string) {
+	_sustuninstall(tag);
 }
 
 function SUST_Logger(message: string, optional informGUI: bool) {
