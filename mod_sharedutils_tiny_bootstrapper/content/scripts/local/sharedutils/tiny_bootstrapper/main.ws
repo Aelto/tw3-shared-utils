@@ -40,8 +40,8 @@ function SUTB_Logger(message: string, optional informGUI: bool)
 	}
 }
 
-function _sutbuninstall(tag: string) {
-	var manager: SU_BaseBootstrappedMod;
+function _sutbuninstall(tag: name) {
+	var manager: SU_TinyBootstrapperManager;
 	var mod: SU_BaseBootstrappedMod;
 
 	manager = SUTB_getManager(thePlayer.GetInputHandler());
@@ -54,6 +54,6 @@ function _sutbuninstall(tag: string) {
 		}
 	}
 }
-exec function sutbuninstall(tag: string) {
+exec function sutbuninstall(tag: name) {
 	_sutbuninstall(tag);
 }
