@@ -7,40 +7,22 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 	protected var states_to_process: array<name>;
 
 	// The persistent list with the user-made mods
-	//
-	// DEPRECRATED: not used anymore but kept for backward compatibility
 	protected saved var mods: array<SU_BaseBootstrappedMod>;
 
-	protected var mods_to_bootstrap: array<SU_BaseBootstrappedMod>;
+	// Cleared before bootstrapping mods, then contains the names of the 
+	// mods that were bootstrapped this session. Meaning they were
+	// injected BEFORE but no longer have a state that bootstraps them.
+	protected var bootstrapped_mods_this_session: array<name>;
 	
 	public function init(): SU_TinyBootstrapperManager 
 	{
+		this.bootstrapped_mods_this_session.Clear();
+		this.removeNullMods();
 		this.states_to_process = theGame.GetDefinitionsManager()
 			.GetItemsWithTag('SU_TinyBootstrapperManager');
-
-		this.mods_to_bootstrap.Clear();
-		this.migrateModsToNonPeristentArray();
+		
 		this.GotoState('Initialising');
 		return this;
-	}
-
-	private function migrateModsToNonPeristentArray() {
-		var mod: SU_BaseBootstrappedMod;
-		var i: int;
-
-		for (i = 0; i < this.mods.Size(); i += 1) {
-			mod = this.mods[i];
-
-			if (mod) {
-				// migrate the mod to the non-persistent array
-				this.mods_to_bootstrap.PushBack(mod);
-			}
-		}
-
-		// DEPRECATION:
-		// `this.mods` is no longer used and all mods currently stored in it should
-		// be migrated to SUST directly.
-		this.mods.Clear();
 	}
 	
 	protected function startMods()
@@ -48,12 +30,10 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		var mod: SU_BaseBootstrappedMod;
 		var i: int;
 
-		for (i = 0; i < this.mods_to_bootstrap.Size(); i += 1) {
-			mod = this.mods_to_bootstrap[i];
-
-			if (mod) {
-				mod.start();
-			}
+		for (i = 0; i < this.mods.Size(); i += 1) 
+		{
+			mod = this.mods[i];
+			mod.start();
 		}
 	}
 	
@@ -62,35 +42,64 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		var mod: SU_BaseBootstrappedMod;
 		var i: int;
 
-		for (i = 0; i < this.mods_to_bootstrap.Size(); i += 1) 
+		for (i = 0; i < this.mods.Size(); i += 1) 
 		{
-			mod = this.mods_to_bootstrap[i];
+			mod = this.mods[i];
+			mod.stop();
+		}
+	}
 
-			if (mod) {
-				mod.stop();
+	protected function removeNullMods()
+	{
+		var new_mods: array<SU_BaseBootstrappedMod>;
+		var i: int;
+
+		for (i = 0; i < this.mods.Size(); i += 1)
+		{
+			if (this.mods[i])
+			{
+				new_mods.PushBack(this.mods[i]);
 			}
 		}
 
-		this.mods_to_bootstrap.Clear();
+		this.mods = new_mods;
+	}
+
+	// Remove the non bootstrapped mods from the list. The ones that were
+	// injected previously but no longer have a state that bootstrapps them.
+	protected function removeUnusedMods() 
+	{
+		var unused_tags: array<name>;
+		var tag: name;
+		var i: int;
+
+		for (i = 0; i < this.bootstrapped_mods_this_session.Size(); i += 1) 
+		{
+			tag = this.bootstrapped_mods_this_session[i];
+
+			if (this.hasModWithTag(tag)) {
+				continue;
+			}
+			unused_tags.PushBack(tag);
+		}
+
+		for (i = 0; i < unused_tags.Size(); i += 1)
+		{
+				tag = unused_tags[i];
+				this.removeMod(this.getModByTag(tag));
+		}
 	}
 	
 	public function hasModWithTag(tag: name): bool
 	{
-		var mod: SU_BaseBootstrappedMod;
 		var i: int;
 
-		for (i = 0; i < this.mods_to_bootstrap.Size(); i += 1) 
+		for (i = 0; i < this.mods.Size(); i += 1) 
 		{
-			mod = this.mods_to_bootstrap[i];
-
-			if (mod) {
-				if (mod.tag == tag) {
-					return true;
-				}
+			if (this.mods[i].tag == tag) {
+				return true;
 			}
 		}
-
-
 		return false;
 	}
 	
@@ -98,11 +107,11 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 	{
 		var i: int;
 
-		for (i = 0; i < this.mods_to_bootstrap.Size(); i += 1)
+		for (i = 0; i < this.mods.Size(); i += 1)
 		{
-			if (this.mods_to_bootstrap[i].tag == tag)
+			if (this.mods[i].tag == tag)
 			{
-				return this.mods_to_bootstrap[i];
+				return this.mods[i];
 			}
 		}
 		return NULL;
@@ -113,12 +122,16 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		if (mod.tag == '') {
 			return;
 		}
-
-		this.mods_to_bootstrap.PushBack(mod);
+		this.mods.PushBack(mod);
 	}
 	
 	public function removeMod(mod: SU_BaseBootstrappedMod)
 	{
-		this.mods_to_bootstrap.Remove(mod);
+		this.mods.Remove(mod);
+	}
+
+	protected function markModBootstrapped(tag: name)
+	{
+		this.bootstrapped_mods_this_session.PushBack(tag);
 	}
 }

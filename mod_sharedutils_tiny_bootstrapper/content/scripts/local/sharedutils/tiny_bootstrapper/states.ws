@@ -28,6 +28,7 @@ state BaseMod in SU_TinyBootstrapperManager
 		var tag: name;
 
 		tag = this.getTag();
+		parent.markModBootstrapped(tag);
 
 		if (parent.hasModWithTag(tag)) 
 		{
@@ -50,6 +51,7 @@ state Empty in SU_TinyBootstrapperManager
 	
 	entry function Empty_main() 
 	{
+		parent.removeUnusedMods();
 		parent.startMods();
 	}
 }
