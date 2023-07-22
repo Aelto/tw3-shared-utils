@@ -30,10 +30,18 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		var mod: SU_BaseBootstrappedMod;
 		var i: int;
 
+		this.removeNullMods();
+		SUTB_Logger("startMods(), mods.Size() = " + this.mods.Size());
+
 		for (i = 0; i < this.mods.Size(); i += 1) 
 		{
 			mod = this.mods[i];
-			mod.start();
+
+			if (mod)
+			{
+				SUTB_Logger("startMods(), starting mod = " + mod.tag);
+				mod.start();
+			}
 		}
 	}
 	
@@ -42,23 +50,31 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		var mod: SU_BaseBootstrappedMod;
 		var i: int;
 
+		this.removeNullMods();
 		for (i = 0; i < this.mods.Size(); i += 1) 
 		{
 			mod = this.mods[i];
-			mod.stop();
+
+			if (mod)
+			{
+				mod.stop();
+			}
 		}
 	}
 
 	protected function removeNullMods()
 	{
 		var new_mods: array<SU_BaseBootstrappedMod>;
+		var mod: SU_BaseBootstrappedMod;
 		var i: int;
 
 		for (i = 0; i < this.mods.Size(); i += 1)
 		{
-			if (this.mods[i])
+			mod = this.mods[i];
+
+			if (mod)
 			{
-				new_mods.PushBack(this.mods[i]);
+				new_mods.PushBack(mod);
 			}
 		}
 
@@ -122,16 +138,20 @@ statemachine class SU_TinyBootstrapperManager extends SU_StorageItem
 		if (mod.tag == '') {
 			return;
 		}
+
+		SUTB_Logger("addMod(mod) mod.tag = " + mod.tag);
 		this.mods.PushBack(mod);
 	}
 	
 	public function removeMod(mod: SU_BaseBootstrappedMod)
 	{
+		SUTB_Logger("removeMod(mod) mod.tag = " + mod.tag);
 		this.mods.Remove(mod);
 	}
 
 	protected function markModBootstrapped(tag: name)
 	{
+		SUTB_Logger("markModBootstrapped(mod) tag = " + tag);
 		this.bootstrapped_mods_this_session.PushBack(tag);
 	}
 }
