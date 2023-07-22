@@ -48,7 +48,7 @@ function SUMP_getManager(): SUMP_Manager {
 
   SUMP_Logger("SUMP_getManager()");
 	
-	storage = SU_getStorage();
+	storage = SU_getBuffer();
 	manager = (SUMP_Manager)storage.getItem("SUMP_Manager");
 
 	if (!manager) {

@@ -11,7 +11,7 @@ function SUG_getManager(): SU_GlossaryManager {
 	var manager: SU_GlossaryManager;
 	var storage: SU_Storage;
 
-	storage = SU_getStorage();
+	storage = SU_getBuffer();
 	manager = (SU_GlossaryManager)storage.getItem("SU_GlossaryManager");
 
 	if (!manager) {

@@ -4,7 +4,7 @@ function SUOL_getManager(): SUOL_Manager {
 
   SUOL_Logger("SUOL_getManager()");
 	
-	storage = SU_getStorage();
+	storage = SU_getBuffer();
 	manager = (SUOL_Manager)storage.getItem("SUOL_Manager");
 
 	if (!manager) {
