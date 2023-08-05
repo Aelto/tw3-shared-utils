@@ -52,7 +52,7 @@ class SU_Oneliner {
   }
 
   public function setOffset(value: Vector): SU_Oneliner {
-    this.offset = offset;
+    this.offset = value;
 
     return this;
   }
