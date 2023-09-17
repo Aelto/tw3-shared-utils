@@ -112,6 +112,7 @@ function SU_setDialogChoicesAndResponseListener(choices: array<SSceneChoice>, re
   var null: SSceneChoice;
 
   dialogueModule = SU_setDialogChoices(choices);
+  dialogueModule.responseListener = response_listener;
 
   return true;
 }
