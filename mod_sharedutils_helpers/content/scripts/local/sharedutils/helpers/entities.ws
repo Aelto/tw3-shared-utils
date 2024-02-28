@@ -170,7 +170,7 @@ function SUH_keepCreaturesOnPoint(position: Vector, radius: float, entities: arr
 
       is_flying = ((CNewNPC)entities[i]).IsFlying();
 
-      SUH_slideEntityToPosition(entities[i], new_position, (int)is_flying * 6 + 1);
+      SUH_slideEntityToPosition(entities[i], new_position, (int)is_flying * 3 + 1);
     }
   }
 }
