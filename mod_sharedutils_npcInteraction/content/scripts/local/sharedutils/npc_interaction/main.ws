@@ -48,9 +48,7 @@ abstract class SU_InteractionEventListener {
  * Refer to the examples in the example folder of the mod to see how to make a
  * global event listener.
  */
-statemachine class SU_NpcInteraction_GlobalEventHandler extends SU_StorageItem {
-  default tag = "SU_NpcInteraction_GlobalEventHandler";
-
+statemachine class SU_NpcInteraction_GlobalEventHandler {
   /**
    * A queue of states to process, read the `onInteraction` comments to learn
    * more.
@@ -155,13 +153,7 @@ function SU_NpcInteraction_runAllInteractionListeners(actionName: string, activa
   var player_input: CPlayerInput;
   var i: int;
 
-  handler = (SU_NpcInteraction_GlobalEventHandler)SU_getStorage().getItem("SU_NpcInteraction_GlobalEventHandler");
-  if (!handler) {
-    handler = (new SU_NpcInteraction_GlobalEventHandler in theInput)
-      .init();
-
-    SU_getStorage().setItem(handler);
-  }
+  handler = thePlayer.SU_NpcInteraction_getGlobalEventListener();
 
   handler.onInteraction(
     actionName,

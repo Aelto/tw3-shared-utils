@@ -43,23 +43,9 @@ function SU_removeCustomPinByPosition(position: Vector) {
 }
 
 function SUMP_getManager(): SUMP_Manager {
-	var manager: SUMP_Manager;
-	var storage: SU_Storage;
-
   SUMP_Logger("SUMP_getManager()");
 	
-	storage = SU_getBuffer();
-	manager = (SUMP_Manager)storage.getItem("SUMP_Manager");
-
-	if (!manager) {
-    SUMP_Logger("SUMP_getManager(), received null, instantiating instance");
-
-		manager = new SUMP_Manager in storage;
-
-		storage.setItem(manager);
-	}
-
-	return manager;
+	return thePlayer.getSharedutilsMappinsManager();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

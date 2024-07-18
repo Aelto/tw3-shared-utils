@@ -1,5 +1,5 @@
 
-function SU_damageModifier(out action: W3DamageAction, playerAttacker: CR4Player, attackAction: W3Action_Attack) {
+function SU_damageModifier(out action: W3DamageAction) {
   var damage_modifier: SU_BaseDamageModifier;
   var attacker: CNewNPC;
   var victim: CNewNPC;

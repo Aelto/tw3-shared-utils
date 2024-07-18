@@ -1,21 +1,6 @@
 function SUOL_getManager(): SUOL_Manager {
-	var manager: SUOL_Manager;
-	var storage: SU_Storage;
-
   SUOL_Logger("SUOL_getManager()");
-	
-	storage = SU_getBuffer();
-	manager = (SUOL_Manager)storage.getItem("SUOL_Manager");
-
-	if (!manager) {
-    SUOL_Logger("SUOL_getManager(), received null, instantiating instance");
-
-		manager = new SUOL_Manager in storage;
-
-		storage.setItem(manager);
-	}
-
-	return manager;
+	return thePlayer.getSharedutilsOnelinersManager();
 }
 
 function SUOL_Logger(message: string, optional informGUI: bool) {

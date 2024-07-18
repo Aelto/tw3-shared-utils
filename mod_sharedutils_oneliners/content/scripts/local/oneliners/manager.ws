@@ -1,8 +1,6 @@
 
 ///
-statemachine class SUOL_Manager extends SU_StorageItem {
-  default tag = "SUOL_Manager";
-
+statemachine class SUOL_Manager {
   /// an internal counter
   private var oneliner_counter: int;
 

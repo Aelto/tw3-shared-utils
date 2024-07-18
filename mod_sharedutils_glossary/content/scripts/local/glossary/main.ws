@@ -8,19 +8,7 @@ function SU_removeGlossaryEntry(glossary_entry: SU_GlossaryEntry) {
 }
 
 function SUG_getManager(): SU_GlossaryManager {
-	var manager: SU_GlossaryManager;
-	var storage: SU_Storage;
-
-	storage = SU_getBuffer();
-	manager = (SU_GlossaryManager)storage.getItem("SU_GlossaryManager");
-
-	if (!manager) {
-		manager = new SU_GlossaryManager in storage;
-
-		storage.setItem(manager);
-	}
-
-	return manager;
+	return thePlayer.getSharedutilsGlossaryManager();
 }
 
 function SUG_populateListData(out flashDataList : CScriptedFlashArray, out m_flashValueStorage: CScriptedFlashValueStorage) {

@@ -1,7 +1,5 @@
 
-class SU_GlossaryManager extends SU_StorageItem {
-  default tag = "SU_GlossaryManager";
-
+class SU_GlossaryManager {
   var entries: array<SU_GlossaryEntry>;
 
   private function isTitleValid(title: string): bool {
