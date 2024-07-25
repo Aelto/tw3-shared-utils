@@ -22,6 +22,7 @@ XCOPY "%modpath%\mod_sharedutils_journalquest\" "%modpath%\release\mods\mod_shar
 XCOPY "%modpath%\mod_sharedutils_mappins\" "%modpath%\release\mods\mod_sharedutils_mappins\" /e /s /y
 XCOPY "%modpath%\mod_sharedutils_noticeboards\" "%modpath%\release\mods\mod_sharedutils_noticeboards\" /e /s /y
 XCOPY "%modpath%\mod_sharedutils_npcInteraction\" "%modpath%\release\mods\mod_sharedutils_npcInteraction\" /e /s /y
+XCOPY "%modpath%\mod_sharedutils_oneliners\" "%modpath%\release\mods\mod_sharedutils_oneliners\" /e /s /y
 XCOPY "%modpath%\mod0000_sharedutilsmappinsfhudpatch\" "%modpath%\release\mods\mod0000_sharedutilsmappinsfhudpatch\" /e /s /y
 
 :: then the dlcs
