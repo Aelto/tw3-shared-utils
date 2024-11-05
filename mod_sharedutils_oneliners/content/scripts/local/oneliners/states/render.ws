@@ -11,7 +11,7 @@ state Render in SUOL_Manager {
 			this.renderingLoop();
 		}
 
-		parent.GotoState('Idle');
+		parent.GotoState('SUOL_Idle');
 	}
 
 	latent function renderingLoop() {
