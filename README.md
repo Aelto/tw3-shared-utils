@@ -18,6 +18,7 @@ most utilities have an example folder and extensive comments explaining how to u
 | [Oneliners/3D Markers (SUOL)](/mod_sharedutils_oneliners/) | Add floating text/image elements to the world | |
 | [Custom cooldowns](mod_sharedutils_customcooldowns/example/main.ws) | Add custom cooldown icons to the player and to add event listeners for when they finish |  |
 | [NPC interaction](/mod_sharedutils_npcInteraction/README.md) | Run custom code when the player interacts with an NPC |  |
+| [Menu descriptors (SUMD)](/mod_sharedutils_menudescriptors//README.md) | Offers a simple API to display descriptions for mod menu entries |  |
 | [**DEPRECATED** Tiny Bootstrapper (SUTB)](mod_sharedutils_tiny_bootstrapper/) | _**DEPRECATED**: refer to the [`wrapMethod`](https://cdprojektred.atlassian.net/wiki/spaces/W3REDkit/pages/36241598/WS+Script+Compilation+Errors+overrides) for a merge free solution to bootstrap your mods from `CR4Player`'s `event OnSpawned`._ Bootstrap a persistent class after every reload automatically and with no extra merge for the end-users | `Storage`
 | [**DEPRECATED** Storage (SUST)](mod_sharedutils_storage) | _**DEPRECATED**: refer to the [`addField`](https://cdprojektred.atlassian.net/wiki/x/vgApAg) for a merge free solution to store data in `CR4Player`._ Store persistent objects in the save with no extra merge. Most sharedutils module rely on this one for internal data storage.  | |
 
