@@ -37,6 +37,16 @@ class RER_MainMenuDescriptor extends SU_MenuDescriptor {
 
     // displaying a localized string when this field is hovered:
     this.onHover('RERmodVersion',, "rer_mod_version_on_hover");
+
+    // the fallback message is displayed when there is nothing else to display,
+    // if entering a menu or hovering an entry doesn't result in any message then
+    // the fallback is used (if it isn't empty either).
+    //
+    // You can skip the first string and pass a string_key as a second parameter
+    // for a localized message.
+    this.withFallbackMessage(
+      "The main menu for RER, in there you'll find various settings to initialize the mod, turn it off, or quickly scale up/down the intensity of every system it offers."
+    );
   }
 }
 
@@ -48,7 +58,6 @@ function SU_onMenuEntered(menu: string, out descriptors: array<SU_MenuDescriptor
     descriptors.PushBack(new RER_MainMenuDescriptor in this);
   }
 }
-
 ```
 
 # Credits
