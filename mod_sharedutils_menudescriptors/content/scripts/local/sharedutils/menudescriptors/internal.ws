@@ -242,7 +242,27 @@ class SU_MenuDescriptorInternal {
         option_id,
         description,
         description_loc_key,
-        dynamic_description
+        false // dynamic_description
+      )
+    );
+
+    /// like onHover but appends a dynamic variant that will go through
+    /// dynamicDescription to be dynamically edited afterward.
+    protected final function onHoverDynamic(
+    option_id: name,
+    /// if the popup must contain a raw unlocalized string then this parameter
+    /// can provide it:
+    optional description: string,
+    /// if the popup must contain a localized string then this parameter can
+    /// provide the key of that localized string:
+    optional description_loc_key: string,
+  ) {
+    this.option_hover_listeners.PushBack(
+      SU_MenuDescriptor_OptionDescription(
+        option_id,
+        description,
+        description_loc_key,
+        true // dynamic_description
       )
     );
   }

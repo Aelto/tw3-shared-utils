@@ -65,9 +65,9 @@ function SU_onMenuEntered(menu: string, out descriptors: array<SU_MenuDescriptor
 ## Dynamic descriptions
 In some unique scenarios you may want to dynamically change the description
 based on the value of the field that's being hovered. In such case you can
-provide the 4th parameter in `this.onHover(field, description,, true)` calls to indicate that you may edit the description afterward.
+replace calls to `this.onHover` to `this.onHoverDynamic` to indicate that you may edit the description afterward.
 
-Once this is done, the description obtained from either the hardcoded description or from the localization key you pass (2nd and 3th parameters to `this.onHover()`) will be sent through a method called `dynamicDescription`.
+Once this is done, the description obtained from either the hardcoded description or from the localization key you pass (2nd and 3th parameters to `this.onHover()` or its `dynamic` variant in this case) will be sent through a method called `dynamicDescription`.
 
 > Note that if you do not need dynamic strings then you can skip that method entirely and not implement it as shown in the example above.
 
@@ -75,14 +75,9 @@ Here is a complete example:
 ```js
 class RER_MainMenuDescriptor extends SU_MenuDescriptor {
   public function build() {
-    this.onHover(
+    this.onHoverDynamic(
       'RERexternalFactors',
-      "This slider controls how much impact elements like the area and the biome you're at, the time of day, the creatures preferences have on the spawn rate of specific monster species.",,
-
-      // us passing `true` there indicates that we may want to construct
-      // a dynamic string based on the value of the entry. Refer to the
-      // `dynamicDescription` method below for the next step.
-      true
+      "This slider controls how much impact elements like the area and the biome you're at, the time of day, the creatures preferences have on the spawn rate of specific monster species."
     );
   }
 
