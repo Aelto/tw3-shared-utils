@@ -105,6 +105,7 @@ function OnOptionPanelNavigateBack() {
 function OnOptionSelectionChanged(optionName: name, value: bool) {
   var descriptor: SU_MenuDescriptor;
   var message_fallback: string;
+  var current_menu: name;
   var message: string;
   var result: bool;
   var i: int;
@@ -133,10 +134,11 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
 
   LogChannel('SUMD', "OnOptionSelectionChanged(), optionName=" + optionName);
 
+  current_menu = this.su_menu_stack.Last();
   for (i = 0; i < this.su_menu_descriptors.Size(); i += 1) {
     descriptor = this.su_menu_descriptors[i];
 
-    message += descriptor.onOptionHovered(optionName);
+    message += descriptor.onOptionHovered(current_menu, optionName);
   }
 
   this.SUMD_displayMessage(message);
@@ -183,9 +185,11 @@ class SU_MenuDescriptorInternal {
     return this.menu_scope == menu;
   }
 
-  public final function onOptionHovered(option: name): string {
+  public final function onOptionHovered(menu: name, option: name): string {
     var output: string;
+    var dynamic: bool;
     var i: int;
+
 
     for (i = 0; i < this.option_hover_listeners.Size(); i += 1) {
       if (this.option_hover_listeners[i].option_id != option) {
@@ -198,6 +202,18 @@ class SU_MenuDescriptorInternal {
       else {
         output += this.option_hover_listeners[i].description;
       }
+
+      dynamic = dynamic
+             || this.option_hover_listeners[i].dynamic_description;
+    }
+
+    if (dynamic) {
+      output = this.dynamicDescription(
+        menu,
+        option,
+        theGame.GetInGameConfigWrapper().GetVarValue(menu, option),
+        output
+      );
     }
 
     return output;
@@ -214,13 +230,19 @@ class SU_MenuDescriptorInternal {
     optional description: string,
     /// if the popup must contain a localized string then this parameter can
     /// provide the key of that localized string:
-    optional description_loc_key: string
+    optional description_loc_key: string,
+    /// if set to true, the system will redirect the current description that
+    /// may have been obtained from `description` or `description_loc_key`
+    /// and send them to 
+
+    optional dynamic_description: bool
   ) {
     this.option_hover_listeners.PushBack(
       SU_MenuDescriptor_OptionDescription(
         option_id,
         description,
-        description_loc_key
+        description_loc_key,
+        dynamic_description
       )
     );
   }
@@ -240,10 +262,20 @@ class SU_MenuDescriptorInternal {
       this.message_fallback = description;
     }
   }
+
+  private final function dynamicDescription(
+    menu: name,
+    option: name,
+    value: string,
+    description: string
+  ): string {
+    return description;
+  }
 }
 
 struct SU_MenuDescriptor_OptionDescription {
   var option_id: name;
   var description: string;
   var description_loc_key: string;
+  var dynamic_description: bool;
 }

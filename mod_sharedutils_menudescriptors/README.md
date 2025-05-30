@@ -15,6 +15,8 @@ Assuming a XML menu like this:
 
     <Var id="RERgeneralIntensity" displayName="rer_general_intensity" displayType="SLIDER;0;500;500"/>
 
+    <Var id="RERexternalFactors" displayName="rer_external_factors" displayType="SLIDER;0;10;10"/>
+
     <Var id="RERmodVersion" displayName="rer_mod_version" displayType="SLIDER;0;100;10000"></Var>
   </VisibleVars>
 </Group>
@@ -47,6 +49,67 @@ class RER_MainMenuDescriptor extends SU_MenuDescriptor {
     this.withFallbackMessage(
       "The main menu for RER, in there you'll find various settings to initialize the mod, turn it off, or quickly scale up/down the intensity of every system it offers."
     );
+  }
+}
+
+@wrapMethod(CR4IngameMenu)
+function SU_onMenuEntered(menu: string, out descriptors: array<SU_MenuDescriptor>) {
+  wrappedMethod(menu, descriptors);
+
+  if (menu == "rer_main_settings") {
+    descriptors.PushBack(new RER_MainMenuDescriptor in this);
+  }
+}
+```
+
+## Dynamic descriptions
+In some unique scenarios you may want to dynamically change the description
+based on the value of the field that's being hovered. In such case you can
+provide the 4th parameter in `this.onHover(field, description,, true)` calls to indicate that you may edit the description afterward.
+
+Once this is done, the description obtained from either the hardcoded description or from the localization key you pass (2nd and 3th parameters to `this.onHover()`) will be sent through a method called `dynamicDescription`.
+
+> Note that if you do not need dynamic strings then you can skip that method entirely and not implement it as shown in the example above.
+
+Here is a complete example:
+```js
+class RER_MainMenuDescriptor extends SU_MenuDescriptor {
+  public function build() {
+    this.onHover(
+      'RERexternalFactors',
+      "This slider controls how much impact elements like the area and the biome you're at, the time of day, the creatures preferences have on the spawn rate of specific monster species.",,
+
+      // us passing `true` there indicates that we may want to construct
+      // a dynamic string based on the value of the entry. Refer to the
+      // `dynamicDescription` method below for the next step.
+      true
+    );
+  }
+
+  private final function dynamicDescription(
+    /// the current menu
+    menu: name,
+    /// the currently hovered field
+    option: name,
+    /// its value as a string
+    value: string,
+    /// the current description that's going to be displayed
+    description: string
+  ): string {
+    var value_int: int;
+    
+    if (option == 'RERexternalFactors') {
+      // get the current value of the slider as an integer
+      value_int = StringToInt(value);
+
+      if (value_int > 5) {
+        // add a small note when the value is above 5 for example:
+        return description + "A value above 5 means that you will excusively find the creatures that match the current biome you're at and nothing else.";
+      }
+    }
+
+    // unchanged description for any result we do not handle.
+    return description;
   }
 }
 
