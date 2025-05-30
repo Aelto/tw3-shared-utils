@@ -19,6 +19,18 @@ var su_menu_message_cache: string;
 @addField(CR4IngameMenu)
 var su_menu_message_fallback_cache: string;
 
+/// in order to filter out uninteresting hover OUT events, we can compare
+/// them to the last hover IN source.
+@addField(CR4IngameMenu)
+var su_menu_hovered_option: name;
+
+/// counts how many hover OUT events were received since the last hover IN.
+/// A high OUT count can indicate the user is scrolling, or that new entries
+/// were added to the menu and that it is safer to cancel the last hove IN
+/// event.
+@addField(CR4IngameMenu)
+var su_menu_hovered_out_count: int;
+
 @wrapMethod(CR4IngameMenu)
 function OnShowOptionSubmenu(actionType: int, menuTag: int, id: string) {
   var descriptor: SU_MenuDescriptor;
@@ -61,6 +73,9 @@ function OnOptionPanelNavigateBack() {
   var menu_left: string;
   var i: int;
 
+  this.su_menu_hovered_out_count = 0;
+  this.su_menu_hovered_option = '';
+
   // clear fallback and hide popup:
   this.su_menu_message_fallback_cache = "";
   this.SUMD_displayMessage("");
@@ -97,8 +112,23 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
   result = wrappedMethod(optionName, value);
 
   if (!value) {
-    this.SUMD_displayMessage("");
-    return result;
+    this.su_menu_hovered_out_count += 1;
+
+    if (this.su_menu_hovered_out_count > 15) {
+      this.SUMD_displayMessage("");
+      return result;
+    }
+
+    // an unwanted OUT event was received which didn't match the last IN
+    // entry name. Update optionName to simulate a IN event on the previous
+    // hovered entry instead, let the logic handle duplicate IN events then
+    optionName = this.su_menu_hovered_option;
+    value = true;
+  }
+  else {
+    // a hover IN was received, update adequate cache values:
+    this.su_menu_hovered_out_count = 0;
+    this.su_menu_hovered_option = optionName;
   }
 
   LogChannel('SUMD', "OnOptionSelectionChanged(), optionName=" + optionName);
