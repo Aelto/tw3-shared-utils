@@ -34,7 +34,7 @@ class RER_MainMenuDescriptor extends SU_MenuDescriptor {
 
     this.onHover(
       'RERgeneralIntensity',
-      "This slider allows you to instantly speed up or slow down every system in the mod at once, the values of each individual system are then multiplied by the % you specify here.<br/><br/. If you feel like there is too much happening then turning it down to 50% is the way to go, or if you'd like more of what the mod offers then turning it up to 200% will do exactly that."
+      "This slider allows you to instantly speed up or slow down every system in the mod at once, the values of each individual system are then multiplied by the % you specify here.<br/><br/>If you feel like there is too much happening then turning it down to 50% is the way to go, or if you'd like more of what the mod offers then turning it up to 200% will do exactly that."
     );
 
     // displaying a localized string when this field is hovered:
@@ -76,30 +76,31 @@ Here is a complete example:
 class RER_MainMenuDescriptor extends SU_MenuDescriptor {
   public function build() {
     this.onHoverDynamic(
-      'RERexternalFactors',
-      "This slider controls how much impact elements like the area and the biome you're at, the time of day, the creatures preferences have on the spawn rate of specific monster species."
+      'RERgeneralIntensity',
+      "This slider allows you to instantly speed up or slow down every system in the mod at once, the values of each individual system are then multiplied by the % you specify here.<br/><br/>If you feel like there is too much happening then turning it down to 50% is the way to go, or if you'd like more of what the mod offers then turning it up to 200% will do exactly that."
     );
   }
 
-  private final function dynamicDescription(
+  protected function dynamicDescription(
     /// the current menu
-    menu: name,
+    menu: string,
     /// the currently hovered field
     option: name,
-    /// its value as a string
-    value: string,
     /// the current description that's going to be displayed
     description: string
   ): string {
-    var value_int: int;
-    
-    if (option == 'RERexternalFactors') {
-      // get the current value of the slider as an integer
-      value_int = StringToInt(value);
+    var value: float;
 
-      if (value_int > 5) {
+    if (option == 'RERgeneralIntensity') {
+      value = StringToFloat(
+        theGame
+          .GetInGameConfigWrapper()
+          .GetVarValue('RERmain', option)
+      );
+
+      if (value >= 200.0) {
         // add a small note when the value is above 5 for example:
-        return description + "A value above 5 means that you will excusively find the creatures that match the current biome you're at and nothing else.";
+        return description + "<br/><br/>A value above 200% can cause performance issues due to the amount of spawned enemies, adjust encounter settings accordingly.";
       }
     }
 

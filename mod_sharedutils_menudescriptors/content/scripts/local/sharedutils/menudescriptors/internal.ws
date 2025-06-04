@@ -104,8 +104,7 @@ function OnOptionPanelNavigateBack() {
 @wrapMethod(CR4IngameMenu)
 function OnOptionSelectionChanged(optionName: name, value: bool) {
   var descriptor: SU_MenuDescriptor;
-  var message_fallback: string;
-  var current_menu: name;
+  var current_menu: string;
   var message: string;
   var result: bool;
   var i: int;
@@ -146,6 +145,34 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
   return result;
 }
 
+@wrapMethod(CR4IngameMenu)
+function OnOptionValueChanged(
+  groupId: int,
+  optionName: name,
+  optionValue: string
+) { 
+  var descriptor: SU_MenuDescriptor;
+  var current_menu: string;
+  var message: string;
+  var result: bool;
+  var i: int;
+
+  result = wrappedMethod(groupId, optionName, optionValue);
+  LogChannel('SUMD', "OnOptionValueChanged(), optionName=" + optionName);
+
+  current_menu = this.su_menu_stack.Last();
+  for (i = 0; i < this.su_menu_descriptors.Size(); i += 1) {
+    descriptor = this.su_menu_descriptors[i];
+
+    message += descriptor.onOptionValueChanged(current_menu, optionName);
+  }
+
+  if (message != "") {
+    this.SUMD_displayMessage(message);
+  }
+
+  return result;
+}
 
 @addMethod(CR4IngameMenu)
 function SUMD_displayMessage(message: string) {
@@ -185,11 +212,10 @@ class SU_MenuDescriptorInternal {
     return this.menu_scope == menu;
   }
 
-  public final function onOptionHovered(menu: name, option: name): string {
+  public final function onOptionHovered(menu: string, option: name): string {
     var output: string;
     var dynamic: bool;
     var i: int;
-
 
     for (i = 0; i < this.option_hover_listeners.Size(); i += 1) {
       if (this.option_hover_listeners[i].option_id != option) {
@@ -211,10 +237,40 @@ class SU_MenuDescriptorInternal {
       output = this.dynamicDescription(
         menu,
         option,
-        theGame.GetInGameConfigWrapper().GetVarValue(menu, option),
         output
       );
     }
+
+    return output;
+  }
+
+  public final function onOptionValueChanged(menu: string, option: name): string {
+    var output: string;
+    var i: int;
+
+    for (i = 0; i < this.option_hover_listeners.Size(); i += 1) {
+      if (this.option_hover_listeners[i].option_id != option) {
+        continue;
+      }
+
+      // skip all non-dynamic listeners
+      if (!this.option_hover_listeners[i].dynamic_description) {
+        continue;
+      }
+
+      if (this.option_hover_listeners[i].description_loc_key != "") {
+        output += GetLocStringByKey(this.option_hover_listeners[i].description_loc_key);
+      }
+      else {
+        output += this.option_hover_listeners[i].description;
+      }
+    }
+
+    output = this.dynamicDescription(
+      menu,
+      option,
+      output
+    );
 
     return output;
   }
@@ -245,17 +301,18 @@ class SU_MenuDescriptorInternal {
         false // dynamic_description
       )
     );
+  }
 
-    /// like onHover but appends a dynamic variant that will go through
-    /// dynamicDescription to be dynamically edited afterward.
-    protected final function onHoverDynamic(
+  /// like onHover but appends a dynamic variant that will go through
+  /// dynamicDescription to be dynamically edited afterward.
+  protected final function onHoverDynamic(
     option_id: name,
     /// if the popup must contain a raw unlocalized string then this parameter
     /// can provide it:
     optional description: string,
     /// if the popup must contain a localized string then this parameter can
     /// provide the key of that localized string:
-    optional description_loc_key: string,
+    optional description_loc_key: string
   ) {
     this.option_hover_listeners.PushBack(
       SU_MenuDescriptor_OptionDescription(
@@ -283,10 +340,9 @@ class SU_MenuDescriptorInternal {
     }
   }
 
-  private final function dynamicDescription(
-    menu: name,
+  protected function dynamicDescription(
+    menu: string,
     option: name,
-    value: string,
     description: string
   ): string {
     return description;
