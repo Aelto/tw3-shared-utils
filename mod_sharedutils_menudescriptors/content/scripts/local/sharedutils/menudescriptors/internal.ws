@@ -112,12 +112,12 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
   result = wrappedMethod(optionName, value);
 
   if (!value) {
-    this.su_menu_hovered_out_count += 1;
-
-    if (this.su_menu_hovered_out_count > 15) {
+    if (optionName == this.su_menu_hovered_option || this.su_menu_hovered_out_count > 15) {
       this.SUMD_displayMessage("");
       return result;
     }
+
+    this.su_menu_hovered_out_count += 1;
 
     // an unwanted OUT event was received which didn't match the last IN
     // entry name. Update optionName to simulate a IN event on the previous
