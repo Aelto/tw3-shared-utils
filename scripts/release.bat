@@ -1,32 +1,59 @@
-:: update the /release directory with:
-:: - the mod menu in /release/bin
-:: - the mod DLC in /release/dlc
-:: - the mod content in /release/mod
-
 call variables.cmd
-call bundle.bat
+
+set releasemods=%modpath%\release\mods
+set bundleddir=%modpath%\release.bundled
+set bundledmod=%bundleddir%\mods\modZZZsharedutils
+set localpath=content\scripts\local\sharedutils
+set bundledout=%bundledmod%\%localpath%
 
 rmdir "%modpath%\release" /s /q
+rmdir "%bundleddir%\" /s /q
+
 mkdir "%modpath%\release"
+mkdir "%bundledout%"
+
+mkdir %releasemods%
+call :movetorelease mod_sharedutils_custombossbar false
+call :movetorelease mod_sharedutils_customcooldowns false
+call :movetorelease mod_sharedutils_damagemodifiers true
+call :movetorelease mod_sharedutils_dialogChoices true
+call :movetorelease mod_sharedutils_dialogHover true
+call :movetorelease mod_sharedutils_helpers true
+call :movetorelease mod_sharedutils_mappins true
+call :movetorelease mod_sharedutils_noticeboards true
+call :movetorelease mod_sharedutils_npcInteraction true
+call :movetorelease mod_sharedutils_oneliners true 
+call :movetorelease mod_sharedutils_glossary true
+call :movetorelease mod_sharedutils_menudescriptors true
+
+:: copy the bundled release into the redkit workspace
+set workspacescripts=%modpath%\redkit\sharedutils\workspace\scripts\local
+rmdir %workspacescripts% /s /q
+XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::FUNCTIONS::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+goto:eof
+
+:: moves the provided module to the normal release
+::
+:: the second parameters defines whether it should also be added to the bundled
+:: release, which is a single mod folder with all local files in the same place
+:movetorelease
+  XCOPY "%modpath%\%~1\" "%releasemods%\%~1\" /e /s /y
+
+  set shouldmovetobundled=%~2
+  if "%shouldmovetobundled%" == "true" (
+    call :movetobundled %~1
+  )
+goto:eof
 
 
-:: first the mods
-mkdir "%modpath%\release\mods\"
-XCOPY "%modpath%\mod_sharedutils_custombossbar\" "%modpath%\release\mods\mod_sharedutils_custombossbar\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_customcooldowns\" "%modpath%\release\mods\mod_sharedutils_customcooldowns\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_damagemodifiers\" "%modpath%\release\mods\mod_sharedutils_damagemodifiers\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_dialogChoices\" "%modpath%\release\mods\mod_sharedutils_dialogChoices\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_dialogHover\" "%modpath%\release\mods\mod_sharedutils_dialogHover\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_helpers\" "%modpath%\release\mods\mod_sharedutils_helpers\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_journalquest\" "%modpath%\release\mods\mod_sharedutils_journalquest\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_mappins\" "%modpath%\release\mods\mod_sharedutils_mappins\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_noticeboards\" "%modpath%\release\mods\mod_sharedutils_noticeboards\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_npcInteraction\" "%modpath%\release\mods\mod_sharedutils_npcInteraction\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_oneliners\" "%modpath%\release\mods\mod_sharedutils_oneliners\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_glossary\" "%modpath%\release\mods\mod_sharedutils_glossary\" /e /s /y
-XCOPY "%modpath%\mod_sharedutils_menudescriptors\" "%modpath%\release\mods\mod_sharedutils_menudescriptors\" /e /s /y
-XCOPY "%modpath%\mod0000_sharedutilsmappinsfhudpatch\" "%modpath%\release\mods\mod0000_sharedutilsmappinsfhudpatch\" /e /s /y
-
-:: then the dlcs
-mkdir "%modpath%\release\dlc\"
-XCOPY "%modpath%\shared-utils\packed\" "%modpath%\release\dlc\dlcsharedutils\" /e /s /y
+:: moves the provided module to the bundled release
+:movetobundled
+  echo Moving %~1 to bundled release
+  ::echo "%releasemods%\%~1\%localpath%"
+  ::echo "%bundledout%"
+  XCOPY "%releasemods%\%~1\%localpath%\" "%bundledout%"  /e /s /y
+goto:eof
