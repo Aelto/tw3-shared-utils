@@ -2,7 +2,7 @@
 var dialog_hover_listeners: array<SU_DialogHoverListener>;
 
 @wrapMethod(CR4HudModuleDialog)
-event OnDialogOptionSelected(index: int) {
+function OnDialogOptionSelected(index: int) {
   var result: bool;
 
   result = wrappedMethod(index);
