@@ -1,2 +1,6 @@
 release
+release.bundled
 minimap2_swf
+
+redkit/*
+!redkit/sharedutils/workspace/scripts
