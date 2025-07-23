@@ -31,6 +31,8 @@ set workspacescripts=%modpath%\redkit\sharedutils\workspace\scripts\local
 rmdir %workspacescripts% /s /q
 XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
 
+call compileblob.bat
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::FUNCTIONS::::::::::::::::::::::::::::::::::::::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
