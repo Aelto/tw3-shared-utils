@@ -3,4 +3,6 @@ release.bundled
 minimap2_swf
 
 redkit/*
+dev-scripts/*
 !redkit/sharedutils/workspace/scripts
+wcc.log

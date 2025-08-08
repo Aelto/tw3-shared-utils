@@ -9,7 +9,6 @@ set modpath=%cd%\..\release.bundled\mods\modZZZsharedutils
 :: path to the `/content/scripts` of the mod
 set modscripts=%modpath%\content\scripts
 
-set gamesfolder=D:\programs\Steam\steamapps\common
 set redkit=%REDKIT_ROOT%\bin\x64_RedKit
 set gamescripts=%WITCHER_ROOT%\content\content0\scripts
 

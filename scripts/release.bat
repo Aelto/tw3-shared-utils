@@ -27,9 +27,11 @@ call :movetorelease mod_sharedutils_glossary true
 call :movetorelease mod_sharedutils_menudescriptors true
 
 :: copy the bundled release into the redkit workspace
-set workspacescripts=%modpath%\redkit\sharedutils\workspace\scripts\local
-rmdir %workspacescripts% /s /q
-XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
+:: not needed anymore as we can compile a bundle directly using wcc_lite
+::
+:: set workspacescripts=%modpath%\redkit\sharedutils\workspace\scripts\local
+:: rmdir %workspacescripts% /s /q
+:: XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
 
 call compileblob.bat
 
