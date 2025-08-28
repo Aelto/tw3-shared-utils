@@ -33,6 +33,7 @@ call :movetorelease mod_sharedutils_menudescriptors true
 :: rmdir %workspacescripts% /s /q
 :: XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
 
+copy "%modpath%\info.json" "%modpath%\release.bundled\mods\modZZZsharedutils\content\info.json" /y
 call compileblob.bat
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
