@@ -2,7 +2,7 @@ call variables.cmd
 
 set releasemods=%modpath%\release\mods
 set bundleddir=%modpath%\release.bundled
-set bundledmod=%bundleddir%\mods\modZZZsharedutils
+set bundledmod=%bundleddir%\mods\modzzz_sharedutils
 set localpath=content\scripts\local\sharedutils
 set bundledout=%bundledmod%\%localpath%
 
@@ -33,7 +33,7 @@ call :movetorelease mod_sharedutils_menudescriptors true
 :: rmdir %workspacescripts% /s /q
 :: XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
 
-copy "%modpath%\info.json" "%modpath%\release.bundled\mods\modZZZsharedutils\content\info.json" /y
+copy "%modpath%\info.json" "%modpath%\release.bundled\mods\modzzz_sharedutils\content\info.json" /y
 call compileblob.bat
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

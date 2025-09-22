@@ -4,7 +4,7 @@
 ::   - REDKIT_ROOT, a path to a REDkit install
 ::   - WITCHER_ROOT, a path to a Witcher 3 install
 :: Adjust the following path to point to the root of the mod that needs a blob:
-set modpath=%cd%\..\release.bundled\mods\modZZZsharedutils
+set modpath=%cd%\..\release.bundled\mods\modzzz_sharedutils
 
 :: path to the `/content/scripts` of the mod
 set modscripts=%modpath%\content\scripts
