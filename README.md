@@ -33,6 +33,7 @@ The primary goal of the shared-utils package is to simplify mod making and reduc
 - [RasitAyaz/Alternative-Radial-Menu](https://www.nexusmods.com/witcher3/mods/8237)
 - [nikich340/Custom Player Characters](https://www.nexusmods.com/witcher3/mods/5940)
 - [MerseyRockoff/Brothers In Arms Ultimate Edition](https://www.nexusmods.com/witcher3/mods/11260)
+- [PlasticMetal/Active Medallion](https://www.nexusmods.com/witcher3/mods/6251)
 - [Aelto/tw3-random-encounters-reworked](https://github.com/Aelto/tw3-random-encounters-reworked)
 - [Aelto/tw3-crow](https://github.com/Aelto/tw3-crow)
 - [Aelto/tw3-a-gwent-empire](https://github.com/Aelto/tw3-a-gwent-empire)
