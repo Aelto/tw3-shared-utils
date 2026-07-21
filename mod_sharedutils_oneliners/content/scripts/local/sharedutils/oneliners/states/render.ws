@@ -59,15 +59,20 @@ state Render in SUOL_Manager {
 
 /// The function returns true if the position in visible on the screen, false if
 /// it is not.
-function SUOL_worldToScreenPosition(hud: CR4ScriptedHud, world_position: Vector, out screen_position: Vector): bool {
-	if (!theCamera.WorldVectorToViewRatio(world_position, screen_position.X, screen_position.Y)) {
+function SUOL_worldToScreenPosition(
+	hud: CR4ScriptedHud,
+	world_position: Vector,
+	out screen_position: Vector
+	out normalized_screen_position: Vector
+): bool {
+	if (!theCamera.WorldVectorToViewRatio(world_position, normalized_screen_position.X, normalized_screen_position.Y)) {
 		return false;
 	}
 
-	screen_position.X = (screen_position.X + 1) / 2;
-	screen_position.Y = (screen_position.Y + 1) / 2;
+	normalized_screen_position.X = (normalized_screen_position.X + 1) / 2;
+	normalized_screen_position.Y = (normalized_screen_position.Y + 1) / 2;
 
-	// at this point, screen_position is a normalized [0;1] vector, the GetScale
+	// at this point, normalized_screen_position is a normalized [0;1] vector, the GetScale
 	// function transforms it into non normlized screen coordinates:
 	screen_position = hud.GetScaleformPoint(screen_position.X, screen_position.Y);
 
