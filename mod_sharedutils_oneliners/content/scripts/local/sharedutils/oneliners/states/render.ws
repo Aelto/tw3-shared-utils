@@ -44,7 +44,6 @@ state Render in SUOL_Manager {
 				}
 
 				if (oneliner.getScreenPosition(parent.module_hud, screen_position)) {
-					oneliner.cached_screen_position = screen_position;
 					sprite.SetPosition(screen_position.X, screen_position.Y);
 					sprite.SetVisible(true);
 				} else {
@@ -65,7 +64,11 @@ function SUOL_worldToScreenPosition(
 	out screen_position: Vector,
 	out normalized_screen_position: Vector
 ): bool {
-	if (!theCamera.WorldVectorToViewRatio(world_position, normalized_screen_position.X, normalized_screen_position.Y)) {
+	if (!theCamera.WorldVectorToViewRatio(
+		world_position,
+		normalized_screen_position.X,
+		normalized_screen_position.Y
+	)) {
 		return false;
 	}
 
@@ -74,7 +77,10 @@ function SUOL_worldToScreenPosition(
 
 	// at this point, normalized_screen_position is a normalized [0;1] vector, the GetScale
 	// function transforms it into non normlized screen coordinates:
-	screen_position = hud.GetScaleformPoint(screen_position.X, screen_position.Y);
+	screen_position = hud.GetScaleformPoint(
+		normalized_screen_position.X,
+		normalized_screen_position.Y
+	);
 
 	return true;
 }
