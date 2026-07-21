@@ -28,7 +28,7 @@ statemachine class SUOL_Manager {
 
   private function getNewId(): int {
     var id: int = Max(this.oneliner_counter, (int)theGame.GetLocalTimeAsMilliseconds());
-	this.oneliner_counter = id + 1;
+	  this.oneliner_counter = id + 1;
     return id;
   }
 
@@ -44,7 +44,10 @@ statemachine class SUOL_Manager {
       this.initialize();
     }
 
-    oneliner.id = this.getNewId();
+    if (oneliner.id < 0) {
+      oneliner.id = this.getNewId();
+    }
+
     this.updateOneliner(oneliner);
     this.oneliners.PushBack(oneliner);
 

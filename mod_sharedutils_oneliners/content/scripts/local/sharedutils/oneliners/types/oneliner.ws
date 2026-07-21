@@ -5,6 +5,8 @@ class SU_Oneliner {
   var tag: string;
 
   var id: int;
+  default id = -1;
+
   var text: string;
   var visible: bool;
   var position: Vector;
