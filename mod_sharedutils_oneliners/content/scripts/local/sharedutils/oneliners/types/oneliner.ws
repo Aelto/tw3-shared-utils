@@ -80,12 +80,20 @@ class SU_Oneliner {
     return this.position + this.offset;
   }
 
+  public var cached_screen_position: Vector;
   function getScreenPosition(hud: CR4ScriptedHud, out screen_position: Vector): bool {
     var world_position: Vector;
     var result: bool;
 
     world_position = this.getPosition();
     result = SUOL_worldToScreenPosition(hud, world_position, screen_position);
+
+    // the `cached_screen_position` could be set here, but in order to save an
+    // if-check in this function that runs every frame and for every oneliner,
+    // the value will be set in the `Render` state of the manager where it 
+    // already performs an if-check on `result`. Ultimately saving us from doing
+    // that duplicate check.
+    // this.cached_screen_position = screen_position;
 
     return result;
   }
