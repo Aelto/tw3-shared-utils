@@ -44,7 +44,7 @@ state Render in SUOL_Manager {
 				}
 
 				if (oneliner.getScreenPosition(parent.module_hud, screen_position)) {
-					oneliner.this.cached_screen_position = screen_position;
+					oneliner.cached_screen_position = screen_position;
 					sprite.SetPosition(screen_position.X, screen_position.Y);
 					sprite.SetVisible(true);
 				} else {
