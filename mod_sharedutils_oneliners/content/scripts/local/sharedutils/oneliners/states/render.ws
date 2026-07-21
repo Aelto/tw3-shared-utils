@@ -62,7 +62,7 @@ state Render in SUOL_Manager {
 function SUOL_worldToScreenPosition(
 	hud: CR4ScriptedHud,
 	world_position: Vector,
-	out screen_position: Vector
+	out screen_position: Vector,
 	out normalized_screen_position: Vector
 ): bool {
 	if (!theCamera.WorldVectorToViewRatio(world_position, normalized_screen_position.X, normalized_screen_position.Y)) {
