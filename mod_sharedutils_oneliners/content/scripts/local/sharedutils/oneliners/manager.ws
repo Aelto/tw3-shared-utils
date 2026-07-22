@@ -65,6 +65,17 @@ statemachine class SUOL_Manager {
     );
   }
 
+  /// Expects a value in the [0;1] range.
+  public function setOnelinerOpacity(oneliner: SU_Oneliner, opacity: float) {
+    var sprite: CScriptedFlashSprite;
+
+    sprite = this.module_flash.GetChildFlashSprite("mcOneliner" + oneliner.id);
+
+    if (sprite) {
+      sprite.SetAlpha(opacity * 100.0);
+    }
+  }
+
   public function deleteOneliner(oneliner: SU_Oneliner) {
     this.oneliners.Remove(oneliner);
     this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));

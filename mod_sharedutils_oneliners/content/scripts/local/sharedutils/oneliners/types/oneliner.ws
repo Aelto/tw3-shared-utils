@@ -65,6 +65,24 @@ class SU_Oneliner {
     return this;
   }
 
+  /// it's public but obviously if you need to modify the opacity, use the
+  /// [setOpacity] method for that. Considering OLs run every frame, getter
+  /// functions just to get float values are better avoided for performance
+  /// reasons.
+  public var opacity: float;
+
+  /// Expects a value in the [0;1] range.
+  public function setOpacity(value: float): SU_Oneliner {
+    if (value == this.opacity) {
+      return this;
+    }
+
+    this.opacity = value;
+    SUOL_getManager().setOnelinerOpacity(this, value);
+
+    return this;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
 
   function getVisible(player_position: Vector): bool {
