@@ -48,7 +48,10 @@ statemachine class SUOL_Manager {
       oneliner.id = this.getNewId();
     }
 
-    this.updateOneliner(oneliner);
+    this.fxCreateOnelinerSFF.InvokeSelfTwoArgs(
+      FlashArgInt(oneliner.id),
+      FlashArgString(oneliner.text)
+    );
     this.oneliners.PushBack(oneliner);
 
     if (should_initialize_and_render) {
@@ -58,11 +61,10 @@ statemachine class SUOL_Manager {
 
   /// Updates the flash values with the oneliner's new/current text
   public function updateOneliner(oneliner: SU_Oneliner) {
-    this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
-    this.fxCreateOnelinerSFF.InvokeSelfTwoArgs(
-      FlashArgInt(oneliner.id),
-      FlashArgString(oneliner.text)
-    );
+    this.module_flash
+      .GetChildFlashSprite("mcOneliner" + oneliner.id)
+      .GetChildFlashTextField("textField")
+      .SetTextHtml(oneliner.text);
   }
 
   /// Expects a value in the [0;1] range.
