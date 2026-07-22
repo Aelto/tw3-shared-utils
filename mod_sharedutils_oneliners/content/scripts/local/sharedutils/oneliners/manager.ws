@@ -132,5 +132,12 @@ statemachine class SUOL_Manager {
 
     return output;
   }
+
+  public function deleteAllOneliners() { 
+    while (this.oneliners.Size() > 0) 
+    { 
+      this.deleteOneliner(this.oneliners[this.oneliners.Size() - 1]); 
+    } 
+  } 
 }
 

@@ -1,6 +1,6 @@
 function SUOL_getManager(): SUOL_Manager {
   SUOL_Logger("SUOL_getManager()");
-	return thePlayer.getSharedutilsOnelinersManager();
+	return theInput.getSharedutilsOnelinersManager();
 }
 
 function SUOL_Logger(message: string, optional informGUI: bool) {
