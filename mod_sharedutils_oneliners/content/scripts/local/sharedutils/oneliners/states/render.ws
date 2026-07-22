@@ -43,7 +43,6 @@ state Render in SUOL_Manager {
 
 				if (oneliner.getScreenPosition(parent.module_hud, screen_position)) {
 					sprite.SetPosition(screen_position.X, screen_position.Y);
-					sprite.SetAlpha(100.0);
 					sprite.SetVisible(true);
 				} else {
 					sprite.SetVisible(false);
