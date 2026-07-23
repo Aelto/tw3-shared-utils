@@ -16,12 +16,15 @@ class SU_Oneliner {
   /// the OL.
   var render_distance: int;
 
+  var is_registered: bool;
+
   default visible = true;
 
   function register() {
     var manager: SUOL_Manager;
 
     manager = SUOL_getManager();
+    // this.is_registered is modified by the manager's methods
     manager.createOneliner(this);
   }
 
@@ -29,6 +32,7 @@ class SU_Oneliner {
     var manager: SUOL_Manager;
 
     manager = SUOL_getManager();
+    // this.is_registered is modified by the manager's methods
     manager.deleteOneliner(this);
   }
 

@@ -52,7 +52,11 @@ statemachine class SUOL_Manager {
       FlashArgInt(oneliner.id),
       FlashArgString(oneliner.text)
     );
-    this.oneliners.PushBack(oneliner);
+
+    if (!oneliner.is_registered) {
+      this.oneliners.PushBack(oneliner);
+      oneliner.is_registered = true;
+    }
 
     if (should_initialize_and_render) {
       this.GotoState('Render');
@@ -81,6 +85,7 @@ statemachine class SUOL_Manager {
   public function deleteOneliner(oneliner: SU_Oneliner) {
     this.oneliners.Remove(oneliner);
     this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
+    oneliner.is_registered = false;
   }
 
   public function findByTag(tag: string): array<SU_Oneliner> {
