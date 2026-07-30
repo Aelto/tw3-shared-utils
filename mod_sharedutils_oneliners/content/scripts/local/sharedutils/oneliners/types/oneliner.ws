@@ -11,7 +11,7 @@ class SU_Oneliner {
   var visible: bool;
   var position: Vector;
   var offset: Vector;
-  
+
   /// if set to a value above 0, will be used as a maximum render distance for
   /// the OL.
   var render_distance: int;
@@ -20,27 +20,27 @@ class SU_Oneliner {
 
   default visible = true;
 
-  function register() {
-    var manager: SUOL_Manager;
+  private var cached_manager: SUOL_Manager;
+  function getManager(): SUOL_Manager {
+    if (!this.cached_manager) {
+      this.cached_manager = SUOL_getManager();
+    }
 
-    manager = SUOL_getManager();
+    return this.cached_manager;
+  }
+
+  function register() {
     // this.is_registered is modified by the manager's methods
-    manager.createOneliner(this);
+    this.getManager().createOneliner(this);
   }
 
   function unregister() {
-    var manager: SUOL_Manager;
-
-    manager = SUOL_getManager();
     // this.is_registered is modified by the manager's methods
-    manager.deleteOneliner(this);
+    this.getManager().deleteOneliner(this);
   }
 
   function update() {
-    var manager: SUOL_Manager;
-
-    manager = SUOL_getManager();
-    manager.updateOneliner(this);
+    this.getManager().updateOneliner(this);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ class SU_Oneliner {
     }
 
     this.opacity = value;
-    SUOL_getManager().setOnelinerOpacity(this, value);
+    this.getManager().setOnelinerOpacity(this, value);
 
     return this;
   }
