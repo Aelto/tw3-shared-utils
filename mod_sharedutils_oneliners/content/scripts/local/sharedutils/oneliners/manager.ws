@@ -83,6 +83,10 @@ statemachine class SUOL_Manager {
   }
 
   public function deleteOneliner(oneliner: SU_Oneliner) {
+    if (!oneliner.is_registered) {
+      return;
+    }
+
     this.oneliners.Remove(oneliner);
     this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
     oneliner.is_registered = false;
