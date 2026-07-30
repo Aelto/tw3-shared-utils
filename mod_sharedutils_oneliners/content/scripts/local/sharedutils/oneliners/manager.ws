@@ -48,12 +48,12 @@ statemachine class SUOL_Manager {
       oneliner.id = this.getNewId();
     }
 
-    this.fxCreateOnelinerSFF.InvokeSelfTwoArgs(
-      FlashArgInt(oneliner.id),
-      FlashArgString(oneliner.text)
-    );
-
     if (!oneliner.is_registered) {
+      this.fxCreateOnelinerSFF.InvokeSelfTwoArgs(
+        FlashArgInt(oneliner.id),
+        FlashArgString(oneliner.text)
+      );
+
       this.oneliners.PushBack(oneliner);
       oneliner.is_registered = true;
     }
@@ -138,11 +138,10 @@ statemachine class SUOL_Manager {
     return output;
   }
 
-  public function deleteAllOneliners() { 
-    while (this.oneliners.Size() > 0) 
-    { 
-      this.deleteOneliner(this.oneliners[this.oneliners.Size() - 1]); 
-    } 
-  } 
+  public function deleteAllOneliners() {
+    while (this.oneliners.Size() > 0)
+    {
+      this.deleteOneliner(this.oneliners[this.oneliners.Size() - 1]);
+    }
+  }
 }
-
