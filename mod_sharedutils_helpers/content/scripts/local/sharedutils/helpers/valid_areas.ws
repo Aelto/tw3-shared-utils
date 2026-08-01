@@ -138,9 +138,7 @@ function SUH_moveCoordinatesAwayFromSafeAreas(point: Vector, optional exception_
     }
   }
 
-  safe_areas = SUH_getSafeAreasByRegion(
-    AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea())
-  );
+  safe_areas = SUH_getSafeAreasByRegion(SUH_getCurrentRegion());
 
   for (i = 0; i < safe_areas.Size(); i += 1) {
     squared_radius = safe_areas[i].Z * safe_areas[i].Z;
@@ -177,7 +175,7 @@ function SUH_moveCoordinatesInsideValidAreas(point: Vector): Vector {
   var output: Vector;
   var i: int;
 
-  region = AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea());
+  region = SUH_getCurrentRegion();
 
   if (region != "skellige") {
     return point;
@@ -309,9 +307,7 @@ function SUH_isPositionInsideSafeAreas(position: Vector): bool {
   var squared_radius: float;
   var i: int;
 
-  safe_areas = SUH_getSafeAreasByRegion(
-    AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea())
-  );
+  safe_areas = SUH_getSafeAreasByRegion(SUH_getCurrentRegion());
 
 
   for (i = 0; i < safe_areas.Size(); i += 1) {
@@ -475,63 +471,51 @@ function SUH_placeCircleCoordinatesAroundPoint(circle_coordinates: Vector, circl
  * returns the bounds of the current world
  */
 function SUH_setMinAndMaxFromRegion(out min_x: float, out max_x: float, out min_y: float, out max_y: float) {
-  var area: EAreaName;
-  var area_string: string;
+  var area: string;
 
-  area = theGame.GetCommonMapManager().GetCurrentArea();
+  area = SUH_getCurrentRegion();
 
   switch (area) {
-    case AN_Prologue_Village:
-    case AN_Prologue_Village_Winter:
-    case AN_Spiral:
-    case AN_CombatTestLevel:
-    case AN_Wyzima:
-    case AN_Island_of_Myst:
+    case "prolog_village":
       min_x = -350;
       max_x = 375;
       min_y = -150;
       max_y = 235;
       break;
 
-    case AN_Skellige_ArdSkellig:
+    case "skellige":
       min_x = -1750;
       max_x = 1750;
       min_y = -1750;
       max_y = 1750;
       break;
 
-    case AN_Kaer_Morhen:
+    case "kaer_morhen":
       min_x = -180;
       max_x = 50;
       min_y = -500;
       max_y = 900;
       break;
 
-    case AN_NMLandNovigrad:
-    case AN_Velen:
+    case "no_mans_land":
       min_x = -350;
       max_x = 2500;
       min_y = -1000;
       max_y = 2500;
       break;
+    
+    case "bob":
+      min_x = -1100;
+      max_x = 1100;
+      min_y = -1800;
+      max_y = 800;
+      break;
 
     default:
-      area_string = AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea());
-
-      if (area_string == "bob") {
-        min_x = -1100;
-        max_x = 1100;
-        min_y = -1800;
-        max_y = 800;
-      }
-      else {
-        min_x = -300;
-        max_x = 300;
-        min_y = -300;
-        max_y = 300;
-      }
-
-      break;
+      min_x = -300;
+      max_x = 300;
+      min_y = -300;
+      max_y = 300;
   }
 }
 

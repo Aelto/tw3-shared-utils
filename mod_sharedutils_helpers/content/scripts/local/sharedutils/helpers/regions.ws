@@ -7,11 +7,11 @@
   *  - kaer_morhen
   */
 function SUH_getCurrentRegion(): string {
-  var region: string;
-
-  region = AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea());
-
-  return SUH_normalizeRegion(region);
+  return SUH_normalizeRegion(
+    theGame
+      .GetCommonMapManager()
+      .GetCurrentArea()
+  );
 }
 
 /**

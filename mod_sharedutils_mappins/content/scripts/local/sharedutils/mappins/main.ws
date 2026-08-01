@@ -1,18 +1,18 @@
 
 
-function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage, shown_area: EAreaName) {
+function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_storage: CScriptedFlashValueStorage, shown_area: name) {
   var flash_object: CScriptedFlashObject;
   var custom_pins: array<SU_MapPin>;
   var current_pin: SU_MapPin;
   var region, shown_region: String;
-  var journal_area: int;
+  var journal_area: name;
   var i: int;
 
   custom_pins = SUMP_getCustomPins();
 
   region = SUH_getCurrentRegion();
-  shown_region = SUH_normalizeRegion(AreaTypeToName(shown_area));
-  journal_area = theGame.GetCommonMapManager().GetCurrentJournalArea();
+  shown_region = SUH_normalizeRegion(shown_area);
+  theGame.GetCommonMapManager().GetCurrentJournalArea(journal_area);
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
     current_pin = custom_pins[i];
@@ -35,7 +35,7 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
     flash_object.SetMemberFlashUInt("id", NameToFlashUInt(current_pin.pin_tag));
 
     //Constants - Should not be modified from these values for our purposes.
-    flash_object.SetMemberFlashInt("journalAreaId", journal_area);
+    flash_object.SetMemberFlashUInt("journalAreaId", NameToFlashUInt(journal_area));
     flash_object.SetMemberFlashNumber("rotation", 0);
     flash_object.SetMemberFlashBool("isPlayer", false);
     flash_object.SetMemberFlashBool("isUserPin", false);
