@@ -15,7 +15,10 @@ public function getSharedutilsOnelinersManager(): SUOL_Manager {
 @addMethod(CInputManager)
 public function newSharedutilsOnelinersManager() 
 {
-  getSharedutilsOnelinersManager().deleteAllOneliners();
+  if (this.sharedutils_oneliners) {
+    this.sharedutils_oneliners.deleteAllOneliners();
+  }
+  
   this.sharedutils_oneliners = new SUOL_Manager in this;
 }
 
