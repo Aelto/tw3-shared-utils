@@ -32,12 +32,33 @@ function SUH_isPlayerInRegion(region: string): bool {
  * these areas into single areas to make naming & coding simpler.
  */
 function SUH_normalizeRegion(region: string): string {
-  if (region == "novigrad") {
-    return "no_mans_land";
-  }
+  switch (region) {
+    case "novigrad":
+    case "AN_Velen":
+    case "AN_NMLandNovigrad":
+      return "no_mans_land";
+      break;
 
-  if (region == "prolog_village_winter") {
-    return "prolog_village";
+    case "prolog_village_winter":
+    case "AN_Prologue_Village_Winter":
+    case "AN_Prologue_Village":
+      return "prolog_village";
+      break;
+
+    case "skellige":
+    case "AN_Skellige_ArdSkellig":
+      return "skellige";
+      break;
+
+    case "bob":
+    case "AN_Bob":
+      return "bob";
+      break;
+
+    case "kaer_morhen":
+    case "AN_Kaer_Morhen":
+      return "kaer_morhen";
+      break;
   }
 
   return region;
