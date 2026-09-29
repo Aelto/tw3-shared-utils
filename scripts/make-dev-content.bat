@@ -12,7 +12,7 @@
 ::   - WITCHER_ROOT, a path to a Witcher 3 install
 set output=%cd%\..\dev-scripts
 set gamescripts=%WITCHER_ROOT%\content\content0\scripts
-set sharedutilsscripts=%cd%\..\release.bundled\mods\modZZZsharedutils\content\scripts
+set sharedutilsscripts=%cd%\..\release.bundled\mods\modzzz_sharedutils\content\scripts
 
 rmdir "%output%" /s /q
 call :copygamescripts

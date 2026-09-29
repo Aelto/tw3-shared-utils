@@ -34,6 +34,9 @@ call :movetorelease mod_sharedutils_menudescriptors true
 :: XCOPY "%bundledout%\" "%workspacescripts%\" /e /s /y
 
 copy "%modpath%\info.json" "%modpath%\release.bundled\mods\modzzz_sharedutils\content\info.json" /y
+
+XCOPY "%modpath%\redkit\sharedutils\packed\dlc" "%bundleddir%\dlc\" /e /s /y
+
 call compileblob.bat
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
