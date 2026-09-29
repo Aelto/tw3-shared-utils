@@ -2,7 +2,7 @@
   "name": "sharedutils",
   "modName": "Sharedutils",
   "version": "3.1.1",
-  "gameVersion": "28",
+  "gameVersion": "29",
   "description": "A collection of utilities for modding the game.",
   "author": "",
   "idSpace": 10000000,
