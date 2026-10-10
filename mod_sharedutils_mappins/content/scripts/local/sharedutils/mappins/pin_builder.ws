@@ -190,6 +190,18 @@ class SU_MapPinBuilder {
 
     return this;
   }
+
+  /**
+   * Only show the pin between these in-game hours (0-23), the end hour is
+   * excluded. The range can wrap around midnight: `.visible_between(20, 6)`
+   * shows the pin from 20:00 until 06:00.
+   */
+  public function visible_between(from_hour: int, to_hour: int): SU_MapPinBuilder {
+    this.pin.visible_from_hour = from_hour;
+    this.pin.visible_to_hour = to_hour;
+
+    return this;
+  }
   
   /**
    * Internal function, do not use it.

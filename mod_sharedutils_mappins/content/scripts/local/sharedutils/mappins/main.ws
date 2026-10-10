@@ -6,6 +6,7 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
   var current_pin: SU_MapPin;
   var region, shown_region: String;
   var journal_area: name;
+  var hour: int;
   var i: int;
 
   custom_pins = SUMP_getCustomPins();
@@ -13,12 +14,18 @@ function SU_updateCustomMapPins(out flash_array: CScriptedFlashArray, value_stor
   region = SUH_getCurrentRegion();
   shown_region = SUH_normalizeRegion(shown_area);
   theGame.GetCommonMapManager().GetCurrentJournalArea(journal_area);
+  hour = GameTimeHours(theGame.GetGameTime());
 
   for (i = 0; i < custom_pins.Size(); i += 1) {
     current_pin = custom_pins[i];
 	
     // the player is not in the right region or right map view, we skip the pin.
     if (current_pin.region != shown_region) {
+      continue;
+    }
+
+    // the pin is limited to some hours of the day and it is not one of them.
+    if (!current_pin.isVisibleAtHour(hour)) {
       continue;
     }
 	
