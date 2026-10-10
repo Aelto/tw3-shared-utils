@@ -91,6 +91,22 @@ class SU_MapPin {
   var highlighted: bool;
   default highlighted = true;
 
+////////////////////////////////////////////////////////////////////////////////
+//                             Time Of Day Options                            //
+////////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * The in-game hours (0-23) during which the pin is shown. The pin is visible
+   * from `visible_from_hour` up to, but not including, `visible_to_hour`, and
+   * the range can wrap around midnight, for example 20 to 6 for a night only pin.
+   * Leave either at -1 (the default) for a pin that is always visible.
+   */
+  var visible_from_hour: int;
+  default visible_from_hour = -1;
+
+  var visible_to_hour: int;
+  default visible_to_hour = -1;
+
   function init(
     _tag: String,
     _position: Vector,
@@ -119,6 +135,23 @@ class SU_MapPin {
     this.is_quest = _is_quest;
 
     return this;
+  }
+
+  /**
+   * Returns whether the pin should be shown at the given in-game hour, see
+   * `visible_from_hour` and `visible_to_hour`.
+   */
+  public function isVisibleAtHour(hour: int): bool {
+    if (this.visible_from_hour < 0 || this.visible_to_hour < 0 || this.visible_from_hour == this.visible_to_hour) {
+      return true;
+    }
+
+    if (this.visible_from_hour < this.visible_to_hour) {
+      return hour >= this.visible_from_hour && hour < this.visible_to_hour;
+    }
+
+    // the range wraps around midnight
+    return hour >= this.visible_from_hour || hour < this.visible_to_hour;
   }
 
   public function onPinUsed() {
