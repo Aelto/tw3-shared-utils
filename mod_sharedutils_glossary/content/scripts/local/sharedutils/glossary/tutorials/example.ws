@@ -8,7 +8,9 @@
 // For this reason prefer adding items but not removing them, as it could have
 // an effect on the tutorials that were added by other mods.
 @wrapMethod
-function SU_populateTutorialEntries(out entries: array<SU_GlossaryTutorialEntry>){
+function SU_populateTutorialEntries(
+	out entries: array<SU_GlossaryTutorialEntry>
+) {
 	var tutorial: SU_GlossaryTutorialEntry;
 
 	wrappedMethod(entries);
@@ -65,7 +67,7 @@ exec function SUGT_exampleChangeImage() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// you won't really need this code for your logic, it's there so the example 
+// you won't really need this code for your logic, it's there so the example
 // does not do anything unless activated by the exec functions above:
 
 @addField(CR4Player)

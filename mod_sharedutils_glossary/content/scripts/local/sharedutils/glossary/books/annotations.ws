@@ -25,11 +25,17 @@ function PopulateData() {
 //
 // The flag ensures we inject our data only once
 @wrapMethod(CR4GlossaryBooksMenu)
-function PopulateListData( booksList : array< name >, out flashDataList : CScriptedFlashArray ) : void {
+function PopulateListData(
+  booksList: array<name>,
+  out flashDataList: CScriptedFlashArray
+): void {
   wrappedMethod(booksList, flashDataList);
 
   if (this.sharedutils_glossary_can_inject) {
-    SUG_populateListData(flashDataList, this.m_flashValueStorage);
+    SUG_populateListData(
+      flashDataList,
+      this.m_flashValueStorage
+    );
     this.sharedutils_glossary_can_inject = false;
   }
 }

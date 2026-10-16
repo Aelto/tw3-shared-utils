@@ -34,8 +34,7 @@
       return -1;
     }
 
-    for (i = 0; i < this.entries.Size(); i += 1)
-    {
+    for (i = 0; i < this.entries.Size(); i += 1) {
       if (this.entries[i] && this.entries[i].entry_unique_id == tag) {
         return i;
       }
@@ -78,8 +77,7 @@
     SU_populateTutorialEntries(collected_entries);
     this.entries.Clear();
 
-    for (i = 0; i < collected_entries.Size(); i += 1)
-    {
+    for (i = 0; i < collected_entries.Size(); i += 1) {
       su_entry = collected_entries[i];
 
       if (!this.isEntryValid(su_entry)) {

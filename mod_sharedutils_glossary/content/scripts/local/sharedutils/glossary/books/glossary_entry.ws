@@ -1,7 +1,6 @@
-
 class SU_GlossaryEntry {
   var entry_unique_id: name;
-  
+
   var sort_index: int;
   default sort_index = 2000;
 

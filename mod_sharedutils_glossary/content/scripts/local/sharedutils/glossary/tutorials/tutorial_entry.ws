@@ -2,11 +2,11 @@
   var entry_unique_id: name;
 
   var drop_down_label: string;
-  var drop_down_tag  : name;
-  var drop_down_icon : string;
+  var drop_down_tag: name;
+  var drop_down_icon: string;
   default drop_down_icon = "icons/monsters/ICO_MonsterDefault.png";
 
-  var title      : string;
+  var title: string;
   var description: string;
 
   var is_new: bool;

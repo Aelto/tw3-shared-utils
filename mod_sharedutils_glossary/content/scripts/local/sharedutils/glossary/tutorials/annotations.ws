@@ -3,8 +3,9 @@ var sharedutils_glossary_tutorials: SU_GlossaryTutorialManager;
 
 @addMethod(CR4Player)
 function getSharedutilsGlossaryTutorialManager(): SU_GlossaryTutorialManager {
-	if (!this.sharedutils_glossary_tutorials)
+	if (!this.sharedutils_glossary_tutorials) {
 		this.sharedutils_glossary_tutorials = new SU_GlossaryTutorialManager in this;
+	}
 
 	return this.sharedutils_glossary_tutorials;
 }
@@ -30,11 +31,9 @@ function PopulateData() {
 	// Vanilla skips SetFlashArray when it has no tutorial rows
 	if (!su_manager.list_published && su_manager.entries.Size() > 0) {
 		su_data_array = m_flashValueStorage.CreateTempFlashArray();
-		
+
 		m_flashValueStorage.SetFlashArray(DATA_BINDING_NAME, su_data_array);
-		m_fxShowSecondaryModulesSFF.InvokeSelfOneArg(
-			FlashArgBool(su_data_array.GetLength() > 0)
-		);
+		m_fxShowSecondaryModulesSFF.InvokeSelfOneArg(FlashArgBool(su_data_array.GetLength() > 0));
 	}
 
 	// Restore the outer call's context if another list rebuild ran inside it.
@@ -49,8 +48,9 @@ function SetFlashArray(key: string, value: CScriptedFlashArray) {
 
 	if (key == "glossary.tutorials.list" && thePlayer) {
 		su_manager = SUGT_getManager();
-		if (su_manager.populating_menu)
+		if (su_manager.populating_menu) {
 			su_manager.populating_menu.SUGT_AppendTutorialEntries(this, value);
+		}
 	}
 
 	wrappedMethod(key, value);
@@ -67,34 +67,50 @@ function SUGT_AppendTutorialEntries(
 	var su_data_object: CScriptedFlashObject;
 	var i: int;
 
-	if (storage != m_flashValueStorage || !value)
-		return;
+	if (storage != m_flashValueStorage || !value) return;
 
 	su_manager = SUGT_getManager();
 	su_manager.list_published = true;
 
 	for (i = 0; i < su_manager.entries.Size(); i += 1) {
 		su_entry = su_manager.entries[i];
-		if (!su_entry)
+		if (!su_entry) {
 			continue;
+		}
 
 		su_data_object = m_flashValueStorage.CreateTempFlashObject();
 
-		su_data_object.SetMemberFlashUInt("tag", NameToFlashUInt(su_entry.entry_unique_id));
-		su_data_object.SetMemberFlashString("dropDownLabel", su_entry.drop_down_label);
-		su_data_object.SetMemberFlashUInt("dropDownTag", NameToFlashUInt(su_entry.drop_down_tag));
-		su_data_object.SetMemberFlashBool("dropDownOpened", IsCategoryOpened(su_entry.drop_down_tag));
+		su_data_object.SetMemberFlashUInt(
+			"tag",
+			NameToFlashUInt(su_entry.entry_unique_id)
+		);
+		su_data_object.SetMemberFlashString(
+			"dropDownLabel",
+			su_entry.drop_down_label
+		);
 		su_data_object.SetMemberFlashString("dropDownIcon", su_entry.drop_down_icon);
-
 		su_data_object.SetMemberFlashBool("isNew", su_entry.getIsNew());
-		if (resetSelection)
-			su_data_object.SetMemberFlashBool("selected", false);
-		else
-			su_data_object.SetMemberFlashBool("selected", (su_entry.entry_unique_id == currentTag));
-
 		su_data_object.SetMemberFlashString("label", su_entry.getTitle());
-		// The stock list icon is transparent, so no use in adding it
+		su_data_object.SetMemberFlashUInt(
+			"dropDownTag",
+			NameToFlashUInt(su_entry.drop_down_tag)
+		);
+		su_data_object.SetMemberFlashBool(
+			"dropDownOpened",
+			IsCategoryOpened(su_entry.drop_down_tag)
+		);
 
+		if (resetSelection) {
+			su_data_object.SetMemberFlashBool("selected", false);
+		}
+		else {
+			su_data_object.SetMemberFlashBool(
+				"selected",
+				(su_entry.entry_unique_id == currentTag)
+			);
+		}
+
+		// The stock list icon is transparent, so no use in adding it
 		value.PushBackFlashObject(su_data_object);
 	}
 }
@@ -146,24 +162,30 @@ private var sugt_image_size_overridden: bool;
 // Both dimensions must be positive to resize an image. The loader applies the
 // bounds after loading, so high-resolution replacements keep the requested size
 @addMethod(CR4GlossaryTutorialsMenu)
-function SUGT_SetImageSize(optional image_width: float, optional image_height: float): void
-{
+function SUGT_SetImageSize(
+	optional image_width: float,
+	optional image_height: float
+) {
 	var image_module: CScriptedFlashObject;
 	var image_loader: CScriptedFlashObject;
 	var content_loader: CScriptedFlashObject;
 
 	image_module = m_flashModule.GetMemberFlashObject("mcGlossarySubModule");
-	if (!image_module)
+	if (!image_module) {
 		return;
+	}
 
 	image_loader = image_module.GetMemberFlashObject("mcLoader");
-	if (!image_loader)
+	if (!image_loader) {
 		return;
+	}
 
 	content_loader = image_loader.GetMemberFlashObject("loader");
 	if (image_width > 0.0f && image_height > 0.0f) {
 		// Capture the original settings once, before the first sized image.
 		if (!sugt_image_size_overridden) {
+			sugt_image_size_overridden = true;
+
 			sugt_image_layout.width = image_loader.GetMemberFlashNumber("width");
 			sugt_image_layout.height = image_loader.GetMemberFlashNumber("height");
 			sugt_image_layout.auto_size = image_loader.GetMemberFlashBool("autoSize");
@@ -174,7 +196,6 @@ function SUGT_SetImageSize(optional image_width: float, optional image_height: f
 				sugt_image_layout.content_x = content_loader.GetMemberFlashNumber("x");
 				sugt_image_layout.content_y = content_loader.GetMemberFlashNumber("y");
 			}
-			sugt_image_size_overridden = true;
 		}
 
 		image_loader.SetMemberFlashBool("autoSize", true);
@@ -183,18 +204,22 @@ function SUGT_SetImageSize(optional image_width: float, optional image_height: f
 		image_loader.SetMemberFlashNumber("height", image_height);
 	}
 	else if (sugt_image_size_overridden) {
+		sugt_image_size_overridden = false;
+
 		// Restore native sizing for vanilla tutorials and entries without bounds.
 		image_loader.SetMemberFlashNumber("width", sugt_image_layout.width);
 		image_loader.SetMemberFlashNumber("height", sugt_image_layout.height);
 		image_loader.SetMemberFlashBool("autoSize", sugt_image_layout.auto_size);
-		image_loader.SetMemberFlashBool("maintainAspectRatio", sugt_image_layout.maintain_aspect_ratio);
+		image_loader.SetMemberFlashBool(
+			"maintainAspectRatio",
+			sugt_image_layout.maintain_aspect_ratio
+		);
 
 		// Auto-sizing centers the inner loader. Its offset also needs restoring.
 		if (content_loader) {
 			content_loader.SetMemberFlashNumber("x", sugt_image_layout.content_x);
 			content_loader.SetMemberFlashNumber("y", sugt_image_layout.content_y);
 		}
-		sugt_image_size_overridden = false;
 	}
 }
 
@@ -206,9 +231,11 @@ function UpdateImage(tag: name) {
 	su_entry = SUGT_getManager().getEntry(tag);
 	if (su_entry) {
 		SUGT_SetImageSize(su_entry.image_width, su_entry.image_height);
+
 		image_path = su_entry.getImagePath();
-		if (image_path == "" || image_path == "empty_texture.PNG")
+		if (image_path == "" || image_path == "empty_texture.PNG") {
 			image_path = "textures/glossary/tutorials/empty_texture.png";
+		}
 
 		m_fxSetImage.InvokeSelfOneArg(FlashArgString(image_path));
 		return;

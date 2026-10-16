@@ -1,4 +1,3 @@
-
 class SU_GlossaryManager {
   var entries: array<SU_GlossaryEntry>;
 
@@ -9,8 +8,10 @@ class SU_GlossaryManager {
   private function isTagValid(tag: name): bool {
     return tag != '';
   }
-  
-  private function isEntryValid(item: SU_GlossaryEntry): bool {
+
+  private function isEntryValid(
+    item: SU_GlossaryEntry
+  ): bool {
     if (!item) {
       return false;
     }
@@ -64,7 +65,7 @@ class SU_GlossaryManager {
     // if an entry with the same title already exists, replace it:
     if (!this.setEntryAt(this.indexOfEntry(item.entry_unique_id), item)) {
       // otherwise push it to the array of entries:
-      this.entries.PushBack(item);  
+      this.entries.PushBack(item);
     }
 
     return true;
@@ -73,8 +74,11 @@ class SU_GlossaryManager {
   public function removeEntry(item: SU_GlossaryEntry) {
     this.entries.Remove(item);
   }
-  
-  private function setEntryAt(index: int, item: SU_GlossaryEntry): bool {
+
+  private function setEntryAt(
+    index: int,
+    item: SU_GlossaryEntry
+  ): bool {
     // out of bound
     if (index < 0 || index >= this.entries.Size()) {
       return false;

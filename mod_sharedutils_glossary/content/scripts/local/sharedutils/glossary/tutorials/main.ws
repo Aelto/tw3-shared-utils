@@ -5,9 +5,13 @@ function SUGT_getManager(): SU_GlossaryTutorialManager {
 }
 
 // The caller supplies a fresh array. Mods wrap this hook to append their entries
-function SU_populateTutorialEntries(out entries: array<SU_GlossaryTutorialEntry>) {}
+function SU_populateTutorialEntries(
+	out entries: array<SU_GlossaryTutorialEntry>
+) {}
 
-function SU_getGlossaryTutorialEntry(tag: name): SU_GlossaryTutorialEntry {
+function SU_getGlossaryTutorialEntry(
+	tag: name
+): SU_GlossaryTutorialEntry {
 	return SUGT_getManager().getEntry(tag);
 }
 
@@ -25,17 +29,26 @@ function SU_createGlossaryTutorialEntryRaw(
 	var tutorial: SU_GlossaryTutorialEntry;
 
 	if (entry_unique_id == '') {
-		LogChannel('SUGT', "Cannot create tutorial entry: entry_unique_id is empty");
+		LogChannel(
+			'SUGT',
+			"Cannot create tutorial entry: entry_unique_id is empty"
+		);
 		return NULL;
 	}
 
 	if (drop_down_tag == '') {
-		LogChannel('SUGT', "Cannot create tutorial entry: drop_down_tag is empty");
+		LogChannel(
+			'SUGT',
+			"Cannot create tutorial entry: drop_down_tag is empty"
+		);
 		return NULL;
 	}
 
 	if (title == "") {
-		LogChannel('SUGT', "Cannot create tutorial entry: title is empty");
+		LogChannel(
+			'SUGT',
+			"Cannot create tutorial entry: title is empty"
+		);
 		return NULL;
 	}
 
@@ -76,15 +89,5 @@ function SU_createGlossaryTutorialEntryLocKeys(
 	optional image_width: float,
 	optional image_height: float
 ): SU_GlossaryTutorialEntry {
-	return SU_createGlossaryTutorialEntryRaw(
-		entry_unique_id,
-		GetLocStringByKeyExt(drop_down_label_key),
-		drop_down_tag,
-		GetLocStringByKeyExt(title_key),
-		GetLocStringByKeyExt(description_key),
-		is_new,
-		image_path,
-		image_width,
-		image_height
-	);
+	return SU_createGlossaryTutorialEntryRaw(entry_unique_id, GetLocStringByKeyExt(drop_down_label_key), drop_down_tag, GetLocStringByKeyExt(title_key), GetLocStringByKeyExt(description_key), is_new, image_path, image_width, image_height);
 }

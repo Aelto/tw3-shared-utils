@@ -6,7 +6,7 @@ exec function SUG_example() {
 
   book.drop_down_label = "Sharedutils - Custom Glossary Entries";
   book.drop_down_tag = 'SharedutilsCustomGlossaryEntries';
-  
+
   book.title = "Custom glossary entry example";
   book.description = "Lorem ipsum dolor sit amet consectitur";
 
