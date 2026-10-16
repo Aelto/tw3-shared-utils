@@ -73,7 +73,7 @@ function OnShowOptionSubmenu(actionType: int, menuTag: int, id: string) {
     }
   }
   this.su_menu_message_fallback_cache = message_fallback;
-  this.SUMD_displayMessage(message_fallback);
+  this.SUMD_displayMessageForType(message_fallback);
 
   return wrappedMethod(actionType, menuTag, id);
 }
@@ -93,7 +93,7 @@ function OnOptionPanelNavigateBack() {
 
   // clear fallback and hide banner:
   this.su_menu_message_fallback_cache = "";
-  this.SUMD_displayMessage("");
+  this.SUMD_displayMessageForType("");
 
   for (i = 0; i < this.su_menu_descriptors.Size(); i += 1) {
     descriptor = this.su_menu_descriptors[i];
@@ -125,7 +125,7 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
 
   if (!value) {
     if (optionName == this.su_menu_hovered_option || this.su_menu_hovered_out_count > 15) {
-      this.SUMD_displayMessage("");
+      this.SUMD_displayMessageForType("");
       return result;
     }
 
@@ -152,7 +152,7 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
     message += descriptor.onOptionHovered(current_menu, optionName);
   }
 
-  this.SUMD_displayMessage(message);
+  this.SUMD_displayMessageForType(message, SUMD_DT_Automatic);
 
   return result;
 }
@@ -180,18 +180,112 @@ function OnOptionValueChanged(
   }
 
   if (message != "") {
-    this.SUMD_displayMessage(message);
+    this.SUMD_displayMessageForType(message, SUMD_DT_Automatic);
   }
 
   return result;
+}
+
+@addMethod(CR4IngameMenu)
+function SUMD_displayMessageForType(
+  message: string,
+  optional display_type: SU_MenuDescriptor_DisplayType
+) {
+  // // handle empty messages, this is usually a sign for releasing/hiding the
+  // // popups and banners.
+  // if (message == "") {
+  //   this.su_menu_message_cache = message;
+  //   theGame.GetGuiManager().ShowNotification("", 0);
+  //   this.SUMD_releaseBanner();
+
+  //   return;
+  // }
+
+  switch (display_type) {
+    case SUMD_DT_Popup:
+      SUMD_displayMessagePopup(message);
+      this.SUMD_releaseBanner(); // hide banners
+      break;
+
+    case SUMD_DT_BannerBottom:
+      SUMD_displayMessageBannerBottom(message);
+      theGame.GetGuiManager().ShowNotification("", 0); // hide popups
+      break;
+
+    // the SUMD_DT_Automatic case, or any other case we do not handle
+    default:
+      // Each line can contain roughly 130 characters before it wraps.
+      // The bottom banner can have 6 lines before it clips, but at 6 lines it
+      // is already close to clipping and obstructs a good part of the screen.
+      //
+      // For this reason we'll stop at 5 lines:
+      
+      if ((StrLen(message) / 130.0) + SUMD_countLineBreaks(message) > 5.0) {
+        SUMD_displayMessagePopup(message);
+        this.SUMD_releaseBanner(); // hide banners
+      }
+      else {
+        SUMD_displayMessageBannerBottom(message);
+        theGame.GetGuiManager().ShowNotification("", 0); // hide popups
+      }
+      break;
+  }
+}
+
+function SUMD_countLineBreaks(message: string): int {
+  var count: int;
+
+  // ensure all line breaks are the same and lowercased to make the rest of the
+  // function easier.
+  message = StrLower(message);
+  message = StrReplaceAll(message, "<br />", "<br/>");
+  message = StrReplaceAll(message, "<br>", "<br/>");
+
+  count = 0;
+  while (count < 5) { // safe limit of 5
+    if (!StrContains(message, "<br/>")) {
+      break;
+    }
+
+    count += 1;
+    message = StrReplace(message, "<br/>", "");
+  }
+
+  return count;
+}
+
+@addMethod(CR4IngameMenu)
+function SUMD_displayMessagePopup(message: string) {
+  var duration: float = -1;
+
+  if (message == "") {
+    if (this.su_menu_message_fallback_cache != "") {
+      message = this.su_menu_message_fallback_cache;
+    }
+  }
+
+  if (message == this.su_menu_message_cache) {
+    return;
+  }
+
+  this.su_menu_message_cache = message;
+
+  if (message == "") {
+    duration = 0;
+  }
+
+  theGame.GetGuiManager().ShowNotification(message, duration);
 }
 
 /// Messages are displayed in the banner the vanilla Accessibility menu uses for
 /// its preset description, it sits under the option list of every options
 /// panel and is driven by two flash functions: `updateBardsBalladText` for the
 /// content and `showBardsBalladTooltip` for the visibility.
+///
+/// Prefer calling `SUMD_displayMessageForType` rather than this method directly
+/// to benefit from the display type choice and/or the automatic picking logic.
 @addMethod(CR4IngameMenu)
-function SUMD_displayMessage(message: string) {
+function SUMD_displayMessageBannerBottom(message: string) {
   if (message == "") {
     if (this.su_menu_message_fallback_cache != "") {
       message = this.su_menu_message_fallback_cache;
@@ -368,12 +462,7 @@ class SU_MenuDescriptorInternal {
     optional description: string,
     /// if the popup must contain a localized string then this parameter can
     /// provide the key of that localized string:
-    optional description_loc_key: string,
-    /// if set to true, the system will redirect the current description that
-    /// may have been obtained from `description` or `description_loc_key`
-    /// and send them to 
-
-    optional dynamic_description: bool
+    optional description_loc_key: string
   ) {
     this.option_hover_listeners.PushBack(
       SU_MenuDescriptor_OptionDescription(
@@ -436,4 +525,14 @@ struct SU_MenuDescriptor_OptionDescription {
   var description: string;
   var description_loc_key: string;
   var dynamic_description: bool;
+}
+
+enum SU_MenuDescriptor_DisplayType {
+  /// lets the framework pick the right display type based on the message length
+  SUMD_DT_Automatic = 0,
+  /// forces the use of the popup for this message
+  SUMD_DT_Popup = 1,
+  /// forces the use of the bottom banner that was introduced in the Remastered
+  /// version of the game
+  SUMD_DT_BannerBottom = 2
 }
