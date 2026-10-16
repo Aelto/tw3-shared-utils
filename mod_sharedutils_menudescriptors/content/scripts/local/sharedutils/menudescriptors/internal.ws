@@ -31,6 +31,18 @@ var su_menu_hovered_option: name;
 @addField(CR4IngameMenu)
 var su_menu_hovered_out_count: int;
 
+/// true while the banner displays one of our messages rather than the vanilla
+/// Accessibility preset description.
+@addField(CR4IngameMenu)
+var su_menu_banner_owned: bool;
+
+@addField(CR4IngameMenu)
+var su_menu_fx_show_banner: CScriptedFlashFunction;
+
+/// original height of the text field of the banner, before we resize it.
+@addField(CR4IngameMenu)
+var su_menu_banner_text_height: float;
+
 @wrapMethod(CR4IngameMenu)
 function OnShowOptionSubmenu(actionType: int, menuTag: int, id: string) {
   var descriptor: SU_MenuDescriptor;
@@ -76,12 +88,12 @@ function OnOptionPanelNavigateBack() {
   this.su_menu_hovered_out_count = 0;
   this.su_menu_hovered_option = '';
 
-  // clear fallback and hide popup:
-  this.su_menu_message_fallback_cache = "";
-  this.SUMD_displayMessage("");
-
   menu_left = this.su_menu_stack.PopBack();
   LogChannel('SUMD', "OnOptionPanelNavigateBack(), menu_left=" + menu_left);
+
+  // clear fallback and hide banner:
+  this.su_menu_message_fallback_cache = "";
+  this.SUMD_displayMessage("");
 
   for (i = 0; i < this.su_menu_descriptors.Size(); i += 1) {
     descriptor = this.su_menu_descriptors[i];
@@ -174,10 +186,12 @@ function OnOptionValueChanged(
   return result;
 }
 
+/// Messages are displayed in the banner the vanilla Accessibility menu uses for
+/// its preset description, it sits under the option list of every options
+/// panel and is driven by two flash functions: `updateBardsBalladText` for the
+/// content and `showBardsBalladTooltip` for the visibility.
 @addMethod(CR4IngameMenu)
 function SUMD_displayMessage(message: string) {
-  var duration: float = -1;
-
   if (message == "") {
     if (this.su_menu_message_fallback_cache != "") {
       message = this.su_menu_message_fallback_cache;
@@ -191,10 +205,78 @@ function SUMD_displayMessage(message: string) {
   this.su_menu_message_cache = message;
 
   if (message == "") {
-    duration = 0;
+    this.SUMD_releaseBanner();
+    return;
   }
 
-  theGame.GetGuiManager().ShowNotification(message, duration);
+  this.su_menu_banner_owned = true;
+  this.m_fxUpdateBardsBalladText.InvokeSelfOneArg(FlashArgString(message));
+  this.SUMD_fitBannerText(true);
+  this.SUMD_showBanner(true);
+}
+
+/// The flash side resizes the frame of the banner to fit its content but not
+/// the text field itself, which is only two lines tall and clips anything
+/// longer. Resize it to its content, or back to its original height once the
+/// banner is released.
+@addMethod(CR4IngameMenu)
+function SUMD_fitBannerText(fit: bool) {
+  var text_field: CScriptedFlashObject;
+
+  text_field = this.m_flashModule
+    .GetChildFlashSprite("mcOptionListModule")
+    .GetChildFlashSprite("tooltip")
+    .GetMemberFlashObject("textField");
+
+  if (!text_field) {
+    return;
+  }
+
+  if (this.su_menu_banner_text_height <= 0) {
+    this.su_menu_banner_text_height = text_field.GetMemberFlashNumber("height");
+  }
+
+  if (fit) {
+    text_field.SetMemberFlashNumber(
+      "height",
+      MaxF(
+        this.su_menu_banner_text_height,
+        // a few extra pixels for the gutter of the text field
+        text_field.GetMemberFlashNumber("textHeight") + 8
+      )
+    );
+  }
+  else {
+    text_field.SetMemberFlashNumber("height", this.su_menu_banner_text_height);
+  }
+}
+
+/// Gives the banner back to the vanilla game: the flash side caches the last
+/// text it received and the scripts only refresh it when the options are
+/// opened, so the Accessibility text has to be restored by hand.
+@addMethod(CR4IngameMenu)
+function SUMD_releaseBanner() {
+  if (!this.su_menu_banner_owned) {
+    return;
+  }
+
+  this.su_menu_banner_owned = false;
+  this.SUMD_fitBannerText(false);
+  this.UpdateBardsBalladTooltipText();
+  this.SUMD_showBanner(
+    this.su_menu_stack.Size() > 0
+    && this.su_menu_stack.Last() == "option_accessibility"
+  );
+}
+
+@addMethod(CR4IngameMenu)
+function SUMD_showBanner(show: bool) {
+  if (!this.su_menu_fx_show_banner) {
+    this.su_menu_fx_show_banner = this.m_flashModule
+      .GetMemberFlashFunction("showBardsBalladTooltip");
+  }
+
+  this.su_menu_fx_show_banner.InvokeSelfOneArg(FlashArgBool(show));
 }
 
 class SU_MenuDescriptorInternal {

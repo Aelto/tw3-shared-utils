@@ -4,6 +4,11 @@ the user hovers over entries in mod menus. The sharedutils module handles the lo
 of keeping track which menu is currently opened, and which descriptor instances
 should be kept alive for maximum performances.
 
+The descriptions are displayed in the banner under the option list, the same one
+the vanilla Accessibility menu uses to describe its presets. The banner grows
+downward with its content and has room for about three lines of text before it
+reaches the button hints, so keep the descriptions short.
+
 # Implementation example
 Assuming a XML menu like this:
 ```xml
