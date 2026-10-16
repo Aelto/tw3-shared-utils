@@ -44,8 +44,8 @@ function SU_removeCustomPinByPosition(position: Vector) {
 
 function SUMP_getManager(): SUMP_Manager {
   SUMP_Logger("SUMP_getManager()");
-	
-	return thePlayer.getSharedutilsMappinsManager();
+  
+  return thePlayer.getSharedutilsMappinsManager();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ class SU_CustomPinRemoverPredicatePositionEquals extends SU_PredicateInterfaceRe
   var position: Vector;
 
   function predicate(pin: SU_MapPin): bool {
-	return pin.position == this.position;
+  return pin.position == this.position;
   }
 
   function init(position: Vector): SU_CustomPinRemoverPredicatePositionEquals {
