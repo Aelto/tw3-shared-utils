@@ -191,15 +191,11 @@ function SUMD_displayMessageForType(
   message: string,
   optional display_type: SU_MenuDescriptor_DisplayType
 ) {
-  // // handle empty messages, this is usually a sign for releasing/hiding the
-  // // popups and banners.
-  // if (message == "") {
-  //   this.su_menu_message_cache = message;
-  //   theGame.GetGuiManager().ShowNotification("", 0);
-  //   this.SUMD_releaseBanner();
-
-  //   return;
-  // }
+  if (message == "") {
+    if (this.su_menu_message_fallback_cache != "") {
+      message = this.su_menu_message_fallback_cache;
+    }
+  }
 
   switch (display_type) {
     case SUMD_DT_Popup:
@@ -254,15 +250,11 @@ function SUMD_countLineBreaks(message: string): int {
   return count;
 }
 
+/// Prefer calling `SUMD_displayMessageForType` rather than this method directly
+/// to benefit from the display type choice and/or the automatic picking logic.
 @addMethod(CR4IngameMenu)
 function SUMD_displayMessagePopup(message: string) {
   var duration: float = -1;
-
-  if (message == "") {
-    if (this.su_menu_message_fallback_cache != "") {
-      message = this.su_menu_message_fallback_cache;
-    }
-  }
 
   if (message == this.su_menu_message_cache) {
     return;
@@ -286,11 +278,6 @@ function SUMD_displayMessagePopup(message: string) {
 /// to benefit from the display type choice and/or the automatic picking logic.
 @addMethod(CR4IngameMenu)
 function SUMD_displayMessageBannerBottom(message: string) {
-  if (message == "") {
-    if (this.su_menu_message_fallback_cache != "") {
-      message = this.su_menu_message_fallback_cache;
-    }
-  }
 
   if (message == this.su_menu_message_cache) {
     return;
