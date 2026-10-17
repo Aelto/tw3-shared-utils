@@ -7,6 +7,7 @@
  */
 latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoice>): SSceneChoice {
   var dialogueModule: CR4HudModuleDialog;
+  var choice: SSceneChoice;
 
   // while on gamepad, the interact input is directly sent in the dialog choice
   // it is safer to wait a bit before capturing the input.
@@ -21,7 +22,17 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
 
   SleepOneFrame();
 
-  return SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule);
+  choice = SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule);
+
+  // the returned choice can be a "NULL", or rather an empty struct with default
+  // values on every field. An empty description should not be there if the
+  // choice is valid.
+  if (choice.description == "" || !dialogueModule.isAcceptedChoiceAvailable) {
+    theGame.GetGuiManager().RequestMouseCursor(false);
+  }
+
+
+  return choice;
 }
 
 function SU_setDialogChoices(choices: array<SSceneChoice>): CR4HudModuleDialog {
@@ -126,10 +137,11 @@ function SU_closeDialogChoiceInterface() {
 
   theInput.SetContext(thePlayer.GetExplorationInputContext());
   theGame.SetIsDialogOrCutscenePlaying(false);
-  theGame.GetGuiManager().RequestMouseCursor(false);
 
   hud = (CR4ScriptedHud)theGame.GetHud();
   if( hud ) {
     hud.OnCutsceneEnded();
   }
+
+  theGame.GetGuiManager().RequestMouseCursor(false);
 }
