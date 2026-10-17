@@ -216,7 +216,7 @@ function SUMD_displayMessageForType(
       //
       // For this reason we'll stop at 5 lines:
       
-      if ((StrLen(message) / 130.0) + SUMD_countLineBreaks(message) > 5.0) {
+      if (SUMD_estimateBannerLines(message) > 5.0) {
         SUMD_displayMessagePopup(message);
         this.SUMD_releaseBanner(); // hide banners
       }
@@ -228,26 +228,82 @@ function SUMD_displayMessageForType(
   }
 }
 
-function SUMD_countLineBreaks(message: string): int {
-  var count: int;
+function SUMD_estimateBannerLines(message: string): float {
+	var character: string;
+	var inside_tag: bool;
+	var line_count: int;
+	var line_length: int;
+	var message_length: int;
+	var i: int;
 
-  // ensure all line breaks are the same and lowercased to make the rest of the
-  // function easier.
-  message = StrLower(message);
-  message = StrReplaceAll(message, "<br />", "<br/>");
-  message = StrReplaceAll(message, "<br>", "<br/>");
+	// Normalize common line breaks
+	message = StrLower(message);
+	message = StrReplaceAll(message, "\r\n", "\n");
+	message = StrReplaceAll(message, "\r", "\n");
+	message = StrReplaceAll(message, "<br>", "\n");
+	message = StrReplaceAll(message, "<br/>", "\n");
+	message = StrReplaceAll(message, "<br />", "\n");
+	message = StrReplaceAll(message, "<li>", "\n");
+	message_length = StrLen(message);
 
-  count = 0;
-  while (count < 5) { // safe limit of 5
-    if (!StrContains(message, "<br/>")) {
-      break;
-    }
-
-    count += 1;
-    message = StrReplace(message, "<br/>", "");
+	if (message_length == 0) {
+		return 0;
   }
 
-  return count;
+	line_count = 0;
+	for (i = 0; i < message_length; i += 1) {
+		character = StrMid(message, i, 1);
+
+    // 0. no need to go further than 6 lines, as it's the limit for the banner
+    if (line_count > 6) {
+			break;
+    }
+
+    // 1. detect & skip characters inside HTML tags that start & end with <>
+		if (character == "<") {
+			inside_tag = true;
+			continue;
+		}
+
+		if (character == ">" && inside_tag) {
+			inside_tag = false;
+			continue;
+		}
+
+		if (inside_tag) {
+      continue;
+    }
+
+    // 2. a line break, stop counting the character in the current line and
+    // directly increment the line_count.
+		if (character == "\n") {
+			line_count += 1;
+			line_length = 0;
+      continue;
+		}
+
+    // 3. regular characters that are neither inside tags, nor linebreaks.
+    // 
+    // Past a limit, we consider the line to be wrapped automatically due to the
+    // banner's width. And we start a new line count.
+    line_length += 1;
+    if (character == "\t") {
+      line_length += 4;
+    }
+
+    if (line_length >= 130) {
+      line_count += 1;
+      line_length = 0;
+    }
+	}
+
+	if (line_count == 1 && line_length <= 0) {
+		return 0;
+  }
+
+  // the `/ 130.0` part is there to still count the unfinished lines that could
+  // cause the line_count to go from 5.0 (isn't above threshold) to 5.1 (is above)
+	return line_count + (line_length / 130.0);
 }
 
 /// Prefer calling `SUMD_displayMessageForType` rather than this method directly
@@ -278,7 +334,6 @@ function SUMD_displayMessagePopup(message: string) {
 /// to benefit from the display type choice and/or the automatic picking logic.
 @addMethod(CR4IngameMenu)
 function SUMD_displayMessageBannerBottom(message: string) {
-
   if (message == this.su_menu_message_cache) {
     return;
   }
