@@ -115,6 +115,7 @@ function OnOptionPanelNavigateBack() {
 
 @wrapMethod(CR4IngameMenu)
 function OnOptionSelectionChanged(optionName: name, value: bool) {
+  var display_type: SU_MenuDescriptor_DisplayType;
   var descriptor: SU_MenuDescriptor;
   var current_menu: string;
   var message: string;
@@ -149,7 +150,7 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
   for (i = 0; i < this.su_menu_descriptors.Size(); i += 1) {
     descriptor = this.su_menu_descriptors[i];
 
-    message += descriptor.onOptionHovered(current_menu, optionName);
+    message += descriptor.onOptionHovered(current_menu, optionName, display_type);
   }
 
   this.SUMD_displayMessageForType(message, SUMD_DT_Automatic);
@@ -163,6 +164,7 @@ function OnOptionValueChanged(
   optionName: name,
   optionValue: string
 ) { 
+  var display_type: SU_MenuDescriptor_DisplayType;
   var descriptor: SU_MenuDescriptor;
   var current_menu: string;
   var message: string;
@@ -176,11 +178,11 @@ function OnOptionValueChanged(
   for (i = 0; i < this.su_menu_descriptors.Size(); i += 1) {
     descriptor = this.su_menu_descriptors[i];
 
-    message += descriptor.onOptionValueChanged(current_menu, optionName);
+    message += descriptor.onOptionValueChanged(current_menu, optionName, display_type);
   }
 
   if (message != "") {
-    this.SUMD_displayMessageForType(message, SUMD_DT_Automatic);
+    this.SUMD_displayMessageForType(message, display_type);
   }
 
   return result;
@@ -430,7 +432,11 @@ class SU_MenuDescriptorInternal {
     return this.menu_scope == menu;
   }
 
-  public final function onOptionHovered(menu: string, option: name): string {
+  public final function onOptionHovered(
+    menu: string,
+    option: name,
+    out display_type: SU_MenuDescriptor_DisplayType
+  ): string {
     var output: string;
     var dynamic: bool;
     var i: int;
@@ -438,6 +444,10 @@ class SU_MenuDescriptorInternal {
     for (i = 0; i < this.option_hover_listeners.Size(); i += 1) {
       if (this.option_hover_listeners[i].option_id != option) {
         continue;
+      }
+
+      if (this.option_hover_listeners[i].display_type != SUMD_DT_Automatic) {
+        display_type = this.option_hover_listeners[i].display_type;
       }
 
       if (this.option_hover_listeners[i].description_loc_key != "") {
@@ -462,7 +472,11 @@ class SU_MenuDescriptorInternal {
     return output;
   }
 
-  public final function onOptionValueChanged(menu: string, option: name): string {
+  public final function onOptionValueChanged(
+    menu: string,
+    option: name,
+    out display_type: SU_MenuDescriptor_DisplayType
+  ): string {
     var output: string;
     var i: int;
 
@@ -474,6 +488,10 @@ class SU_MenuDescriptorInternal {
       // skip all non-dynamic listeners
       if (!this.option_hover_listeners[i].dynamic_description) {
         continue;
+      }
+
+      if (this.option_hover_listeners[i].display_type != SUMD_DT_Automatic) {
+        display_type = this.option_hover_listeners[i].display_type;
       }
 
       if (this.option_hover_listeners[i].description_loc_key != "") {
@@ -504,14 +522,20 @@ class SU_MenuDescriptorInternal {
     optional description: string,
     /// if the popup must contain a localized string then this parameter can
     /// provide the key of that localized string:
-    optional description_loc_key: string
+    optional description_loc_key: string,
+    /// if provided, you can force a type of display instead of relying on the
+    /// automatic selection based on the message's length. Useful if your 
+    /// message is too long but the automatic detection thinks it's too short or
+    /// vice-versa.
+    optional display_type: SU_MenuDescriptor_DisplayType
   ) {
     this.option_hover_listeners.PushBack(
       SU_MenuDescriptor_OptionDescription(
         option_id,
         description,
         description_loc_key,
-        false // dynamic_description
+        false, // dynamic_description
+        display_type
       )
     );
   }
@@ -525,14 +549,20 @@ class SU_MenuDescriptorInternal {
     optional description: string,
     /// if the popup must contain a localized string then this parameter can
     /// provide the key of that localized string:
-    optional description_loc_key: string
+    optional description_loc_key: string,
+    /// if provided, you can force a type of display instead of relying on the
+    /// automatic selection based on the message's length. Useful if your 
+    /// message is too long but the automatic detection thinks it's too short or
+    /// vice-versa.
+    optional display_type: SU_MenuDescriptor_DisplayType
   ) {
     this.option_hover_listeners.PushBack(
       SU_MenuDescriptor_OptionDescription(
         option_id,
         description,
         description_loc_key,
-        true // dynamic_description
+        true, // dynamic_description
+        display_type
       )
     );
   }
@@ -567,6 +597,7 @@ struct SU_MenuDescriptor_OptionDescription {
   var description: string;
   var description_loc_key: string;
   var dynamic_description: bool;
+  var display_type: SU_MenuDescriptor_DisplayType;
 }
 
 enum SU_MenuDescriptor_DisplayType {
