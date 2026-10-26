@@ -39,9 +39,20 @@ var su_menu_banner_owned: bool;
 @addField(CR4IngameMenu)
 var su_menu_fx_show_banner: CScriptedFlashFunction;
 
-/// original height of the text field of the banner, before we resize it.
-@addField(CR4IngameMenu)
-var su_menu_banner_text_height: float;
+@wrapMethod(CR4IngameMenu)
+function OnConfigUI() {
+  var result: bool;
+
+  result = wrappedMethod();
+
+  this.m_flashModule
+    .GetChildFlashSprite("mcOptionListModule")
+    .GetChildFlashSprite("tooltip")
+    .GetMemberFlashObject("textField")
+    .SetMemberFlashString("autoSize", "left");
+
+  return result;
+}
 
 @wrapMethod(CR4IngameMenu)
 function OnShowOptionSubmenu(actionType: int, menuTag: int, id: string) {
@@ -349,44 +360,7 @@ function SUMD_displayMessageBannerBottom(message: string) {
 
   this.su_menu_banner_owned = true;
   this.m_fxUpdateBardsBalladText.InvokeSelfOneArg(FlashArgString(message));
-  this.SUMD_fitBannerText(true);
   this.SUMD_showBanner(true);
-}
-
-/// The flash side resizes the frame of the banner to fit its content but not
-/// the text field itself, which is only two lines tall and clips anything
-/// longer. Resize it to its content, or back to its original height once the
-/// banner is released.
-@addMethod(CR4IngameMenu)
-function SUMD_fitBannerText(fit: bool) {
-  var text_field: CScriptedFlashObject;
-
-  text_field = this.m_flashModule
-    .GetChildFlashSprite("mcOptionListModule")
-    .GetChildFlashSprite("tooltip")
-    .GetMemberFlashObject("textField");
-
-  if (!text_field) {
-    return;
-  }
-
-  if (this.su_menu_banner_text_height <= 0) {
-    this.su_menu_banner_text_height = text_field.GetMemberFlashNumber("height");
-  }
-
-  if (fit) {
-    text_field.SetMemberFlashNumber(
-      "height",
-      MaxF(
-        this.su_menu_banner_text_height,
-        // a few extra pixels for the gutter of the text field
-        text_field.GetMemberFlashNumber("textHeight") + 8
-      )
-    );
-  }
-  else {
-    text_field.SetMemberFlashNumber("height", this.su_menu_banner_text_height);
-  }
 }
 
 /// Gives the banner back to the vanilla game: the flash side caches the last
@@ -399,7 +373,6 @@ function SUMD_releaseBanner() {
   }
 
   this.su_menu_banner_owned = false;
-  this.SUMD_fitBannerText(false);
   this.UpdateBardsBalladTooltipText();
   this.SUMD_showBanner(
     this.su_menu_stack.Size() > 0
