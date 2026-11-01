@@ -54,6 +54,8 @@ statemachine class SUOL_Manager {
         FlashArgString(oneliner.text)
       );
 
+      oneliner.flash_sprite = this.module_flash.GetChildFlashSprite("mcOneliner" + oneliner.id);
+      oneliner.flash_text_field = oneliner.flash_sprite.GetMemberFlashObject("textField");
       this.oneliners.PushBack(oneliner);
       oneliner.is_registered = true;
     }
@@ -65,26 +67,28 @@ statemachine class SUOL_Manager {
 
   /// Updates the flash values with the oneliner's new/current text
   public function updateOneliner(oneliner: SU_Oneliner) {
-    this.module_flash
-      .GetChildFlashSprite("mcOneliner" + oneliner.id)
-      .GetChildFlashTextField("textField")
-      .SetTextHtml(oneliner.text);
+    var text_field: CScriptedFlashObject = oneliner.flash_text_field;
+
+    if (!text_field) {
+      return;
+    }
+
+    text_field.SetMemberFlashString("htmlText", oneliner.text);
+    text_field.SetMemberFlashNumber("y", -text_field.GetMemberFlashNumber("textHeight"));
   }
 
   /// Expects a value in the [0;1] range.
   public function setOnelinerOpacity(oneliner: SU_Oneliner, opacity: float) {
-    var sprite: CScriptedFlashSprite;
-
-    sprite = this.module_flash.GetChildFlashSprite("mcOneliner" + oneliner.id);
-
-    if (sprite) {
-      sprite.SetAlpha(opacity * 100.0);
+    if (oneliner.flash_sprite) {
+      oneliner.flash_sprite.SetAlpha(opacity * 100.0);
     }
   }
 
   public function deleteOneliner(oneliner: SU_Oneliner) {
     this.oneliners.Remove(oneliner);
     this.fxRemoveOnelinerSFF.InvokeSelfOneArg(FlashArgInt(oneliner.id));
+    oneliner.flash_sprite = NULL;
+    oneliner.flash_text_field = NULL;
     oneliner.is_registered = false;
   }
 

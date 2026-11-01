@@ -34,7 +34,7 @@ state Render in SUOL_Manager {
 
 			for (i = 0; i < oneliners_count; i += 1) {
 				oneliner = parent.oneliners[i];
-				sprite = parent.module_flash.GetChildFlashSprite("mcOneliner" + oneliner.id);
+				sprite = oneliner.flash_sprite;
 
 				if (!oneliner.getVisible(player_position)) {
 					sprite.SetVisible(false);

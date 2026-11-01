@@ -18,6 +18,9 @@ class SU_Oneliner {
 
   var is_registered: bool;
 
+  var flash_sprite: CScriptedFlashSprite;
+  var flash_text_field: CScriptedFlashObject;
+
   default visible = true;
 
   private var cached_manager: SUOL_Manager;
