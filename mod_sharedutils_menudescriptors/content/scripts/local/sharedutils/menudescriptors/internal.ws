@@ -153,7 +153,12 @@ function OnOptionSelectionChanged(optionName: name, value: bool) {
     message += descriptor.onOptionHovered(current_menu, optionName, display_type);
   }
 
-  this.SUMD_displayMessageForType(message, SUMD_DT_Automatic);
+  if (message != "") {
+    this.SUMD_displayMessageForType(message, display_type);
+  }
+  else {
+    this.SUMD_displayMessageForType(message, SUMD_DT_Automatic);
+  }
 
   return result;
 }
