@@ -15,6 +15,10 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
 
   dialogueModule = SU_setDialogChoices(choices);
 
+  if (!dialogueModule) {
+    return choice;
+  }
+
   // wait for the player to accept one of the dialog choices
   while (SU_isDialogChoiceCurrentlyPlaying(dialogueModule)) {
     SleepOneFrame();
@@ -24,20 +28,19 @@ latent function SU_setDialogChoicesAndWaitForResponse(choices: array<SSceneChoic
 
   choice = SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule);
 
-  // the returned choice can be a "NULL", or rather an empty struct with default
-  // values on every field. An empty description should not be there if the
-  // choice is valid.
-  if (choice.description == "" || !dialogueModule.isAcceptedChoiceAvailable) {
-    theGame.GetGuiManager().RequestMouseCursor(false);
-  }
-
+  // when a choice is accepted the game hides the mouse cursor itself but if
+  // the dialog was interrupted (player attacked, change of context...) the
+  // cursor request has to be released here, otherwise the cursor would stay
+  // visible forever.
+  SU_releaseDialogChoicesCursor(dialogueModule);
 
   return choice;
 }
 
 function SU_setDialogChoices(choices: array<SSceneChoice>): CR4HudModuleDialog {
   var dialogueModule: CR4HudModuleDialog;
-  var null: CR4HudModuleDialog;
+  var nullModule: CR4HudModuleDialog;
+  var nullChoice: SSceneChoice;
   var hud: CR4ScriptedHud;
 
   hud = (CR4ScriptedHud)theGame.GetHud();
@@ -45,16 +48,24 @@ function SU_setDialogChoices(choices: array<SSceneChoice>): CR4HudModuleDialog {
   if (!hud) {
     LogChannel('SharedUtils', "SU_setDialogChoicesAndWaitForResponse - could not get HUD");
 
-    return null;
+    return nullModule;
   }
 
-  // setting the dialog choices
   dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
+
+  // a previous dialog may not have been closed properly, its mouse cursor
+  // request is released first to keep the cursor requests balanced.
+  SU_releaseDialogChoicesCursor(dialogueModule);
+
+  // setting the dialog choices
   dialogueModule.OnDialogChoicesSet( choices, false );
 
-  // set the value to false before starting, in case it was already at true
-  // and not properly reset.
+  // resetting the state of a dialog that would not have been properly closed,
+  // and tracking the cursor request of this new dialog.
+  dialogueModule.lastAcceptedChoice = nullChoice;
   dialogueModule.isAcceptedChoiceAvailable = false;
+  dialogueModule.responseListener = NULL;
+  dialogueModule.su_dialogChoicesOpen = true;
 
   // telling the game to display the cutscene UI
   theInput.SetContext( 'Scene' );
@@ -72,7 +83,6 @@ function SU_isDialogChoiceCurrentlyPlaying(dialogueModule: CR4HudModuleDialog): 
 
 function SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule: CR4HudModuleDialog): SSceneChoice {
   var accepted_choice: SSceneChoice;
-  var empty_array: array<SSceneChoice>;
   var null: SSceneChoice;
 
   // we fetch the last accepted choice
@@ -89,10 +99,25 @@ function SU_getLastAcceptedChoiceAndFlushDialog(dialogueModule: CR4HudModuleDial
 
   dialogueModule.isAcceptedChoiceAvailable = false;
 
-  // send an empty array to flush the data
-  dialogueModule.OnDialogChoicesSet( empty_array, false );
+  // send an empty array to flush the data, without touching the mouse cursor
+  // requests, OnDialogChoicesSet would request the cursor again for the empty
+  // set of choices.
+  dialogueModule.SU_flushDialogChoices();
 
   return accepted_choice;
+}
+
+/**
+ * Releases the mouse cursor request made when the dialog choices were set.
+ * The request is only ever released once per dialog, either here or by the
+ * game when a choice is accepted, so that closing a dialog can never hide a
+ * cursor request owned by something else.
+ */
+function SU_releaseDialogChoicesCursor(dialogueModule: CR4HudModuleDialog) {
+  if (dialogueModule && dialogueModule.su_dialogChoicesOpen) {
+    dialogueModule.su_dialogChoicesOpen = false;
+    theGame.GetGuiManager().RequestMouseCursor(false);
+  }
 }
 
 /**
@@ -134,14 +159,29 @@ function SU_setDialogChoicesAndResponseListener(choices: array<SSceneChoice>, re
  */
 function SU_closeDialogChoiceInterface() {
   var hud : CR4ScriptedHud;
+  var dialogueModule : CR4HudModuleDialog;
 
   theInput.SetContext(thePlayer.GetExplorationInputContext());
   theGame.SetIsDialogOrCutscenePlaying(false);
+  theGame.ForceUIAnalog(false);
 
   hud = (CR4ScriptedHud)theGame.GetHud();
   if( hud ) {
-    hud.OnCutsceneEnded();
-  }
+    dialogueModule = (CR4HudModuleDialog)hud.GetHudModule("DialogModule");
 
-  theGame.GetGuiManager().RequestMouseCursor(false);
+    if (dialogueModule) {
+      dialogueModule.isAcceptedChoiceAvailable = false;
+      dialogueModule.responseListener = NULL;
+
+      // clear the choices that would otherwise stay displayed on screen
+      dialogueModule.SU_flushDialogChoices();
+    }
+
+    hud.OnCutsceneEnded();
+
+    // kept last so that nothing can request the cursor back afterwards
+    if (dialogueModule) {
+      SU_releaseDialogChoicesCursor(dialogueModule);
+    }
+  }
 }
